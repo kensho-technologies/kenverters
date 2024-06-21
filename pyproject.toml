@@ -1,0 +1,23 @@
+[project]
+name = "kenverters"
+version = "0.0.1"
+description = "Extract Output Translator Tools"
+readme = "README.md"
+requires-python = ">=3.10, <4"
+dependencies = [
+    "pandas>=1.2.0,<3",
+    "pydantic>=2,<3",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest",
+    "parameterized>=0.8.1",
+    "black",
+    "flake8",
+    "isort>=5.0.0,<6",
+    "mypy",
+    "pylint",
+    "pydocstyle",
+    "pytest-cov",
+]

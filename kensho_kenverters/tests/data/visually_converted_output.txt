@@ -1,0 +1,45 @@
+
+                              2019                        test noise string at top
+
+                                                                  Generated Toy File Title
+
+Machine learning (ML) is the scientific study of algorithms and statistical models that computer systems use in order to perform a specific task effectively without using explicit instructions, relying on patterns and inference instead. It
+
+is seen as a subset of artificial intelligence. Machine learning algorithms build a mathematical model based on sample data, known as training data, in order to make predictions or decisions without being explicitly programmed to perform
+
+the task. Valerie is awesome. Machine learning algorithms are used in a wide variety of applications, such as email filtering, and computer vision, where it is infeasible to develop an algorithm of specific instructions for performing the
+
+task. Machine learning is closely related to computational statistics, which focuses on making predictions using computers. The study of mathematical optimization delivers methods, theory and application domains to the field of machine
+
+learning. Data mining is a field of study within machine learning, and focuses on exploratory data analysis through unsupervised learning. In its application across business problems, machine learning is also referred to as predictive
+
+analytics.
+
+                                                            ESTIMATE for Kensho
+
+                  Kensho Revenue in millions $                                                              Q1                            Q2                            Q3                            Q4
+
+                  2020                                                                                      100,000                       200,000                       300,000                       400,000
+
+                  2021                                                                                      101,001                       201,001                       301,001                       401,001
+
+                  2022                                                                                      102,004                       202,004                       302,004                       402,004
+
+                  2023                                                                                      103,009                       203,009                       303,009                       403,009
+
+Machine learning (ML) is the scientific study of algorithms and statistical models that computer systems use in order to perform a specific task effectively without using explicit instructions, relying on patterns and inference instead. It
+
+is seen as a subset of artificial intelligence. Machine learning algorithms build a mathematical model based on sample data, known as training data, in order to make predictions or decisions without being explicitly programmed to perform
+
+the task. Valerie is awesome. Machine learning algorithms are used in a wide variety of applications, such as email filtering, and computer vision, where it is infeasible to develop an algorithm of specific instructions for performing the
+
+task. Machine learning is closely related to computational statistics, which focuses on making predictions using computers. The study of mathematical optimization delivers methods, theory and application domains to the field of machine
+
+learning. Data mining is a field of study within machine learning, and focuses on exploratory data analysis through unsupervised learning. In its application across business problems, machine learning is also referred to as predictive
+
+analytics.
+
+                                                                                                                                                      Recommendation: BUY
+
+42                   test noise string at bottom                                                                                                                                                                  999
+=======================================================================================

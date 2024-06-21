@@ -1,0 +1,3 @@
+include kensho_kenverters/tests/data/*.json
+include kensho_kenverters/tests/data/*.txt
+include kensho_kenverters/CHANGELOG.md
