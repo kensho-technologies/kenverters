@@ -980,4 +980,4 @@ class TestTableExtraction(TestCase):
         tables = build_table_grids(
             {"content_tree": content, "annotations": annotations}, True
         )
-        self.assertEquals(expected_tables, tables)
+        self.assertEqual(expected_tables, tables)

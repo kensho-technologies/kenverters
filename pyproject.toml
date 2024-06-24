@@ -1,23 +1,22 @@
-[project]
-name = "kenverters"
+[tool.poetry]
+name = "kensho_kenverters"
 version = "0.0.1"
 description = "Extract Output Translator Tools"
 readme = "README.md"
-requires-python = ">=3.10, <4"
-dependencies = [
-    "pandas>=1.2.0,<3",
-    "pydantic>=2,<3",
-]
+authors = ["Valerie Faucon-Morin <valerie.fauconmorin@kensho.com>"]
 
-[project.optional-dependencies]
-dev = [
-    "pytest",
-    "parameterized>=0.8.1",
-    "black",
-    "flake8",
-    "isort>=5.0.0,<6",
-    "mypy",
-    "pylint",
-    "pydocstyle",
-    "pytest-cov",
-]
+[tool.poetry.dependencies]
+python = ">=3.10,<4"
+pandas = ">=1.2.0,<3"
+pydantic = ">=2,<3"
+
+[tool.poetry.group.dev.dependencies]
+pytest = "~7.4.4"
+parameterized= "^0.8.1"
+black = "~24.4.2"
+flake8 = "~7.1.0"
+isort = ">=5.0.0,<6"
+mypy = "~1.8.0"
+pylint = "~3.2.3"
+pydocstyle = "~6.3.0"
+pytest-cov = "~5.0.0"

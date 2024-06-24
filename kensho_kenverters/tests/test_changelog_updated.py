@@ -1,8 +1,9 @@
 """A template used to add a changelog updated test."""
 
+import os
 import re
 import unittest
-from importlib import metadata, resources
+from importlib import metadata
 
 _version_pattern = re.compile(r"## v(\d+\.\d+\.\d+)")
 package_name = "kensho_kenverters"
@@ -15,7 +16,11 @@ class ChangelogTests(unittest.TestCase):
 
         changelog_lines = []
 
-        for line in resources.open_text(package_name, "CHANGELOG.md"):
+        changelog_file_path = os.path.join(package_name, "CHANGELOG.md")
+        with open(changelog_file_path, "r") as f:
+            changelog = f.readlines()
+
+        for line in changelog:
             stripped_line = line.strip()
             if stripped_line == "# Changelog":
                 # Found the start of the changelog.
