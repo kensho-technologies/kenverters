@@ -51,10 +51,8 @@ jobs:
       #  -----  Run tests  ----------------------------------------
       #------------------------------------------------------------
       - name: Run pytest tests
-        run: |
-            source .venv/bin/activate
-            bash ${{ github.workspace }}/scripts/test.sh
+        run: poetry run bash ${{ github.workspace }}/scripts/test.sh
       - name: Run lint tests
-        run:  bash ${{ github.workspace }}/scripts/lint.sh
+        run:  poetry run bash ${{ github.workspace }}/scripts/lint.sh
       - name: Run copyright tests
-        run:   bash ${{ github.workspace }}/scripts/copyright_line_check.sh
+        run:   poetry run bash ${{ github.workspace }}/scripts/copyright_line_check.sh
