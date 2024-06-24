@@ -48,6 +48,11 @@ jobs:
         if: steps.cached-poetry-dependencies.outputs.cache-hit != 'true'
         run: poetry install --no-interaction --no-root
       #------------------------------------------------------------
+      #  -----  Install project  ----------------------------------
+      #------------------------------------------------------------
+      - name: Install library
+        run: poetry install --no-interaction
+      #------------------------------------------------------------
       #  -----  Run tests  ----------------------------------------
       #------------------------------------------------------------
       - name: Run pytest tests
