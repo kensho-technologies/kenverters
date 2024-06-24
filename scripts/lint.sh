@@ -25,7 +25,7 @@ function get_physical_cores() {
 
 
 # Parse input arguments.
-diff_only=0
+diff_only=1
 any_run_only_set=0
 run_fast_linters=0  # copyright line check, isort, black, flake8, pydocstyle
 run_pylint=0
