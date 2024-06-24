@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "kenverters"
+name = "kensho_kenverters"
 version = "0.0.1"
 description = "Extract Output Translator Tools"
 readme = "README.md"

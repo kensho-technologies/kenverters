@@ -5,7 +5,7 @@ import unittest
 from importlib import metadata, resources
 
 _version_pattern = re.compile(r"## v(\d+\.\d+\.\d+)")
-package_name = "kenverters"
+package_name = "kensho_kenverters"
 
 
 class ChangelogTests(unittest.TestCase):
