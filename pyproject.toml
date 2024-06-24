@@ -1,4 +1,4 @@
-[project]
+[tool.poetry]
 name = "kenverters"
 version = "0.0.1"
 description = "Extract Output Translator Tools"
