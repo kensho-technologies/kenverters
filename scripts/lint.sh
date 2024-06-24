@@ -129,7 +129,7 @@ if [ "$run_fast_linters" -eq 1 ]; then
     echo -e "\n*** End of black run; exit: $black_exit_code ***\n"
 
     echo -e '*** Running flake8... ***\n'
-    flake8 --config=setup.cfg $py_lintable_locations
+    flake8 --config=setup.cfg $py_lintable_locations --diff
     flake_exit_code=$?
     echo -e "\n*** End of flake8 run, exit: $flake_exit_code ***\n"
 
