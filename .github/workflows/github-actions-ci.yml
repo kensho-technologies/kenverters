@@ -15,9 +15,15 @@ jobs:
       - run: echo "Running scripts/lint.sh"
       - name: Run lint.sh
         run: |
-          sh ${{ github.workspace }}/scripts/lint.sh
+          bash ${{ github.workspace }}/scripts/lint.sh
+      - run: echo "🍏 This job's status is ${{ job.status }}."
       - run: echo "Running scripts/test.sh"
       - name: Run test.sh
         run: |
-          sh ${{ github.workspace }}/scripts/test.sh
+          bash ${{ github.workspace }}/scripts/test.sh
+      - run: echo "🍏 This job's status is ${{ job.status }}."
+      - run: echo "Running scripts/copyright_line_check.sh"
+      - name: Run copyright_line_check.sh
+        run: |
+          bash ${{ github.workspace }}/scripts/copyright_line_check.sh
       - run: echo "🍏 This job's status is ${{ job.status }}."
