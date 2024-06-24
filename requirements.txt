@@ -1,0 +1,9 @@
+pytest
+parameterized>=0.8.1
+black
+flake8
+isort>=5.0.0,<6
+mypy
+pylint
+pydocstyle
+pytest-cov
