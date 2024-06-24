@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/usr/bin/env sh
 # Copyright 2024-present Kensho Technologies, LLC.
 
 # Treat undefined variables and non-zero exits in pipes as errors.
