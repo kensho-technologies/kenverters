@@ -9,6 +9,9 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+      #------------------------------------------------------------
+      #  -----  Python setup  -------------------------------------
+      #------------------------------------------------------------
       - name: Set up Python
         # This is the version of the action for setting up Python, not the Python version.
         uses: actions/setup-python@v5
@@ -20,33 +23,38 @@ jobs:
       # You can test your matrix by printing the current Python version
       - name: Display Python version
         run: python -c "import sys; print(sys.version)"
-      #----------------------------------------------
-      #  -----  install & configure poetry  -----
-      #----------------------------------------------
+      #------------------------------------------------------------
+      #  -----  Install & configure poetry  -----------------------
+      #------------------------------------------------------------
       - name: Install Poetry
         uses: snok/install-poetry@v1
         with:
           virtualenvs-create: true
           virtualenvs-in-project: true
           installer-parallel: true
-      #----------------------------------------------
-      #       load cached venv if cache exists
-      #----------------------------------------------
+      #------------------------------------------------------------
+      #  -----  Load cached venv if cache exists ------------------
+      #------------------------------------------------------------
       - name: Load cached venv
         id: cached-poetry-dependencies
         uses: actions/cache@v3
         with:
           path: .venv
           key: venv-${{ runner.os }}-${{ steps.setup-python.outputs.python-version }}-${{ hashFiles('**/poetry.lock') }}
-      #----------------------------------------------
-      # install dependencies if cache does not exist
-      #----------------------------------------------
+      #------------------------------------------------------------
+      #  -----  Install dependencies if cache does not exist  -----
+      #------------------------------------------------------------
       - name: Install dependencies
         if: steps.cached-poetry-dependencies.outputs.cache-hit != 'true'
         run: poetry install --no-interaction --no-root
-      - name: Run tests
+      #------------------------------------------------------------
+      #  -----  Run tests  ----------------------------------------
+      #------------------------------------------------------------
+      - name: Run pytest tests
         run: |
             source .venv/bin/activate
             bash ${{ github.workspace }}/scripts/test.sh
-            bash ${{ github.workspace }}/scripts/lint.sh
-            bash ${{ github.workspace }}/scripts/copyright_line_check.sh
+      - name: Run lint tests
+        run:  bash ${{ github.workspace }}/scripts/lint.sh
+      - name: Run copyright tests
+        run:   bash ${{ github.workspace }}/scripts/copyright_line_check.sh
