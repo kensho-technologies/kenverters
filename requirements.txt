@@ -7,3 +7,5 @@ mypy
 pylint
 pydocstyle
 pytest-cov
+pandas>=1.2.0,<3
+pydantic>=2,<3
