@@ -6,7 +6,7 @@ readme = "README.md"
 authors = ["Valerie Faucon-Morin <valerie.fauconmorin@kensho.com>"]
 
 [tool.poetry.dependencies]
-requires-python = ">=3.10,<4"
+python = ">=3.10,<4"
 pandas = ">=1.2.0,<3"
 pydantic = ">=2,<3"
 
