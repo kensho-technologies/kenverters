@@ -51,6 +51,21 @@ class TestTableExtraction(TestCase):
         # Assert the tables are equal (logic for the tables is the same in the two fns)
         self.assertEqual(table_no_locs.to_csv(), table.df.to_csv())
 
+    def test_empty_tables(self) -> None:
+        # Test that tables with no cells don't crash the code
+        output_with_empty_table = {
+            "annotations": [],
+            "content_tree": {
+                "content": None,
+                "type": "DOCUMENT",
+                "uid": "0",
+                "children": [
+                    {"content": None, "children": [], "uid": "1", "type": "TABLE"}
+                ],
+            },
+        }
+        extract_pd_dfs_from_output(output_with_empty_table)
+
     def test_build_table_grids(self) -> None:
         # Test with a spanning cell: Make sure it's duplicated
         content = {

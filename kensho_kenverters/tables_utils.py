@@ -11,7 +11,7 @@ from kensho_kenverters.extract_output_models import AnnotationDataModel, Annotat
 
 def _check_complete_set(integer_set: set[int]) -> bool:
     """Check that the set of integers contains all integers between 0 and its max."""
-    return integer_set == set(range(max(integer_set) + 1))
+    return integer_set == set(range(max(integer_set, default=-1) + 1))
 
 
 def _validate_annotations(duplicated_annotations: Sequence[AnnotationModel]) -> None:
@@ -92,13 +92,21 @@ def get_table_shape(
         raise ValueError(
             "Table grid can only be built from table structure annotations."
         )
-    n_rows = max(
-        annotation.data.index[0] + annotation.data.span[0]
-        for annotation in table_structure_annotations
+    n_rows = (
+        max(
+            annotation.data.index[0] + annotation.data.span[0]
+            for annotation in table_structure_annotations
+        )
+        if table_structure_annotations
+        else 0
     )
-    n_cols = max(
-        annotation.data.index[1] + annotation.data.span[1]
-        for annotation in table_structure_annotations
+    n_cols = (
+        max(
+            annotation.data.index[1] + annotation.data.span[1]
+            for annotation in table_structure_annotations
+        )
+        if table_structure_annotations
+        else 0
     )
     return n_rows, n_cols
 
