@@ -2,7 +2,7 @@
 
 Welcome to Kenverters! This project is a set of conversion tools for the output from Kensho Extract. It'll help you take the output JSON from Extract and convert it to different formats for your downstream use cases. Think text for RAGs, pandas tables for extracting tabular data, markdown for rendering, and more.
 
-For documentation on how to use the Extract API to parse your documents, visit https://docs.kensho.com/extract. If you plan to use locations in your output - for example, to organize output by page - uncomment `params["output_format"] = "structured_document_with_locations"` when using the API. Once you receive the JSON output, you can pass it as the `serialized_document` arg for any of the conversion functions to get your converted output.
+For documentation on how to use the Extract API to parse your documents, visit https://docs.kensho.com/extract. If you plan to use locations in your output - for example, to organize output by page - uncomment `params["output_format"] = "structured_document_with_locations"` when using the API. Once you receive the JSON output, you can pass it as the `serialized_document` arg for any of the conversion functions to get your converted output. Note: If your output JSON has keys `['error', 'metadata', 'output', 'status']`, pass the value for the `'output'` key as `serialized_document`. Otherwise, if the output directly has the keys `['annotations', 'content_tree']`, just pass in the output as-is.
 
 We welcome contributions from the community. Additionally, if you have a suggestion for a new adapter for a particular use case, feel free to reach out, but please note that our decision to devote development time is at our sole discretion.
 
