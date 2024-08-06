@@ -8,6 +8,18 @@ We welcome contributions from the community. Additionally, if you have a suggest
 
 Any questions or suggestions can be sent to kenverters-maintainer@kensho.com. Happy document processing!
 
+# Setup
+
+For setup, we recommend using [Poetry](https://python-poetry.org/). Within the cloned repo, simply run in the terminal:
+
+```poetry install```
+
+You can now activate the environment within the terminal with
+
+```poetry shell```
+
+It will also print out the path where Poetry installed the virtual environment.
+
 # Usage
 
 ## Conversion to Items
