@@ -10,7 +10,15 @@ Any questions or suggestions can be sent to kenverters-maintainer@kensho.com. Ha
 
 # Setup
 
-For setup, we recommend using [Poetry](https://python-poetry.org/). Within the cloned repo, simply run in the terminal:
+## Option 1: PyPI (Recommended)
+
+You can install kenverters on [PyPI](https://pypi.org/project/kensho-kenverters/) via 
+
+`pip install kensho-kenverters`
+
+## Option 2: From Repo
+
+For setup from the repo itself, we recommend using [Poetry](https://python-poetry.org/). Within the cloned repo, simply run in the terminal:
 
 ```poetry install```
 
