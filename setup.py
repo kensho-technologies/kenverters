@@ -1,7 +1,7 @@
 # Copyright 2024-present Kensho Technologies, LLC.
 # Package metadata is located in pyproject.toml
 
-from distutils.core import setup
+from distutils.core import setup  # pylint: disable=deprecated-module
 
 setup(
     name="kensho_kenverters",
