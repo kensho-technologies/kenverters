@@ -1,7 +1,7 @@
 # Copyright 2024-present Kensho Technologies, LLC.
 # Package metadata is located in pyproject.toml
 
-from distutils.core import setup
+from distutils.core import setup  # pylint: disable=deprecated-module
 
 setup(
     name="kensho_kenverters",
@@ -12,7 +12,7 @@ setup(
     author="Valerie Faucon-Morin",
     author_email="valerie.fauconmorin@spglobal.com",
     url="https://github.com/kensho-technologies/kenverters",
-    download_url="https://github.com/kensho-technologies/kenverters/archive/refs/tags/v_1_0_0.tar.gz",
+    download_url="https://github.com/kensho-technologies/kenverters/archive/refs/tags/v_1_0_0.tar.gz",  # noqa:E501
     keywords=["Kensho Extract", "Python Toolkit"],
     install_requires=[
         "pandas",
