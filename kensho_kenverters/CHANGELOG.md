@@ -1,5 +1,9 @@
 # Changelog
 
+## v1.0.0
+
+Synchronizing the version number with the pypi release number
+
 ## v0.0.2
 
 Allowing for empty tables found in the output
