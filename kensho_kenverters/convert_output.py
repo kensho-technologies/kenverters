@@ -26,10 +26,13 @@ logger = getLogger(__name__)
 def table_to_markdown(table: TableType) -> str:
     """Convert 2D grid table to a single string with | as a delimiter."""
     lines = []
-    for row in table:
+    for row_index, row in enumerate(table):
         row = [str(x) for x in row]
         line = "| " + " | ".join(row) + " |"
         lines.append(line)
+        # Markdown tables only render if there's a header row
+        if row_index == 0:
+            lines.append("| " + " | ".join(["---" for _ in row]) + " |")
     table_text = "\n".join(lines)
     return table_text
 
