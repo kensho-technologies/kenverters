@@ -1,5 +1,9 @@
 # Changelog
 
+## v1.0.1
+
+Fix tables to markdown bug
+
 ## v1.0.0
 
 Synchronizing the version number with the pypi release number
