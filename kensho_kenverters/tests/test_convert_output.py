@@ -83,7 +83,7 @@ class TestMarkdownConversion(TestCase):
                 " --- | --- |\n| 2020 | 100,000 | "
                 "200,000 | 300,000 | 400,000 |\n| 2021 | 101,001 | 201,001 | 301,001 | 401,001 |\n"
                 "| 2022 | 102,004 | 202,004 | 302,004 | 402,004 |\n| 2023 | 103,009 | 203,009 | "
-                "303,009 | 403,009 |",
+                "303,009 | 403,009 |\n",
             },
             {
                 "category": "text",
@@ -110,7 +110,6 @@ class TestMarkdownConversion(TestCase):
             {"category": "text", "text": "999"},
         ]
         output_list = convert_output_to_items_list(self.extract_output)
-        print(output_list)
         self.assertEqual(expected_list, output_list)
 
         # With locations
@@ -200,7 +199,7 @@ class TestMarkdownConversion(TestCase):
                 " --- | --- |\n| 2020 | 100,000 | "
                 "200,000 | 300,000 | 400,000 |\n| 2021 | 101,001 | 201,001 | 301,001 | 401,001 |\n"
                 "| 2022 | 102,004 | 202,004 | 302,004 | 402,004 |\n| 2023 | 103,009 | 203,009 | "
-                "303,009 | 403,009 |",
+                "303,009 | 403,009 |\n",
                 "locations": [
                     LocationModel(
                         height=0.09188,
@@ -465,7 +464,7 @@ class TestMarkdownConversion(TestCase):
                 " select | Newly |\n| Released | Released | Ratings | Ratings | Listings. | "
                 "Listings. | Alternatively, | Alternatively, | call | the | Standard & | Poor's |  "
                 "|\n| Ratings | Ratings | Desk | in | NYC | at | (44) | number. | number. |  |  |  "
-                "|  |",
+                "|  |\n",
             },
             {"category": "h2", "text": "Analytical E-Mail Addresses"},
             {"category": "h2", "text": "email"},
@@ -502,7 +501,7 @@ class TestMarkdownConversion(TestCase):
             "200,000 | 300,000 | 400,000 |\n| 20"
             "21 | 101,001 | 201,001 | 301,001 | 401,001 |\n| 2022 | 102,00"
             "4 | 202,004 | 302,004 | 402,004 |\n| 2023 | 103,009 | 203,009"
-            " | 303,009 | 403,009 |\nMachine learning (ML) is the scientif"
+            " | 303,009 | 403,009 |\n\nMachine learning (ML) is the scientif"
             "ic study of algorithms and statistical models that computer "
             "systems use in order to perform a specific task effectively "
             "without using explicit instructions, relying on patterns and"
@@ -554,7 +553,7 @@ class TestMarkdownConversion(TestCase):
             " | Ratings | Ratings | Listings. | Listings. | Alternatively, | Alternatively, | "
             "call | "
             "the | Standard & | Poor's |  |\n| Ratings | Ratings | Desk | in | NYC | at | (44) | "
-            "number. | number. |  |  |  |  |\nAnalytical E-Mail Addresses\nemail\nemail\nemail"
+            "number. | number. |  |  |  |  |\n\nAnalytical E-Mail Addresses\nemail\nemail\nemail"
         )
         output_str = convert_output_to_str(self.extract_output_broker_research)
         self.assertEqual(expected_str, output_str)
@@ -587,7 +586,7 @@ class TestMarkdownConversion(TestCase):
             " | 200,000 | 300,000 | 400,000 |\n"
             "| 2021 | 101,001 | 201,001 | 301,001 | 401,001 |\n| 2022 | 10"
             "2,004 | 202,004 | 302,004 | 402,004 |\n| 2023 | 103,009 | 203"
-            ",009 | 303,009 | 403,009 |\nMachine learning (ML) is the scie"
+            ",009 | 303,009 | 403,009 |\n\nMachine learning (ML) is the scie"
             "ntific study of algorithms and statistical models that compu"
             "ter systems use in order to perform a specific task effectiv"
             "ely without using explicit instructions, relying on patterns"
@@ -631,7 +630,7 @@ class TestMarkdownConversion(TestCase):
             "Actions, | select | Newly |\n| Released | Released | Ratings | Ratings | Listings. | "
             "Listings. | Alternatively, | Alternatively, | call | the | Standard & | Poor's |  "
             "|\n| Ratings | Ratings | Desk | in | NYC | at | (44) | number. | number. |  |  |  |  "
-            "|\n## Analytical E-Mail Addresses\n## email\nemail\nemail"
+            "|\n\n## Analytical E-Mail Addresses\n## email\nemail\nemail"
         )
         output_str = convert_output_to_markdown(self.extract_output_broker_research)
         self.assertEqual(expected_str, output_str)
@@ -1088,7 +1087,7 @@ class TestMarkdownConversion(TestCase):
             " --- | --- |\n| 2020 | 100,000 | 200"
             ",000 | 300,000 | 400,000 |\n| 2021 | 101,001 | 201,001 | 301,001 | 401,001 |"
             "\n| 2022 | 102,004 | 202,004 | 302,004 | 402,004 |\n| 2023 | 103,009 | 203,00"
-            "9 | 303,009 | 403,009 |"
+            "9 | 303,009 | 403,009 |\n"
         )
         self.assertEqual(markdown_table, expected_markdown)
 
@@ -1166,7 +1165,7 @@ class TestMarkdownConversion(TestCase):
                 "ld et al., 2005) | (McDonald et al., 2005) |\n| Auto-Regressive | Sequence |"
                 " Preﬁx (C^N | Preﬁx (C^N | ) |  | Greedy Search, | 60 | - | (Tillmann and N"
                 "ey, 2003) | (Tillmann and Ney, 2003) | (Tillmann and Ney, 2003) |\n|  |  |  "
-                "|  |  |  | Beam Search |  |  |  |  |  |\nTable 1: Models and algorithms impl"
+                "|  |  |  | Beam Search |  |  |  |  |  |\n\nTable 1: Models and algorithms impl"
                 "emented in Torch-Struct. Notation is developed in Section 5. Parts are desc"
                 "ribed in terms of sequence lengths N,M, label size C, segment length K, and"
                 " layers / grammar size L,G. Lines of code (LoC) is from the log-partition ("
@@ -1227,8 +1226,8 @@ class TestMarkdownConversion(TestCase):
                 "backpropagation. | computed by backpropagation. | (c) Mode | (c) Mode | tree "
                 "|\n| "
                 "argmaxz CRF(z;`). | argmaxz CRF(z;`). | argmaxz CRF(z;`). | (d) Sampled tree z | "
-                "(d) Sampled tree z | ⇠ | CRF(`). | CRF(`). |\n# 4 Library Design\nO = Ez^⇠ p(z | "
-                "x;\x00)[logp(y | z,x)] Computing the expectation is intractable so pol- icy "
+                "(d) Sampled tree z | ⇠ | CRF(`). | CRF(`). |\n\n# 4 Library Design\nO = Ez^⇠ p(z |"
+                " x;\x00)[logp(y | z,x)] Computing the expectation is intractable so pol- icy "
                 "gradient is used. First a tree is sampled ˜z ⇠ p(z | x;\x00), then the gradient "
                 "with respect to \x00 is approximated as, @ @\x00 O ⇡ (logp(y | ˜z,x) \x00 b)( @ @"
                 "\x00 p(z | x;\x00)) where b is a variance reduction baseline. A com- mon choice "
@@ -1303,7 +1302,7 @@ class TestMarkdownConversion(TestCase):
             "| --- | --- |\n| 2020 | 100,000 | "
             "200,000 | 300,000 | 400,000 |\n| 2021 | 101,001 | 201,001 | 301,001 | 401,00"
             "1 |\n| 2022 | 102,004 | 202,004 | 302,004 | 402,004 |\n| 2023 | 103,009 | 203"
-            ",009 | 303,009 | 403,009 |\nMachine learning (ML) is the scientific study of"
+            ",009 | 303,009 | 403,009 |\n\nMachine learning (ML) is the scientific study of"
             " algorithms and statistical models that computer systems use in order to pe"
             "rform a specific task effectively without using explicit instructions, rely"
             "ing on patterns and inference instead. It is seen as a subset of artificial"
@@ -1348,7 +1347,7 @@ class TestMarkdownConversion(TestCase):
             "| --- |\n| 2020 | 100,000 | 200,"
             "000 | 300,000 | 400,000 |\n| 2021 | 101,001 | 201,001 | 301,001 | 401,001 |\n"
             "| 2022 | 102,004 | 202,004 | 302,004 | 402,004 |\n| 2023 | 103,009 | 203,009"
-            " | 303,009 | 403,009 |\nMachine learning (ML) is the scientific study of alg"
+            " | 303,009 | 403,009 |\n\nMachine learning (ML) is the scientific study of alg"
             "orithms and statistical models that computer systems use in order to perfor"
             "m a specific task effectively without using explicit instructions, relying "
             "on patterns and inference instead. It is seen as a subset of artificial int"
@@ -1444,7 +1443,7 @@ class TestMarkdownConversion(TestCase):
                 "ld et al., 2005) | (McDonald et al., 2005) |\n| Auto-Regressive | Sequence |"
                 " Preﬁx (C^N | Preﬁx (C^N | ) |  | Greedy Search, | 60 | - | (Tillmann and N"
                 "ey, 2003) | (Tillmann and Ney, 2003) | (Tillmann and Ney, 2003) |\n|  |  |  "
-                "|  |  |  | Beam Search |  |  |  |  |  |\nTable 1: Models and algorithms impl"
+                "|  |  |  | Beam Search |  |  |  |  |  |\n\nTable 1: Models and algorithms impl"
                 "emented in Torch-Struct. Notation is developed in Section 5. Parts are desc"
                 "ribed in terms of sequence lengths N,M, label size C, segment length K, and"
                 " layers / grammar size L,G. Lines of code (LoC) is from the log-partition ("
@@ -1503,8 +1502,8 @@ class TestMarkdownConversion(TestCase):
                 "| computed by backpropagation. | computed by backpropagation. | computed by "
                 "backpropagation. | computed by backpropagation. | (c) Mode | (c) Mode | tree |\n|"
                 " argmaxz CRF(z;`). | argmaxz CRF(z;`). | argmaxz CRF(z;`). | (d) Sampled tree z |"
-                " (d) Sampled tree z | ⇠ | CRF(`). | CRF(`). |\n4 Library Design\nO = Ez^⇠ p(z | "
-                "x;\x00)[logp(y | z,x)] Computing the expectation is intractable so pol- icy "
+                " (d) Sampled tree z | ⇠ | CRF(`). | CRF(`). |\n\n4 Library Design\nO = Ez^⇠ p(z |"
+                " x;\x00)[logp(y | z,x)] Computing the expectation is intractable so pol- icy "
                 "gradient is used. First a tree is sampled ˜z ⇠ p(z | x;\x00), then the gradient "
                 "with respect to \x00 is approximated as, @ @\x00 O ⇡ (logp(y | ˜z,x) \x00 b)( @ @"
                 "\x00 p(z | x;\x00)) where b is a variance reduction baseline. A com- mon "

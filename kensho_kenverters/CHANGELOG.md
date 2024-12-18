@@ -2,7 +2,7 @@
 
 ## v1.0.1
 
-Fix tables to markdown bug
+Fix tables to markdown bug where tables were not converting to markdown properly
 
 ## v1.0.0
 
