@@ -44,7 +44,6 @@ class TestMarkdownConversion(TestCase):
             cls.extract_output_multi_page = json.load(f)
         with open(OUTPUT_NO_LOCS_FILE_PATH, "r") as f:
             cls.extract_output_no_locs = json.load(f)
-        cls.maxDiff = None
 
     def test_convert_output_to_items(self) -> None:
         expected_list = [
@@ -80,10 +79,11 @@ class TestMarkdownConversion(TestCase):
                     ["2022", "102,004", "202,004", "302,004", "402,004"],
                     ["2023", "103,009", "203,009", "303,009", "403,009"],
                 ],
-                "text": "| Kensho Revenue in millions $ | Q1 | Q2 | Q3 | Q4 |\n| 2020 | 100,000 | "
+                "text": "| Kensho Revenue in millions $ | Q1 | Q2 | Q3 | Q4 |\n| --- | --- | --- |"
+                " --- | --- |\n| 2020 | 100,000 | "
                 "200,000 | 300,000 | 400,000 |\n| 2021 | 101,001 | 201,001 | 301,001 | 401,001 |\n"
                 "| 2022 | 102,004 | 202,004 | 302,004 | 402,004 |\n| 2023 | 103,009 | 203,009 | "
-                "303,009 | 403,009 |",
+                "303,009 | 403,009 |\n",
             },
             {
                 "category": "text",
@@ -195,10 +195,11 @@ class TestMarkdownConversion(TestCase):
                     ["2022", "102,004", "202,004", "302,004", "402,004"],
                     ["2023", "103,009", "203,009", "303,009", "403,009"],
                 ],
-                "text": "| Kensho Revenue in millions $ | Q1 | Q2 | Q3 | Q4 |\n| 2020 | 100,000 | "
+                "text": "| Kensho Revenue in millions $ | Q1 | Q2 | Q3 | Q4 |\n| --- | --- | --- |"
+                " --- | --- |\n| 2020 | 100,000 | "
                 "200,000 | 300,000 | 400,000 |\n| 2021 | 101,001 | 201,001 | 301,001 | 401,001 |\n"
                 "| 2022 | 102,004 | 202,004 | 302,004 | 402,004 |\n| 2023 | 103,009 | 203,009 | "
-                "303,009 | 403,009 |",
+                "303,009 | 403,009 |\n",
                 "locations": [
                     LocationModel(
                         height=0.09188,
@@ -450,7 +451,8 @@ class TestMarkdownConversion(TestCase):
                         "",
                     ],
                 ],
-                "text": "| ABC | ABC | ABC | ABC | Bank |  |  |  |  |  |  |  |  |\n|  | "
+                "text": "| ABC | ABC | ABC | ABC | Bank |  |  |  |  |  |  |  |  |\n| --- | --- | "
+                "--- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |\n|  | "
                 "Counterparty | Counterparty | credit | credit | rating | rating |  | "
                 "AAAAAAAAAAAAAA | AAAAAAAAAAAAAA |  |  |  |\n|  | Certificate | Certificate | of "
                 "| deposit |  |  |  | AAAAAAAAAAAAAA |  |  |  |  |\n| A | complete | complete | "
@@ -462,7 +464,7 @@ class TestMarkdownConversion(TestCase):
                 " select | Newly |\n| Released | Released | Ratings | Ratings | Listings. | "
                 "Listings. | Alternatively, | Alternatively, | call | the | Standard & | Poor's |  "
                 "|\n| Ratings | Ratings | Desk | in | NYC | at | (44) | number. | number. |  |  |  "
-                "|  |",
+                "|  |\n",
             },
             {"category": "h2", "text": "Analytical E-Mail Addresses"},
             {"category": "h2", "text": "email"},
@@ -495,10 +497,11 @@ class TestMarkdownConversion(TestCase):
             "rning. In its application across business problems, machine "
             "learning is also referred to as predictive analytics.\nESTIMA"
             "TE for Kensho\n| Kensho Revenue in millions $ | Q1 | Q2 | Q3 "
-            "| Q4 |\n| 2020 | 100,000 | 200,000 | 300,000 | 400,000 |\n| 20"
+            "| Q4 |\n| --- | --- | --- | --- | --- |\n| 2020 | 100,000 | "
+            "200,000 | 300,000 | 400,000 |\n| 20"
             "21 | 101,001 | 201,001 | 301,001 | 401,001 |\n| 2022 | 102,00"
             "4 | 202,004 | 302,004 | 402,004 |\n| 2023 | 103,009 | 203,009"
-            " | 303,009 | 403,009 |\nMachine learning (ML) is the scientif"
+            " | 303,009 | 403,009 |\n\nMachine learning (ML) is the scientif"
             "ic study of algorithms and statistical models that computer "
             "systems use in order to perform a specific task effectively "
             "without using explicit instructions, relying on patterns and"
@@ -532,7 +535,8 @@ class TestMarkdownConversion(TestCase):
             "Rating\nRationale\nS&P assigned it a AAAAAAA\nOutlook\nThe unstable outlook,\nthe "
             "discontinued support of the parent company.\nRatings List\n| ABC | ABC | ABC | ABC | "
             "Bank"
-            " |  |  |  |  |  |  |  |  |\n|  | Counterparty | Counterparty | credit | credit | "
+            " |  |  |  |  |  |  |  |  |\n| --- | --- | --- | --- | --- | --- | --- | --- | --- | "
+            "--- | --- | --- | --- |\n|  | Counterparty | Counterparty | credit | credit | "
             "rating |"
             " rating |  | AAAAAAAAAAAAAA | AAAAAAAAAAAAAA |  |  |  |\n|  | Certificate | "
             "Certificate |"
@@ -549,7 +553,7 @@ class TestMarkdownConversion(TestCase):
             " | Ratings | Ratings | Listings. | Listings. | Alternatively, | Alternatively, | "
             "call | "
             "the | Standard & | Poor's |  |\n| Ratings | Ratings | Desk | in | NYC | at | (44) | "
-            "number. | number. |  |  |  |  |\nAnalytical E-Mail Addresses\nemail\nemail\nemail"
+            "number. | number. |  |  |  |  |\n\nAnalytical E-Mail Addresses\nemail\nemail\nemail"
         )
         output_str = convert_output_to_str(self.extract_output_broker_research)
         self.assertEqual(expected_str, output_str)
@@ -578,10 +582,11 @@ class TestMarkdownConversion(TestCase):
             "earning. In its application across business problems, machin"
             "e learning is also referred to as predictive analytics.\n# ES"
             "TIMATE for Kensho\n| Kensho Revenue in millions $ | Q1 | Q2 |"
-            " Q3 | Q4 |\n| 2020 | 100,000 | 200,000 | 300,000 | 400,000 |\n"
+            " Q3 | Q4 |\n| --- | --- | --- | --- | --- |\n| 2020 | 100,000"
+            " | 200,000 | 300,000 | 400,000 |\n"
             "| 2021 | 101,001 | 201,001 | 301,001 | 401,001 |\n| 2022 | 10"
             "2,004 | 202,004 | 302,004 | 402,004 |\n| 2023 | 103,009 | 203"
-            ",009 | 303,009 | 403,009 |\nMachine learning (ML) is the scie"
+            ",009 | 303,009 | 403,009 |\n\nMachine learning (ML) is the scie"
             "ntific study of algorithms and statistical models that compu"
             "ter systems use in order to perform a specific task effectiv"
             "ely without using explicit instructions, relying on patterns"
@@ -613,7 +618,8 @@ class TestMarkdownConversion(TestCase):
             "Table Of Contents\nRatings List\nE-Mail Addresses\n# Research Update: The Company\n"
             "### Credit Rating\n### Rationale\nS&P assigned it a AAAAAAA\n# Outlook\nThe unstable "
             "outlook,\nthe discontinued support of the parent company.\n### Ratings List\n| ABC | "
-            "ABC | ABC | ABC | Bank |  |  |  |  |  |  |  |  |\n|  | Counterparty | Counterparty |"
+            "ABC | ABC | ABC | Bank |  |  |  |  |  |  |  |  |\n| --- | --- | --- | --- | --- "
+            "| --- | --- | --- | --- | --- | --- | --- | --- |\n|  | Counterparty | Counterparty |"
             " credit | credit | rating | rating |  | AAAAAAAAAAAAAA | AAAAAAAAAAAAAA |  |  |  |\n|"
             "  | Certificate | Certificate | of | deposit |  |  |  | AAAAAAAAAAAAAA |  |  |  |  "
             "|\n| A | complete | complete | list | of | rating | actions | is | available | to | "
@@ -624,7 +630,7 @@ class TestMarkdownConversion(TestCase):
             "Actions, | select | Newly |\n| Released | Released | Ratings | Ratings | Listings. | "
             "Listings. | Alternatively, | Alternatively, | call | the | Standard & | Poor's |  "
             "|\n| Ratings | Ratings | Desk | in | NYC | at | (44) | number. | number. |  |  |  |  "
-            "|\n## Analytical E-Mail Addresses\n## email\nemail\nemail"
+            "|\n\n## Analytical E-Mail Addresses\n## email\nemail\nemail"
         )
         output_str = convert_output_to_markdown(self.extract_output_broker_research)
         self.assertEqual(expected_str, output_str)
@@ -1077,10 +1083,11 @@ class TestMarkdownConversion(TestCase):
         # Test markdown conversion
         markdown_table = table_to_markdown(table)
         expected_markdown = (
-            "| Kensho Revenue in millions $ | Q1 | Q2 | Q3 | Q4 |\n| 2020 | 100,000 | 200"
+            "| Kensho Revenue in millions $ | Q1 | Q2 | Q3 | Q4 |\n| --- | --- | --- |"
+            " --- | --- |\n| 2020 | 100,000 | 200"
             ",000 | 300,000 | 400,000 |\n| 2021 | 101,001 | 201,001 | 301,001 | 401,001 |"
             "\n| 2022 | 102,004 | 202,004 | 302,004 | 402,004 |\n| 2023 | 103,009 | 203,00"
-            "9 | 303,009 | 403,009 |"
+            "9 | 303,009 | 403,009 |\n"
         )
         self.assertEqual(markdown_table, expected_markdown)
 
@@ -1132,7 +1139,8 @@ class TestMarkdownConversion(TestCase):
             ),
             (
                 "| Name | Structure ( ) | Parts ( |  | ) |  | Algorithm (A(`)) | LoC | T/S |"
-                " Sample Reference | Sample Reference |  |\n|  | Z |  | P | P |  |  |  |  |  "
+                " Sample Reference | Sample Reference |  |\n| --- | --- | --- | --- | --- | "
+                "--- | --- | --- | --- | --- | --- | --- |\n|  | Z |  | P | P |  |  |  |  |  "
                 "|  |  |\n| Linear-Chain | Labeled Chain | Edges (TC^2 | Edges (TC^2 | Edges "
                 "(TC^2 | ) | Forward-Backward, | 20 | 390k | (Lafferty et al., 2001) | (Laff"
                 "erty et al., 2001) |  |\n|  |  |  |  |  |  | Viterbi |  |  |  |  |  |\n| Fact"
@@ -1157,7 +1165,7 @@ class TestMarkdownConversion(TestCase):
                 "ld et al., 2005) | (McDonald et al., 2005) |\n| Auto-Regressive | Sequence |"
                 " Preﬁx (C^N | Preﬁx (C^N | ) |  | Greedy Search, | 60 | - | (Tillmann and N"
                 "ey, 2003) | (Tillmann and Ney, 2003) | (Tillmann and Ney, 2003) |\n|  |  |  "
-                "|  |  |  | Beam Search |  |  |  |  |  |\nTable 1: Models and algorithms impl"
+                "|  |  |  | Beam Search |  |  |  |  |  |\n\nTable 1: Models and algorithms impl"
                 "emented in Torch-Struct. Notation is developed in Section 5. Parts are desc"
                 "ribed in terms of sequence lengths N,M, label size C, segment length K, and"
                 " layers / grammar size L,G. Lines of code (LoC) is from the log-partition ("
@@ -1209,7 +1217,8 @@ class TestMarkdownConversion(TestCase):
                 "latent-tree"
                 " RL model which we brieﬂy summarize. The objective is to maximize the probability"
                 " of the correct predic- tion under the expectation of a prior tree model, p(z | x"
-                ";\x00),\n| Figure | 2: | Latent | Tree | CRF | example. | (a) | Log- |\n| "
+                ";\x00),\n| Figure | 2: | Latent | Tree | CRF | example. | (a) | Log- |\n| --- |"
+                " --- | --- | --- | --- | --- | --- | --- |\n| "
                 "potentials"
                 " | ` | for | each | part/span. | (b) Marginals | (b) Marginals | for |\n| CRF(`) "
                 "| "
@@ -1217,8 +1226,8 @@ class TestMarkdownConversion(TestCase):
                 "backpropagation. | computed by backpropagation. | (c) Mode | (c) Mode | tree "
                 "|\n| "
                 "argmaxz CRF(z;`). | argmaxz CRF(z;`). | argmaxz CRF(z;`). | (d) Sampled tree z | "
-                "(d) Sampled tree z | ⇠ | CRF(`). | CRF(`). |\n# 4 Library Design\nO = Ez^⇠ p(z | "
-                "x;\x00)[logp(y | z,x)] Computing the expectation is intractable so pol- icy "
+                "(d) Sampled tree z | ⇠ | CRF(`). | CRF(`). |\n\n# 4 Library Design\nO = Ez^⇠ p(z |"
+                " x;\x00)[logp(y | z,x)] Computing the expectation is intractable so pol- icy "
                 "gradient is used. First a tree is sampled ˜z ⇠ p(z | x;\x00), then the gradient "
                 "with respect to \x00 is approximated as, @ @\x00 O ⇡ (logp(y | ˜z,x) \x00 b)( @ @"
                 "\x00 p(z | x;\x00)) where b is a variance reduction baseline. A com- mon choice "
@@ -1289,10 +1298,11 @@ class TestMarkdownConversion(TestCase):
             "y within machine learning, and focuses on exploratory data analysis through"
             " unsupervised learning. In its application across business problems, machin"
             "e learning is also referred to as predictive analytics.\n# ESTIMATE for Kens"
-            "ho\n| Kensho Revenue in millions $ | Q1 | Q2 | Q3 | Q4 |\n| 2020 | 100,000 | "
+            "ho\n| Kensho Revenue in millions $ | Q1 | Q2 | Q3 | Q4 |\n| --- | --- | --- "
+            "| --- | --- |\n| 2020 | 100,000 | "
             "200,000 | 300,000 | 400,000 |\n| 2021 | 101,001 | 201,001 | 301,001 | 401,00"
             "1 |\n| 2022 | 102,004 | 202,004 | 302,004 | 402,004 |\n| 2023 | 103,009 | 203"
-            ",009 | 303,009 | 403,009 |\nMachine learning (ML) is the scientific study of"
+            ",009 | 303,009 | 403,009 |\n\nMachine learning (ML) is the scientific study of"
             " algorithms and statistical models that computer systems use in order to pe"
             "rform a specific task effectively without using explicit instructions, rely"
             "ing on patterns and inference instead. It is seen as a subset of artificial"
@@ -1333,10 +1343,11 @@ class TestMarkdownConversion(TestCase):
             "within machine learning, and focuses on exploratory data analysis through u"
             "nsupervised learning. In its application across business problems, machine "
             "learning is also referred to as predictive analytics.\nESTIMATE for Kensho\n|"
-            " Kensho Revenue in millions $ | Q1 | Q2 | Q3 | Q4 |\n| 2020 | 100,000 | 200,"
+            " Kensho Revenue in millions $ | Q1 | Q2 | Q3 | Q4 |\n| --- | --- | --- | --- "
+            "| --- |\n| 2020 | 100,000 | 200,"
             "000 | 300,000 | 400,000 |\n| 2021 | 101,001 | 201,001 | 301,001 | 401,001 |\n"
             "| 2022 | 102,004 | 202,004 | 302,004 | 402,004 |\n| 2023 | 103,009 | 203,009"
-            " | 303,009 | 403,009 |\nMachine learning (ML) is the scientific study of alg"
+            " | 303,009 | 403,009 |\n\nMachine learning (ML) is the scientific study of alg"
             "orithms and statistical models that computer systems use in order to perfor"
             "m a specific task effectively without using explicit instructions, relying "
             "on patterns and inference instead. It is seen as a subset of artificial int"
@@ -1406,7 +1417,8 @@ class TestMarkdownConversion(TestCase):
             ),
             (
                 "| Name | Structure ( ) | Parts ( |  | ) |  | Algorithm (A(`)) | LoC | T/S |"
-                " Sample Reference | Sample Reference |  |\n|  | Z |  | P | P |  |  |  |  |  "
+                " Sample Reference | Sample Reference |  |\n| --- | --- | --- | --- | --- | "
+                "--- | --- | --- | --- | --- | --- | --- |\n|  | Z |  | P | P |  |  |  |  |  "
                 "|  |  |\n| Linear-Chain | Labeled Chain | Edges (TC^2 | Edges (TC^2 | Edges "
                 "(TC^2 | ) | Forward-Backward, | 20 | 390k | (Lafferty et al., 2001) | (Laff"
                 "erty et al., 2001) |  |\n|  |  |  |  |  |  | Viterbi |  |  |  |  |  |\n| Fact"
@@ -1431,7 +1443,7 @@ class TestMarkdownConversion(TestCase):
                 "ld et al., 2005) | (McDonald et al., 2005) |\n| Auto-Regressive | Sequence |"
                 " Preﬁx (C^N | Preﬁx (C^N | ) |  | Greedy Search, | 60 | - | (Tillmann and N"
                 "ey, 2003) | (Tillmann and Ney, 2003) | (Tillmann and Ney, 2003) |\n|  |  |  "
-                "|  |  |  | Beam Search |  |  |  |  |  |\nTable 1: Models and algorithms impl"
+                "|  |  |  | Beam Search |  |  |  |  |  |\n\nTable 1: Models and algorithms impl"
                 "emented in Torch-Struct. Notation is developed in Section 5. Parts are desc"
                 "ribed in terms of sequence lengths N,M, label size C, segment length K, and"
                 " layers / grammar size L,G. Lines of code (LoC) is from the log-partition ("
@@ -1483,14 +1495,15 @@ class TestMarkdownConversion(TestCase):
                 "latent-tree"
                 " RL model which we brieﬂy summarize. The objective is to maximize the probability "
                 "of the correct predic- tion under the expectation of a prior tree model, p(z | x;"
-                "\x00),\n| Figure | 2: | Latent | Tree | CRF | example. | (a) | Log- |\n| "
+                "\x00),\n| Figure | 2: | Latent | Tree | CRF | example. | (a) | Log- |\n| --- | "
+                "--- | --- | --- | --- | --- | --- | --- |\n| "
                 "potentials"
                 " | ` | for | each | part/span. | (b) Marginals | (b) Marginals | for |\n| CRF(`) "
                 "| computed by backpropagation. | computed by backpropagation. | computed by "
                 "backpropagation. | computed by backpropagation. | (c) Mode | (c) Mode | tree |\n|"
                 " argmaxz CRF(z;`). | argmaxz CRF(z;`). | argmaxz CRF(z;`). | (d) Sampled tree z |"
-                " (d) Sampled tree z | ⇠ | CRF(`). | CRF(`). |\n4 Library Design\nO = Ez^⇠ p(z | "
-                "x;\x00)[logp(y | z,x)] Computing the expectation is intractable so pol- icy "
+                " (d) Sampled tree z | ⇠ | CRF(`). | CRF(`). |\n\n4 Library Design\nO = Ez^⇠ p(z |"
+                " x;\x00)[logp(y | z,x)] Computing the expectation is intractable so pol- icy "
                 "gradient is used. First a tree is sampled ˜z ⇠ p(z | x;\x00), then the gradient "
                 "with respect to \x00 is approximated as, @ @\x00 O ⇡ (logp(y | ˜z,x) \x00 b)( @ @"
                 "\x00 p(z | x;\x00)) where b is a variance reduction baseline. A com- mon "
