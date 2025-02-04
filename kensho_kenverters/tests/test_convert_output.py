@@ -26,6 +26,9 @@ MULTI_PAGE_OUTPUT_FILE_PATH = os.path.join(
 OUTPUT_NO_LOCS_FILE_PATH = os.path.join(
     os.path.dirname(__file__), "data", "extract_output_no_locs.json"
 )
+OUTPUT_CHAR_OFFSETS_FILE_PATH = os.path.join(
+    os.path.dirname(__file__), "data", "extract_output_char_offsets.json"
+)
 
 
 class TestMarkdownConversion(TestCase):
@@ -33,6 +36,7 @@ class TestMarkdownConversion(TestCase):
     extract_output_broker_research: ClassVar[dict[str, Any]]
     extract_output_multi_page: ClassVar[dict[str, Any]]
     extract_output_no_locs: ClassVar[dict[str, Any]]
+    extract_output_char_offsets: ClassVar[dict[str, Any]]
 
     @classmethod
     def setUpClass(cls) -> None:
@@ -44,6 +48,8 @@ class TestMarkdownConversion(TestCase):
             cls.extract_output_multi_page = json.load(f)
         with open(OUTPUT_NO_LOCS_FILE_PATH, "r") as f:
             cls.extract_output_no_locs = json.load(f)
+        with open(OUTPUT_CHAR_OFFSETS_FILE_PATH, "r") as f:
+            cls.extract_output_char_offsets = json.load(f)
 
     def test_convert_output_to_items(self) -> None:
         expected_list = [
@@ -473,6 +479,80 @@ class TestMarkdownConversion(TestCase):
         ]
         self.assertEqual(expected_list, output_list)
 
+    def test_convert_output_to_items_char_offsets(self) -> None:
+        output_list = convert_output_to_items_list(self.extract_output_char_offsets)
+        expected_output_list = [
+            {"category": "text", "text": "2019"},
+            {"category": "text", "text": "test noise string at top"},
+            {"category": "title", "text": "Generated Toy File Title"},
+            {
+                "category": "text",
+                "text": "Machine learning (ML) is the scientific study of algorithms and "
+                "statistical models that computer sys"
+                "tems use in order to perform a specific task effectively without "
+                "using explicit instructions, relyin"
+                "g on patterns and inference instead. It is seen as a subset of artificial "
+                "intelligence. Machine lear"
+                "ning algorithms build a mathematical model based on sample data, known as "
+                "training data, in order to"
+                " make predictions or decisions without being explicitly programmed to "
+                "perform the task. Tony Tong is"
+                " awesome. Machine learning algorithms are used in a wide variety of "
+                "applications, such as email filtering, and computer vision, where it is "
+                "infeasible to develop an algorithm of specific instructions "
+                "for performing the task. Machine learning is closely related to "
+                "computational statistics, which focuses on making predictions using computers"
+                ". The study of mathematical optimization delivers methods, "
+                "theory and application domains to the field of machine learning. Data "
+                "mining is a field of study within machine learning, and focuses on "
+                "exploratory data analysis through unsupervised learning. In its"
+                " application across business problems, machine learning is also "
+                "referred to as predictive analytics.",
+            },
+            {"category": "title", "text": "ESTIMATE for Kensho"},
+            {
+                "category": "table",
+                "table": [
+                    ["Kensho Revenue in millions $", "Q1", "Q2", "Q3", "Q4"],
+                    ["2020", "100,000", "200,000", "300,000", "400,000"],
+                    ["2021", "101,001", "201,001", "301,001", "401,001"],
+                    ["2022", "102,004", "202,004", "302,004", "402,004"],
+                    ["2023", "103,009", "203,009", "303,009", "403,009"],
+                ],
+                "text": "| Kensho Revenue in millions $ | Q1 | Q2 | Q3 | Q4 |\n| --- | --- "
+                "| --- | --- | --- |\n| 2020 | 100,000 | 200,000 | 300,000 | 400,000 |\n| "
+                "2021 | 101,001 | 201,001 | 301,001 | 401,001 |\n| 2022 | 102,004 "
+                "| 202,004 | 302,004 | 402,004 |\n| 2023 | 103,009 | 203,009 | 303,009 | 403,009 "
+                "|\n",
+            },
+            {
+                "category": "text",
+                "text": "Machine learning (ML) is the scientific study of algorithms and statis"
+                "tical models that computer systems use in order to perform a specific "
+                "task effectively without using explicit instructions, relying on patte"
+                "rns and inference instead. It is seen as a subset of artificial intell"
+                "igence. Machine learning algorithms build a mathematical model based o"
+                "n sample data, known as training data, in order to make predictions or"
+                " decisions without being explicitly programmed to perform the task. To"
+                "ny Tong is awesome. Machine learning algorithms are used in a wide var"
+                "iety of applications, such as email filtering, and computer vision, wh"
+                "ere it is infeasible to develop an algorithm of specific instructions "
+                "for performing the task. Machine learning is closely related to comput"
+                "ational statistics, which focuses on making predictions using computer"
+                "s. The study of mathematical optimization delivers methods, theory and"
+                " application domains to the field of machine learning. Data mining is "
+                "a field of study within machine learning, and focuses on exploratory d"
+                "ata analysis through unsupervised learning. In its application across "
+                "business problems, machine learning is also referred to as predictive "
+                "analytics.",
+            },
+            {"category": "title", "text": "Recommendation: BUY"},
+            {"category": "text", "text": "42"},
+            {"category": "text", "text": "test noise string at bottom"},
+            {"category": "text", "text": "999"},
+        ]
+        self.assertListEqual(expected_output_list, output_list)
+
     def test_convert_output_to_str(self) -> None:
         expected_str = (
             "2019\ntest noise string at top\nGenerated Toy File Title\nMachi"
@@ -557,6 +637,53 @@ class TestMarkdownConversion(TestCase):
         )
         output_str = convert_output_to_str(self.extract_output_broker_research)
         self.assertEqual(expected_str, output_str)
+
+    def test_convert_output_to_str_char_offsets(self) -> None:
+        output_str = convert_output_to_str(self.extract_output_char_offsets)
+        expected_output_str = (
+            "2019\ntest noise string at top\nGenerated Toy File Title\nMachine learnin"
+            "g (ML) is the scientific study of algorithms and statistical models th"
+            "at computer systems use in order to perform a specific task effectivel"
+            "y without using explicit instructions, relying on patterns and inferen"
+            "ce instead. It is seen as a subset of artificial intelligence. Machine"
+            " learning algorithms build a mathematical model based on sample data, "
+            "known as training data, in order to make predictions or decisions with"
+            "out being explicitly programmed to perform the task. Tony Tong is awes"
+            "ome. Machine learning algorithms are used in a wide variety of applica"
+            "tions, such as email filtering, and computer vision, where it is infea"
+            "sible to develop an algorithm of specific instructions for performing "
+            "the task. Machine learning is closely related to computational statist"
+            "ics, which focuses on making predictions using computers. The study of"
+            " mathematical optimization delivers methods, theory and application do"
+            "mains to the field of machine learning. Data mining is a field of stud"
+            "y within machine learning, and focuses on exploratory data analysis th"
+            "rough unsupervised learning. In its application across business proble"
+            "ms, machine learning is also referred to as predictive analytics.\nESTI"
+            "MATE for Kensho\n| Kensho Revenue in millions $ | Q1 | Q2 | Q3 | Q4 |\n|"
+            " --- | --- | --- | --- | --- |\n| 2020 | 100,000 | 200,000 | 300,000 | "
+            "400,000 |\n| 2021 | 101,001 | 201,001 | 301,001 | 401,001 |\n| 2022 | 10"
+            "2,004 | 202,004 | 302,004 | 402,004 |\n| 2023 | 103,009 | 203,009 | 303"
+            ",009 | 403,009 |\n\nMachine learning (ML) is the scientific study of alg"
+            "orithms and statistical models that computer systems use in order to p"
+            "erform a specific task effectively without using explicit instructions"
+            ", relying on patterns and inference instead. It is seen as a subset of"
+            " artificial intelligence. Machine learning algorithms build a mathemat"
+            "ical model based on sample data, known as training data, in order to m"
+            "ake predictions or decisions without being explicitly programmed to pe"
+            "rform the task. Tony Tong is awesome. Machine learning algorithms are "
+            "used in a wide variety of applications, such as email filtering, and c"
+            "omputer vision, where it is infeasible to develop an algorithm of spec"
+            "ific instructions for performing the task. Machine learning is closely"
+            " related to computational statistics, which focuses on making predicti"
+            "ons using computers. The study of mathematical optimization delivers m"
+            "ethods, theory and application domains to the field of machine learnin"
+            "g. Data mining is a field of study within machine learning, and focuse"
+            "s on exploratory data analysis through unsupervised learning. In its a"
+            "pplication across business problems, machine learning is also referred"
+            " to as predictive analytics.\nRecommendation: BUY\n42\ntest noise string "
+            "at bottom\n999"
+        )
+        self.assertEqual(expected_output_str, output_str)
 
     def test_convert_output_to_markdown(self) -> None:
         expected_str = (

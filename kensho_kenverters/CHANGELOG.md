@@ -1,5 +1,9 @@
 # Changelog
 
+## v1.1.0
+
+Add support for structured_output_with_character_offsets output format from Extract.
+
 ## v1.0.1
 
 Fix tables to markdown bug where tables were not converting to markdown properly
