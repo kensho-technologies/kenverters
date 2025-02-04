@@ -44,6 +44,14 @@ class AnnotationModel(BaseModel):
     locations: list[LocationModel] | None = None
 
 
+class TextNodeDataModel(BaseModel):
+    """Pydantic object for the structured output character offsets and their text boxes."""
+
+    texts: list[str] | None
+    text_locations: list[LocationModel | None] | None
+    character_offsets: list[list[float] | None] | None
+
+
 class ContentModel(BaseModel):
     """Pydantic object for the Extract contents."""
 
@@ -52,6 +60,15 @@ class ContentModel(BaseModel):
     content: str | None
     children: list["ContentModel"]
     locations: list[LocationModel] | None = None
+    text_node_data: TextNodeDataModel | None = None
+
+
+class PDFPageModel(BaseModel):
+    """Pydantic object for the PDF page information."""
+
+    height: float
+    width: float
+    required_ccw_rotation: int
 
 
 class ExtractOutputModel(BaseModel):
@@ -59,3 +76,4 @@ class ExtractOutputModel(BaseModel):
 
     annotations: list[AnnotationModel]
     content_tree: ContentModel
+    pdf_pages: list[PDFPageModel] | None = None
