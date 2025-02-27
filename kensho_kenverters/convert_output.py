@@ -12,9 +12,7 @@ from kensho_kenverters.constants import (
     LOCATIONS_KEY,
     TABLE_CONTENT_CATEGORIES,
     TABLE_KEY,
-    TEXT_CONTENT_CATEGORIES,
     TEXT_KEY,
-    TITLE_CONTENT_CATEGORIES,
     AnnotationType,
     ContentCategory,
     TableType,
@@ -106,12 +104,6 @@ def _create_segment(
     # DOCUMENT is just a head node
     if content.type == DOCUMENT_CATEGORY_KEY:
         return {}
-    # For texts and titles, add the text content and the category
-    elif content.type in TITLE_CONTENT_CATEGORIES | TEXT_CONTENT_CATEGORIES:
-        segment = {
-            CATEGORY_KEY: content.type.lower(),
-            TEXT_KEY: content.content,
-        }
     # For tables, use table cell structures read above
     elif content.type in TABLE_CONTENT_CATEGORIES:
         # Construct the table from cells
@@ -131,10 +123,16 @@ def _create_segment(
     elif content.type == ContentCategory.TABLE_CELL.value:
         # Skip - already accounted for in tables
         return {}
+    # For texts and titles, add the text content and the category
+    elif content.type in [e.value for e in ContentCategory]:
+        segment = {
+            CATEGORY_KEY: content.type.lower(),
+            TEXT_KEY: content.content,
+        }
     else:
         raise TypeError(
             f"Content category must be in {[e.value for e in ContentCategory]}. "
-            "Found {content.type}"
+            f"Found {content.type}"
         )
     return segment
 

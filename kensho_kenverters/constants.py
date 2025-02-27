@@ -69,7 +69,6 @@ TITLE_CONTENT_CATEGORIES = {
     ContentCategory.H5.value,
 } | ELEMENT_TITLE_CONTENT_CATEGORIES
 
-TEXT_CONTENT_CATEGORIES = {ContentCategory.TEXT.value, ContentCategory.PARAGRAPH.value}
 
 TABLE_CONTENT_CATEGORIES = {
     ContentCategory.TABLE.value,

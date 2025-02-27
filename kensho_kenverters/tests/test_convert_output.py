@@ -20,6 +20,9 @@ OUTPUT_FILE_PATH = os.path.join(
 HIERARCHICAL_OUTPUT_FILE_PATH = os.path.join(
     os.path.dirname(__file__), "data", "extract_output_hierarchical.json"
 )
+HIERARCHICAL_v2_OUTPUT_FILE_PATH = os.path.join(
+    os.path.dirname(__file__), "data", "extract_output_hierarchical_v2.json"
+)
 MULTI_PAGE_OUTPUT_FILE_PATH = os.path.join(
     os.path.dirname(__file__), "data", "output_multi_page_locs.json"
 )
@@ -37,6 +40,7 @@ class TestMarkdownConversion(TestCase):
     extract_output_multi_page: ClassVar[dict[str, Any]]
     extract_output_no_locs: ClassVar[dict[str, Any]]
     extract_output_char_offsets: ClassVar[dict[str, Any]]
+    extract_output_hierarchical_v2: ClassVar[dict[str, Any]]
 
     @classmethod
     def setUpClass(cls) -> None:
@@ -44,6 +48,8 @@ class TestMarkdownConversion(TestCase):
             cls.extract_output = json.load(f)
         with open(HIERARCHICAL_OUTPUT_FILE_PATH, "r") as f:
             cls.extract_output_hierarchical = json.load(f)
+        with open(HIERARCHICAL_v2_OUTPUT_FILE_PATH, "r") as f:
+            cls.extract_output_hierarchical_v2 = json.load(f)
         with open(MULTI_PAGE_OUTPUT_FILE_PATH, "r") as f:
             cls.extract_output_multi_page = json.load(f)
         with open(OUTPUT_NO_LOCS_FILE_PATH, "r") as f:
@@ -479,6 +485,71 @@ class TestMarkdownConversion(TestCase):
         ]
         self.assertEqual(expected_list, output_list)
 
+    def test_convert_output_to_items_hierarchical_v2(self) -> None:
+        output_list = convert_output_to_items_list(self.extract_output_hierarchical_v2)
+        expected_list = [
+            {"category": "page_header", "text": "2019  test noise string at top"},
+            {"category": "h1", "text": "Generated Toy File Title"},
+            {
+                "category": "paragraph",
+                "text": "Machine learning (ML) is the scientific study of algorithms and "
+                "statistical models that computer systems use in order to perform a specific "
+                "task effectively without using explicit instructions, relying on patterns "
+                "and inference instead. It is seen as a subset of artificial intelligence. "
+                "Machine learning algorithms build a mathematical model based on sample data, "
+                "known as training data, in order to make predictions or decisions without "
+                "being explicitly programmed to perform the task. Valerie is awesome. "
+                "Machine learning algorithms are used in a wide variety of applications, "
+                "such as email filtering, and computer vision, where it is infeasible to "
+                "develop an algorithm of specific instructions for performing the task. "
+                "Machine learning is closely related to computational statistics, which "
+                "focuses on making predictions using computers. The study of mathematical "
+                "optimization delivers methods, theory and application domains to the field of "
+                "machine learning. Data mining is a field of study within machine learning, and "
+                "focuses on exploratory data analysis through unsupervised learning. In its "
+                "application across business problems, machine learning is also referred to "
+                "as predictive analytics.",
+            },
+            {"category": "text", "text": "ESTIMATE for Kensho"},
+            {
+                "category": "table",
+                "table": [
+                    ["Kensho Revenue in millions $", "Q1", "Q2", "Q3", "Q4"],
+                    ["2020", "100,000", "200,000", "300,000", "400,000"],
+                    ["2021", "101,001", "201,001", "301,001", "401,001"],
+                    ["2022", "102,004", "202,004", "302,004", "402,004"],
+                    ["2023", "103,009", "203,009", "303,009", "403,009"],
+                ],
+                "text": "| Kensho Revenue in millions $ | Q1 | Q2 | Q3 | Q4 |\n| --- | --- "
+                "| --- | --- | --- |\n| 2020 | 100,000 | 200,000 | 300,000 | 400,000 |\n| 2021 "
+                "| 101,001 | 201,001 | 301,001 | 401,001 |\n| 2022 | 102,004 | 202,004 | 302,004 "
+                "| 402,004 |\n| 2023 | 103,009 | 203,009 | 303,009 | 403,009 |\n",
+            },
+            {
+                "category": "paragraph",
+                "text": "Machine learning (ML) is the scientific study of algorithms and "
+                "statistical models that computer systems use in order to perform a specific "
+                "task effectively without using explicit instructions, relying on patterns "
+                "and inference instead. It is seen as a subset of artificial intelligence. "
+                "Machine learning algorithms build a mathematical model based on sample data, "
+                "known as training data, in order to make predictions or decisions without "
+                "being explicitly programmed to perform the task. Valerie is awesome. "
+                "Machine learning algorithms are used in a wide variety of applications, "
+                "such as email filtering, and computer vision, where it is infeasible to "
+                "develop an algorithm of specific instructions for performing the task. "
+                "Machine learning is closely related to computational statistics, which "
+                "focuses on making predictions using computers. The study of mathematical "
+                "optimization delivers methods, theory and application domains to the field of "
+                "machine learning. Data mining is a field of study within machine learning, and "
+                "focuses on exploratory data analysis through unsupervised learning. In its "
+                "application across business problems, machine learning is also referred to "
+                "as predictive analytics.",
+            },
+            {"category": "text", "text": "Recommendation: BUY"},
+            {"category": "page_footer", "text": "42  test noise string at bottom  999"},
+        ]
+        self.assertEqual(expected_list, output_list)
+
     def test_convert_output_to_items_char_offsets(self) -> None:
         output_list = convert_output_to_items_list(self.extract_output_char_offsets)
         expected_output_list = [
@@ -496,7 +567,7 @@ class TestMarkdownConversion(TestCase):
                 "ning algorithms build a mathematical model based on sample data, known as "
                 "training data, in order to"
                 " make predictions or decisions without being explicitly programmed to "
-                "perform the task. Tony Tong is"
+                "perform the task. Valerie is"
                 " awesome. Machine learning algorithms are used in a wide variety of "
                 "applications, such as email filtering, and computer vision, where it is "
                 "infeasible to develop an algorithm of specific instructions "
@@ -648,7 +719,7 @@ class TestMarkdownConversion(TestCase):
             "ce instead. It is seen as a subset of artificial intelligence. Machine"
             " learning algorithms build a mathematical model based on sample data, "
             "known as training data, in order to make predictions or decisions with"
-            "out being explicitly programmed to perform the task. Tony Tong is awes"
+            "out being explicitly programmed to perform the task. Valerie is awes"
             "ome. Machine learning algorithms are used in a wide variety of applica"
             "tions, such as email filtering, and computer vision, where it is infea"
             "sible to develop an algorithm of specific instructions for performing "
@@ -670,7 +741,7 @@ class TestMarkdownConversion(TestCase):
             " artificial intelligence. Machine learning algorithms build a mathemat"
             "ical model based on sample data, known as training data, in order to m"
             "ake predictions or decisions without being explicitly programmed to pe"
-            "rform the task. Tony Tong is awesome. Machine learning algorithms are "
+            "rform the task. Valerie is awesome. Machine learning algorithms are "
             "used in a wide variety of applications, such as email filtering, and c"
             "omputer vision, where it is infeasible to develop an algorithm of spec"
             "ific instructions for performing the task. Machine learning is closely"
@@ -760,6 +831,48 @@ class TestMarkdownConversion(TestCase):
             "|\n\n## Analytical E-Mail Addresses\n## email\nemail\nemail"
         )
         output_str = convert_output_to_markdown(self.extract_output_hierarchical)
+        self.assertEqual(expected_str, output_str)
+
+    def test_convert_output_to_markdown_hierarchical_v2(self) -> None:
+        expected_str = (
+            "2019  test noise string at top\n# Generated Toy File Title\nMachine learning (ML) "
+            "is the scientific study of algorithms and statistical models that computer systems "
+            "use in order to perform a specific task effectively without using explicit "
+            "instructions, relying on patterns and inference instead. It is seen as a subset"
+            " of artificial intelligence. Machine learning algorithms build a mathematical"
+            " model based on sample data, known as training data, in order to make predictions"
+            " or decisions without being explicitly programmed to perform the task. Valerie "
+            "is awesome. Machine learning algorithms are used in a wide variety of applications,"
+            " such as email filtering, and computer vision, where it is infeasible to develop"
+            " an algorithm of specific instructions for performing the task. Machine learning"
+            " is closely related to computational statistics, which focuses on making "
+            "predictions using computers. The study of mathematical optimization delivers methods"
+            ", theory and application domains to the field of machine learning. Data mining is a "
+            "field of study within machine learning, and focuses on exploratory data analysis "
+            "through unsupervised learning. In its application across business problems, "
+            "machine learning is also referred to as predictive analytics.\nESTIMATE for "
+            "Kensho\n| Kensho Revenue in millions $ | Q1 | Q2 | Q3 | Q4 |\n| --- | --- | --- "
+            "| --- | --- |\n| 2020 | 100,000 | 200,000 | 300,000 | 400,000 |\n| 2021 | 101,001 "
+            "| 201,001 | 301,001 | 401,001 |\n| 2022 | 102,004 | 202,004 | 302,004 | 402,004 |\n"
+            "| 2023 | 103,009 | 203,009 | 303,009 | 403,009 |\n\nMachine learning (ML) is the "
+            "scientific study of algorithms and statistical models that computer systems use in "
+            "order to perform a specific task effectively without using explicit instructions, "
+            "relying on patterns and inference instead. It is seen as a subset of artificial "
+            "intelligence. Machine learning algorithms build a mathematical model based on "
+            "sample data, known as training data, in order to make predictions or decisions "
+            "without being explicitly programmed to perform the task. Valerie is awesome. "
+            "Machine learning algorithms are used in a wide variety of applications, such as "
+            "email filtering, and computer vision, where it is infeasible to develop an "
+            "algorithm of specific instructions for performing the task. Machine learning "
+            "is closely related to computational statistics, which focuses on making "
+            "predictions using computers. The study of mathematical optimization "
+            "delivers methods, theory and application domains to the field of machine learning. "
+            "Data mining is a field of study within machine learning, and focuses on "
+            "exploratory data analysis through unsupervised learning. In its application "
+            "across business problems, machine learning is also referred to as predictive "
+            "analytics.\nRecommendation: BUY\n42  test noise string at bottom  999"
+        )
+        output_str = convert_output_to_markdown(self.extract_output_hierarchical_v2)
         self.assertEqual(expected_str, output_str)
 
     def test_convert_table_to_markdown(self) -> None:
