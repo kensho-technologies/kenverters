@@ -6,7 +6,11 @@ from typing import Any, Sequence
 
 import pandas as pd
 
-from kensho_kenverters.constants import AnnotationType, ContentCategory
+from kensho_kenverters.constants import (
+    TABLE_CONTENT_CATEGORIES,
+    AnnotationType,
+    ContentCategory,
+)
 from kensho_kenverters.extract_output_models import (
     AnnotationModel,
     ContentModel,
@@ -27,7 +31,7 @@ def _get_table_uid_to_cells_mapping(
 ) -> dict[str, list[ContentModel]]:
     """Recursively get table uids to cells mapping from nested structured document."""
     current_mapping: dict[str, list[ContentModel]] = {}
-    if content.type == ContentCategory.TABLE.value:
+    if content.type in TABLE_CONTENT_CATEGORIES:
         # Termination condition 1
         cells = [
             child
@@ -48,7 +52,7 @@ def _get_table_uid_to_locations_mapping(
 ) -> dict[str, list[LocationType]]:
     """Recursively get table uids to locations mapping from nested structured document."""
     current_mapping: dict[str, list[LocationType]] = {}
-    if content.type == ContentCategory.TABLE.value:
+    if content.type in TABLE_CONTENT_CATEGORIES:
         # Termination condition 1
         if content.locations is not None:
             current_mapping[content.uid] = [

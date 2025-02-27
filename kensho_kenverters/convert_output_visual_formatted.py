@@ -10,6 +10,7 @@ from typing import Any, TypeAlias
 
 from kensho_kenverters.constants import (
     LOCATIONS_KEY,
+    TABLE_CONTENT_CATEGORIES,
     TEXT_KEY,
     AnnotationType,
     ContentCategory,
@@ -73,21 +74,8 @@ def _convert_output_to_texts_with_locs(
     content_tree = parsed_serialized_document.content_tree
     segments: list[dict[str, Any]] = []
     for content in content_tree.children:
-        segment: dict[str, Any] = {}
-        if content.type == ContentCategory.TITLE.value:
-            segment = {
-                TEXT_KEY: content.content,
-                LOCATIONS_KEY: content.locations,
-            }
-            segments.append(segment)
-        elif content.type == ContentCategory.TEXT.value:
-            segment = {
-                TEXT_KEY: content.content,
-                LOCATIONS_KEY: content.locations,
-            }
-            segments.append(segment)
         # For tables, use table cell structures read above
-        elif content.type == ContentCategory.TABLE.value:
+        if content.type in TABLE_CONTENT_CATEGORIES:
             # Construct the table from cells
             table_cells = content.children
             # Drop tables with no cells
@@ -97,6 +85,12 @@ def _convert_output_to_texts_with_locs(
                 table_cells, uid_to_location
             )
             segments += table_cell_segments
+        elif content.type in [e.value for e in ContentCategory]:
+            segment: dict[str, Any] = {
+                TEXT_KEY: content.content,
+                LOCATIONS_KEY: content.locations,
+            }
+            segments.append(segment)
         else:
             raise TypeError(
                 f"Content category must be in {[e.value for e in ContentCategory]}. "

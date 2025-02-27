@@ -1,8 +1,12 @@
 # Changelog
 
+## v1.2.0
+
+Add support for heirarchical_v2 model output
+
 ## v1.1.0
 
-Add support for structured_output_with_character_offsets output format from Extract.
+Add support for structured_output_with_character_offsets output format from Extract
 
 ## v1.0.1
 
