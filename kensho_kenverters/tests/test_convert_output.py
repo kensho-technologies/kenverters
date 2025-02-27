@@ -17,8 +17,8 @@ from kensho_kenverters.extract_output_models import ContentModel, LocationModel
 OUTPUT_FILE_PATH = os.path.join(
     os.path.dirname(__file__), "data", "extract_output.json"
 )
-BROKER_RESEARCH_OUTPUT_FILE_PATH = os.path.join(
-    os.path.dirname(__file__), "data", "extract_output_broker_research.json"
+HIERARCHICAL_OUTPUT_FILE_PATH = os.path.join(
+    os.path.dirname(__file__), "data", "extract_output_hierarchical.json"
 )
 MULTI_PAGE_OUTPUT_FILE_PATH = os.path.join(
     os.path.dirname(__file__), "data", "output_multi_page_locs.json"
@@ -33,7 +33,7 @@ OUTPUT_CHAR_OFFSETS_FILE_PATH = os.path.join(
 
 class TestMarkdownConversion(TestCase):
     extract_output: ClassVar[dict[str, Any]]
-    extract_output_broker_research: ClassVar[dict[str, Any]]
+    extract_output_hierarchical: ClassVar[dict[str, Any]]
     extract_output_multi_page: ClassVar[dict[str, Any]]
     extract_output_no_locs: ClassVar[dict[str, Any]]
     extract_output_char_offsets: ClassVar[dict[str, Any]]
@@ -42,8 +42,8 @@ class TestMarkdownConversion(TestCase):
     def setUpClass(cls) -> None:
         with open(OUTPUT_FILE_PATH, "r") as f:
             cls.extract_output = json.load(f)
-        with open(BROKER_RESEARCH_OUTPUT_FILE_PATH, "r") as f:
-            cls.extract_output_broker_research = json.load(f)
+        with open(HIERARCHICAL_OUTPUT_FILE_PATH, "r") as f:
+            cls.extract_output_hierarchical = json.load(f)
         with open(MULTI_PAGE_OUTPUT_FILE_PATH, "r") as f:
             cls.extract_output_multi_page = json.load(f)
         with open(OUTPUT_NO_LOCS_FILE_PATH, "r") as f:
@@ -296,8 +296,8 @@ class TestMarkdownConversion(TestCase):
         )
         self.assertEqual(expected_list_with_locs, output_list_with_locs)
 
-    def test_convert_output_to_items_broker_research(self) -> None:
-        output_list = convert_output_to_items_list(self.extract_output_broker_research)
+    def test_convert_output_to_items_hierarchical(self) -> None:
+        output_list = convert_output_to_items_list(self.extract_output_hierarchical)
         expected_list = [
             {"category": "text", "text": "July 1, 2000"},
             {"category": "h1", "text": "Research Update: A Company"},
@@ -607,7 +607,7 @@ class TestMarkdownConversion(TestCase):
         output_str = convert_output_to_str(self.extract_output)
         self.assertEqual(expected_str, output_str)
 
-    def test_convert_output_to_str_broker_research(self) -> None:
+    def test_convert_output_to_str_hierarchical(self) -> None:
         expected_str = (
             "July 1, 2000\nResearch Update: A Company\nBank\nCredit Analyst:\nA Guy\n"
             "Table Of Contents\nRatings List\nE-Mail Addresses\nResearch Update: The Company\n"
@@ -635,7 +635,7 @@ class TestMarkdownConversion(TestCase):
             "the | Standard & | Poor's |  |\n| Ratings | Ratings | Desk | in | NYC | at | (44) | "
             "number. | number. |  |  |  |  |\n\nAnalytical E-Mail Addresses\nemail\nemail\nemail"
         )
-        output_str = convert_output_to_str(self.extract_output_broker_research)
+        output_str = convert_output_to_str(self.extract_output_hierarchical)
         self.assertEqual(expected_str, output_str)
 
     def test_convert_output_to_str_char_offsets(self) -> None:
@@ -739,7 +739,7 @@ class TestMarkdownConversion(TestCase):
         output_str = convert_output_to_markdown(self.extract_output)
         self.assertEqual(expected_str, output_str)
 
-    def test_convert_output_to_markdown_broker_research(self) -> None:
+    def test_convert_output_to_markdown_hierarchical(self) -> None:
         expected_str = (
             "July 1, 2000\n# Research Update: A Company\n# Bank\nCredit Analyst:\nA Guy\n"
             "Table Of Contents\nRatings List\nE-Mail Addresses\n# Research Update: The Company\n"
@@ -759,7 +759,7 @@ class TestMarkdownConversion(TestCase):
             "|\n| Ratings | Ratings | Desk | in | NYC | at | (44) | number. | number. |  |  |  |  "
             "|\n\n## Analytical E-Mail Addresses\n## email\nemail\nemail"
         )
-        output_str = convert_output_to_markdown(self.extract_output_broker_research)
+        output_str = convert_output_to_markdown(self.extract_output_hierarchical)
         self.assertEqual(expected_str, output_str)
 
     def test_convert_table_to_markdown(self) -> None:

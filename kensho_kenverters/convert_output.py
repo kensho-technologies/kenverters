@@ -8,7 +8,9 @@ from typing import Any
 from kensho_kenverters.constants import (
     CATEGORY_KEY,
     DOCUMENT_CATEGORY_KEY,
+    ELEMENT_TITLE_CONTENT_CATEGORIES,
     LOCATIONS_KEY,
+    TABLE_CONTENT_CATEGORIES,
     TABLE_KEY,
     TEXT_CONTENT_CATEGORIES,
     TEXT_KEY,
@@ -79,11 +81,18 @@ def _get_markdown_text(item: dict[str, Any]) -> str:
     elif item[CATEGORY_KEY] == ContentCategory.H2.value.lower():
         return "## " + item[TEXT_KEY]  # type: ignore[no-any-return]
     # Add ### to figure titles and table titles
-    elif item[CATEGORY_KEY] in (
-        ContentCategory.TABLE_TITLE.value.lower(),
-        ContentCategory.FIGURE_TITLE.value.lower(),
+    elif (
+        item[CATEGORY_KEY]
+        in [content_type.lower() for content_type in ELEMENT_TITLE_CONTENT_CATEGORIES]
+        or item[CATEGORY_KEY] == ContentCategory.H3.value.lower()
     ):
         return "### " + item[TEXT_KEY]  # type: ignore[no-any-return]
+    # Add #### to H4
+    elif item[CATEGORY_KEY] == ContentCategory.H4.value.lower():
+        return "#### " + item[TEXT_KEY]  # type: ignore[no-any-return]
+    # Add ##### to H5
+    elif item[CATEGORY_KEY] == ContentCategory.H5.value.lower():
+        return "##### " + item[TEXT_KEY]  # type: ignore[no-any-return]
     return item[TEXT_KEY]  # type: ignore[no-any-return]
 
 
@@ -104,7 +113,7 @@ def _create_segment(
             TEXT_KEY: content.content,
         }
     # For tables, use table cell structures read above
-    elif content.type == ContentCategory.TABLE.value:
+    elif content.type in TABLE_CONTENT_CATEGORIES:
         # Construct the table from cells
         table_cells = content.children
         # Drop tables with no cells
@@ -115,7 +124,7 @@ def _create_segment(
         if len(table) == 0:
             return {}
         segment = {
-            CATEGORY_KEY: ContentCategory.TABLE.value.lower(),
+            CATEGORY_KEY: content.type.lower(),
             TABLE_KEY: table,
             TEXT_KEY: table_to_markdown(table),
         }
