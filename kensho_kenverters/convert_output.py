@@ -51,8 +51,18 @@ def _construct_table_from_cells(
     ]
     indexes = [uid_to_index[uid] for uid in cell_uids]
     rows, cols = zip(*indexes)
+
+    # Calculate the necessary number of rows and columns based on the spans
     n_row = max(rows) + 1
     n_col = max(cols) + 1
+    for cell in table_cells:
+        row, col = uid_to_index[cell.uid]
+        row_span, col_span = uid_to_span[cell.uid]
+        # Update the table dimensions if a cell spans beyond the current limits
+        n_row = max(n_row, row + row_span)
+        n_col = max(n_col, col + col_span)
+
+    # Construct the table
     table = [["" for _ in range(n_col)] for _ in range(n_row)]
     for cell in table_cells:
         row, col = uid_to_index[cell.uid]

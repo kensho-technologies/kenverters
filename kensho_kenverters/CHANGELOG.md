@@ -1,5 +1,9 @@
 # Changelog
 
+## v1.2.1
+
+Bug fix for spanning cells at the outer edge of a table
+
 ## v1.2.0
 
 Add support for heirarchical_v2 model output
