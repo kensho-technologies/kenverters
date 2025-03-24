@@ -1,5 +1,9 @@
 # Changelog
 
+## v1.2.2
+
+Use underscores instead of hyphens for setuptools 78
+
 ## v1.2.1
 
 Bug fix for spanning cells at the outer edge of a table
