@@ -23,7 +23,7 @@ def _create_empty_annotation(row: int, col: int) -> AnnotationModel:
 
 
 def _validate_annotations(
-    duplicated_annotations: list[AnnotationModel],
+    duplicated_annotations: list[AnnotationModel], max_row: int, max_col: int
 ) -> list[AnnotationModel]:
     """Validate duplicated annotations."""
     # Check all spans are 1 (annotations are duplicated)
@@ -36,19 +36,10 @@ def _validate_annotations(
     if len(set(all_indices)) != len(all_indices):
         raise ValueError("Overlapping indices in table.")
 
-    # If any empty rows or columns, add empty annotations
-    existing_rows = set(index[0] for index in all_indices)
-    existing_columns = set(index[1] for index in all_indices)
-    full_rows = set(range(max(existing_rows, default=0) + 1))
-    full_columns = set(range(max(existing_columns, default=0) + 1))
-
-    for row in full_rows - existing_rows:
-        for col in full_columns:
-            duplicated_annotations.append(_create_empty_annotation(row, col))
-
-    for col in full_columns - existing_columns:
-        for row in full_rows:
-            duplicated_annotations.append(_create_empty_annotation(row, col))
+    for row in range(max_row + 1):
+        for col in range(max_col + 1):
+            if (row, col) not in all_indices:
+                duplicated_annotations.append(_create_empty_annotation(row, col))
 
     return duplicated_annotations
 
@@ -70,6 +61,8 @@ def duplicate_spanning_annotations(
         duplicated annotations. Duplicated annotations must all have span (1, 1).
     """
     duplicated_annotations = []
+    max_row = 0
+    max_col = 0
     for annotation in annotations:
         data = annotation.data
         row_span, col_span = data.span
@@ -94,8 +87,10 @@ def duplicate_spanning_annotations(
                     locations=annotation.locations,
                 )
                 duplicated_annotations.append(new_annotation)
+                max_row = max(max_row, row_index + row_span_index)
+                max_col = max(max_col, col_index + col_span_index)
 
-    return _validate_annotations(duplicated_annotations)
+    return _validate_annotations(duplicated_annotations, max_row, max_col)
 
 
 def get_table_shape(

@@ -57,7 +57,7 @@ class TestTablesUtils(TestCase):
         )
         self.assertEqual(expected_df.to_csv(), converted_df.to_csv())
 
-    def test_duplicate_spanning_annotations(self) -> None:
+    def test_duplicate_spanning_annotations_1_spans(self) -> None:
         # Test no duplication when all spans are 1
         duplicated = duplicate_spanning_annotations(
             self.parsed_serialized_document.annotations
@@ -417,6 +417,7 @@ class TestTablesUtils(TestCase):
 
         self.assertEqual(duplicated, expected_duplicated)
 
+    def test_duplicate_spanning_annotations_greater_1_spans(self) -> None:
         # Test properly duplicated when cells have a span > 1
         annotations = self.parsed_serialized_document.annotations
         annotations.pop(-1)
@@ -775,3 +776,53 @@ class TestTablesUtils(TestCase):
         ]
         duplicated = duplicate_spanning_annotations(annotations)
         self.assertEqual(expected_duplicated, duplicated)
+
+    def test_duplicate_spanning_annotations_missing_cells(self) -> None:
+        # Test missing cells
+        annotations = [
+            AnnotationModel(
+                content_uids=["7"],
+                data=AnnotationDataModel(index=(0, 0), span=(1, 1)),
+                type="table_structure",
+                locations=[
+                    LocationModel(
+                        height=0.01188,
+                        width=0.22128,
+                        x=0.16008,
+                        y=0.40464,
+                        page_number=0,
+                    )
+                ],
+            ),
+            AnnotationModel(
+                content_uids=["8"],
+                data=AnnotationDataModel(index=(0, 1), span=(1, 1)),
+                type="table_structure",
+                locations=[
+                    LocationModel(
+                        height=0.01188,
+                        width=0.22128,
+                        x=0.16008,
+                        y=0.80464,
+                        page_number=0,
+                    )
+                ],
+            ),
+            AnnotationModel(
+                content_uids=["9"],
+                data=AnnotationDataModel(index=(3, 0), span=(1, 1)),
+                type="table_structure",
+                locations=[
+                    LocationModel(
+                        height=0.01188,
+                        width=0.22128,
+                        x=0.7008,
+                        y=0.40464,
+                        page_number=0,
+                    )
+                ],
+            ),
+        ]
+
+        duplicated = duplicate_spanning_annotations(annotations)
+        self.assertEqual(len(duplicated), 8)
