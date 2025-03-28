@@ -118,7 +118,7 @@ def _build_uids_grid_from_table_cell_annotations(
             "Table structure and figure extracted table structure "
             "cannot appear in the same table."
         )
-    validated_annotations = duplicate_spanning_annotations(
+    duplicated_annotations = duplicate_spanning_annotations(
         annotations, duplicate_content_flag
     )
     # If annotations are table structure, we map uids into grids
@@ -126,10 +126,10 @@ def _build_uids_grid_from_table_cell_annotations(
         list,
         {
             annotation.data.index: annotation.content_uids
-            for annotation in validated_annotations
+            for annotation in duplicated_annotations
         },
     )
-    n_rows, n_cols = get_table_shape(validated_annotations)
+    n_rows, n_cols = get_table_shape(duplicated_annotations)
     rows: list[list[list[str]]] = []
     for row_index in range(n_rows):
         current_row = []
