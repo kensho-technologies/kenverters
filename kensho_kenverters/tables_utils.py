@@ -9,12 +9,22 @@ from kensho_kenverters.constants import AnnotationType
 from kensho_kenverters.extract_output_models import AnnotationDataModel, AnnotationModel
 
 
-def _check_complete_set(integer_set: set[int]) -> bool:
-    """Check that the set of integers contains all integers between 0 and its max."""
-    return integer_set == set(range(max(integer_set, default=-1) + 1))
+def _create_empty_annotation(row: int, col: int) -> AnnotationModel:
+    """Create an empty annotation."""
+    return AnnotationModel(
+        type=AnnotationType.TABLE_STRUCTURE.value,
+        content_uids=[],
+        data=AnnotationDataModel(
+            span=(1, 1),
+            index=(row, col),
+        ),
+        locations=None,
+    )
 
 
-def _validate_annotations(duplicated_annotations: Sequence[AnnotationModel]) -> None:
+def _validate_annotations(
+    duplicated_annotations: list[AnnotationModel],
+) -> list[AnnotationModel]:
     """Validate duplicated annotations."""
     # Check all spans are 1 (annotations are duplicated)
     all_spans = [annotation.data.span for annotation in duplicated_annotations]
@@ -26,13 +36,21 @@ def _validate_annotations(duplicated_annotations: Sequence[AnnotationModel]) -> 
     if len(set(all_indices)) != len(all_indices):
         raise ValueError("Overlapping indices in table.")
 
-    # Check no empty rows or columns
-    all_rows = set(index[0] for index in all_indices)
-    all_columns = set(index[1] for index in all_indices)
-    if not _check_complete_set(all_rows):
-        raise ValueError("Empty row in table.")
-    if not _check_complete_set(all_columns):
-        raise ValueError("Empty column in table.")
+    # If any empty rows or columns, add empty annotations
+    existing_rows = set(index[0] for index in all_indices)
+    existing_columns = set(index[1] for index in all_indices)
+    full_rows = set(range(max(existing_rows, default=0) + 1))
+    full_columns = set(range(max(existing_columns, default=0) + 1))
+
+    for row in full_rows - existing_rows:
+        for col in full_columns:
+            duplicated_annotations.append(_create_empty_annotation(row, col))
+
+    for col in full_columns - existing_columns:
+        for row in full_rows:
+            duplicated_annotations.append(_create_empty_annotation(row, col))
+
+    return duplicated_annotations
 
 
 def duplicate_spanning_annotations(
@@ -77,8 +95,7 @@ def duplicate_spanning_annotations(
                 )
                 duplicated_annotations.append(new_annotation)
 
-    _validate_annotations(duplicated_annotations)
-    return duplicated_annotations
+    return _validate_annotations(duplicated_annotations)
 
 
 def get_table_shape(
