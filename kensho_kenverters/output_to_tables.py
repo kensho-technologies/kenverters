@@ -37,7 +37,10 @@ def _get_table_uid_to_cells_mapping(
             child
             for child in content.children
             if child.type
-            in (ContentCategory.TABLE_CELL.value, ContentCategory.FIGURE_EXTRACTED_TABLE_CELL.value)
+            in (
+                ContentCategory.TABLE_CELL.value,
+                ContentCategory.FIGURE_EXTRACTED_TABLE_CELL.value,
+            )
         ]
         current_mapping[content.uid] = cells
     elif len(content.children) > 0:
@@ -100,7 +103,9 @@ def _get_table_uid_to_annotations_mapping(
 
 
 def _build_grid_from_table_cell_annotations(
-    annotations: Sequence[AnnotationModel], table_type: str, duplicate_content_flag: bool = False
+    annotations: Sequence[AnnotationModel],
+    table_type: str,
+    duplicate_content_flag: bool = False,
 ) -> list[list[list[str]]]:
     """Build grid where each location has a list of content uids."""
     if any(
@@ -123,10 +128,15 @@ def _build_grid_from_table_cell_annotations(
         )
 
     rows: list[list[list[str]]] = []
-    if table_type in (ContentCategory.TABLE.value, ContentCategory.TABLE_OF_CONTENTS.value):
+    if table_type in (
+        ContentCategory.TABLE.value,
+        ContentCategory.TABLE_OF_CONTENTS.value,
+    ):
         # If annotations are table structure, we apply the duplicate spanning
         # to normalize the annotations
-        normalized_annotations = duplicate_spanning_annotations(annotations, duplicate_content_flag)
+        normalized_annotations = duplicate_spanning_annotations(
+            annotations, duplicate_content_flag
+        )
         # If annotations are table structure, we map uids into grids
         index_to_uids_mapping = defaultdict(
             list,
@@ -153,13 +163,17 @@ def _build_grid_from_table_cell_annotations(
         index_to_annotation_value_mapping = {}
         for annotation in annotations:
             if annotation.data.value is not None:
-                index_to_annotation_value_mapping[annotation.data.index] = annotation.data.value
+                index_to_annotation_value_mapping[annotation.data.index] = (
+                    annotation.data.value
+                )
             else:
                 index_to_annotation_value_mapping[annotation.data.index] = ""
         for row_index in range(n_rows):
             current_row = []
             for col_index in range(n_cols):
-                current_row.append([index_to_annotation_value_mapping[(row_index, col_index)]])
+                current_row.append(
+                    [index_to_annotation_value_mapping[(row_index, col_index)]]
+                )
             rows.append(current_row)
 
     return rows
@@ -278,7 +292,9 @@ def extract_pd_dfs_from_output(
         2                         2022  102,004  202,004  302,004  402,004
         3                         2023  103,009  203,009  303,009  403,009]
     """
-    table_grids = build_table_grids(serialized_document, duplicate_merged_cells_content_flag)
+    table_grids = build_table_grids(
+        serialized_document, duplicate_merged_cells_content_flag
+    )
     table_dfs = []
     for table_grid in table_grids.values():
         table_df = convert_table_to_pd_df(
@@ -320,7 +336,9 @@ def extract_pd_dfs_with_locs_from_output(
         )]
     """
     # Get dfs
-    table_grids = build_table_grids(serialized_document, duplicate_merged_cells_content_flag)
+    table_grids = build_table_grids(
+        serialized_document, duplicate_merged_cells_content_flag
+    )
 
     # Get locations
     parsed_serialized_document = load_output_to_pydantic(serialized_document)
@@ -334,5 +352,7 @@ def extract_pd_dfs_with_locs_from_output(
         table_df = convert_table_to_pd_df(
             table_grid, use_first_row_as_header=use_first_row_as_header
         )
-        tables.append(Table(df=table_df, locations=table_uid_to_locs_mapping[table_uid]))
+        tables.append(
+            Table(df=table_df, locations=table_uid_to_locs_mapping[table_uid])
+        )
     return tables

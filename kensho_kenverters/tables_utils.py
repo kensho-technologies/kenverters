@@ -58,7 +58,9 @@ def duplicate_spanning_annotations(
         row_index, col_index = data.index
         for row_span_index in range(row_span):
             for col_span_index in range(col_span):
-                if duplicate_content_flag or (row_span_index == 0 and col_span_index == 0):
+                if duplicate_content_flag or (
+                    row_span_index == 0 and col_span_index == 0
+                ):
                     content_uids = annotation.content_uids
                 else:
                     content_uids = []

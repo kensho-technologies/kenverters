@@ -50,7 +50,7 @@ def _get_segments_from_table_cells(
 
 
 def _convert_output_to_texts_with_locs(
-    serialized_document: dict[str, Any]
+    serialized_document: dict[str, Any],
 ) -> list[dict[str, Any]]:
     """Convert Extract output into a list of items.
 
