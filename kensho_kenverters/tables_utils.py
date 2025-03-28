@@ -58,9 +58,7 @@ def duplicate_spanning_annotations(
         row_index, col_index = data.index
         for row_span_index in range(row_span):
             for col_span_index in range(col_span):
-                if duplicate_content_flag or (
-                    row_span_index == 0 and col_span_index == 0
-                ):
+                if duplicate_content_flag or (row_span_index == 0 and col_span_index == 0):
                     content_uids = annotation.content_uids
                 else:
                     content_uids = []
@@ -86,11 +84,15 @@ def get_table_shape(
 ) -> tuple[int, int]:
     """Get table shape from table structure annotations."""
     if any(
-        annotation.type != AnnotationType.TABLE_STRUCTURE.value
+        annotation.type
+        not in (
+            AnnotationType.TABLE_STRUCTURE.value,
+            AnnotationType.FIGURE_EXTRACTED_TABLE_STRUCTURE.value,
+        )
         for annotation in table_structure_annotations
     ):
         raise ValueError(
-            "Table grid can only be built from table structure annotations."
+            "Table grid can only be built from table structure or figure extracted table annotations."
         )
     n_rows = (
         max(

@@ -36,7 +36,8 @@ def _get_table_uid_to_cells_mapping(
         cells = [
             child
             for child in content.children
-            if child.type == ContentCategory.TABLE_CELL.value
+            if child.type
+            in (ContentCategory.TABLE_CELL.value, ContentCategory.FIGURE_EXTRACTED_TABLE_CELL.value)
         ]
         current_mapping[content.uid] = cells
     elif len(content.children) > 0:
@@ -45,6 +46,21 @@ def _get_table_uid_to_cells_mapping(
             nested_mapping = _get_table_uid_to_cells_mapping(child)
             current_mapping.update(nested_mapping)
     return current_mapping
+
+
+def _get_table_uid_to_types(
+    content: ContentModel,
+) -> dict[str, str]:
+    table_uid_to_types: dict[str, str] = {}
+    if content.type in TABLE_CONTENT_CATEGORIES:
+        # Termination condition 1
+        table_uid_to_types[content.uid] = content.type
+    elif len(content.children) > 0:
+        for child in content.children:
+            # Recursive call to children
+            nested_mapping = _get_table_uid_to_types(child)
+            table_uid_to_types.update(nested_mapping)
+    return table_uid_to_types
 
 
 def _get_table_uid_to_locations_mapping(
@@ -84,36 +100,63 @@ def _get_table_uid_to_annotations_mapping(
 
 
 def _build_grid_from_table_cell_annotations(
-    annotations: Sequence[AnnotationModel], duplicate_content_flag: bool = False
+    annotations: Sequence[AnnotationModel], table_type: str, duplicate_content_flag: bool = False
 ) -> list[list[list[str]]]:
     """Build grid where each location has a list of content uids."""
     if any(
-        annotation.type != AnnotationType.TABLE_STRUCTURE.value
+        annotation.type
+        not in (
+            AnnotationType.TABLE_STRUCTURE.value,
+            AnnotationType.FIGURE_EXTRACTED_TABLE_STRUCTURE.value,
+        )
         for annotation in annotations
     ):
         raise ValueError(
-            "Table grid can only be built from table structure annotations."
+            "Table grid can only be built from table structure or figure extracted table structure annotations."
         )
 
-    duplicated_annotations = duplicate_spanning_annotations(
-        annotations, duplicate_content_flag
-    )
-    index_to_uids_mapping = defaultdict(
-        list,
-        {
-            annotation.data.index: annotation.content_uids
-            for annotation in duplicated_annotations
-        },
-    )
-
-    n_rows, n_cols = get_table_shape(duplicated_annotations)
+    if len(set(annotation.type for annotation in annotations)) > 1:
+        raise ValueError(
+            "Table structure and figure extracted table structure cannot appear in the same table."
+        )
 
     rows: list[list[list[str]]] = []
-    for row_index in range(n_rows):
-        current_row = []
-        for col_index in range(n_cols):
-            current_row.append(index_to_uids_mapping[(row_index, col_index)])
-        rows.append(current_row)
+    if table_type in (ContentCategory.TABLE.value, ContentCategory.TABLE_OF_CONTENTS.value):
+        # If annotations are table structure, we apply the duplicate spanning to normalize the annotations
+        normalized_annotations = duplicate_spanning_annotations(annotations, duplicate_content_flag)
+        # If annotations are table structure, we map uids into grids
+        index_to_uids_mapping = defaultdict(
+            list,
+            {
+                annotation.data.index: annotation.content_uids
+                for annotation in normalized_annotations
+            },
+        )
+        n_rows, n_cols = get_table_shape(normalized_annotations)
+        for row_index in range(n_rows):
+            current_row = []
+            for col_index in range(n_cols):
+                current_row.append(index_to_uids_mapping[(row_index, col_index)])
+            rows.append(current_row)
+    elif table_type == ContentCategory.FIGURE_EXTRACTED_TABLE_CELL.value:
+        if any(annotation.data.value is None for annotation in annotations):
+            raise ValueError(
+                "Data value of figure extracted table structure annotations cannot be None."
+            )
+        # If annotations are figure extracted table structure, we fill the grids with extracted values.
+        n_rows, n_cols = get_table_shape(annotations)
+        index_to_annotation_value_mapping = {}
+        for annotation in annotations:
+            if annotation.data.value is not None:
+                index_to_annotation_value_mapping[annotation.data.index] = annotation.data.value
+            else:
+                index_to_annotation_value_mapping[annotation.data.index] = ""
+        for row_index in range(n_rows):
+            current_row = []
+            for col_index in range(n_cols):
+                current_row.append([index_to_annotation_value_mapping[(row_index, col_index)]])
+            rows.append(current_row)
+
     return rows
 
 
@@ -122,6 +165,7 @@ def _convert_uid_grid_to_content_grid(
 ) -> list[list[str]]:
     """Convert a UID grid to content grid."""
     uids_to_content = {cell.uid: cell.content for cell in cell_contents}
+
     content_grid = []
     for uid_row in uid_grid:
         content_row = []
@@ -168,11 +212,16 @@ def build_table_grids(
     content = parsed_serialized_document.content_tree
 
     table_uid_to_cells_mapping = _get_table_uid_to_cells_mapping(content)
+    table_uid_to_type = _get_table_uid_to_types(content)
 
     table_cell_annotations = [
         annotation
         for annotation in annotations
-        if annotation.type == AnnotationType.TABLE_STRUCTURE.value
+        if annotation.type
+        in (
+            AnnotationType.TABLE_STRUCTURE.value,
+            AnnotationType.FIGURE_EXTRACTED_TABLE_STRUCTURE.value,
+        )
     ]
     table_uid_to_cell_annotations = _get_table_uid_to_annotations_mapping(
         table_uid_to_cells_mapping, table_cell_annotations
@@ -181,11 +230,21 @@ def build_table_grids(
     tables = {}
     for table_uid, cell_annotations in table_uid_to_cell_annotations.items():
         grid = _build_grid_from_table_cell_annotations(
-            cell_annotations, duplicate_content_flag=duplicate_merged_cells_content_flag
+            cell_annotations,
+            table_uid_to_type[table_uid],
+            duplicate_content_flag=duplicate_merged_cells_content_flag,
         )
-        cell_contents = table_uid_to_cells_mapping[table_uid]
-        content_grid = _convert_uid_grid_to_content_grid(grid, cell_contents)
-        tables[table_uid] = content_grid
+        # If the grid is uids grid, we do the contents mapping.
+        if table_uid_to_type[table_uid] in (
+            ContentCategory.TABLE.value,
+            ContentCategory.TABLE_OF_CONTENTS.value,
+        ):
+            cell_contents = table_uid_to_cells_mapping[table_uid]
+            content_grid = _convert_uid_grid_to_content_grid(grid, cell_contents)
+            tables[table_uid] = content_grid
+        # Otherwise, we save the table grid directly.
+        else:
+            tables[table_uid] = grid[0]
     return tables
 
 
@@ -214,9 +273,7 @@ def extract_pd_dfs_from_output(
         2                         2022  102,004  202,004  302,004  402,004
         3                         2023  103,009  203,009  303,009  403,009]
     """
-    table_grids = build_table_grids(
-        serialized_document, duplicate_merged_cells_content_flag
-    )
+    table_grids = build_table_grids(serialized_document, duplicate_merged_cells_content_flag)
     table_dfs = []
     for table_grid in table_grids.values():
         table_df = convert_table_to_pd_df(
@@ -258,9 +315,7 @@ def extract_pd_dfs_with_locs_from_output(
         )]
     """
     # Get dfs
-    table_grids = build_table_grids(
-        serialized_document, duplicate_merged_cells_content_flag
-    )
+    table_grids = build_table_grids(serialized_document, duplicate_merged_cells_content_flag)
 
     # Get locations
     parsed_serialized_document = load_output_to_pydantic(serialized_document)
@@ -274,7 +329,5 @@ def extract_pd_dfs_with_locs_from_output(
         table_df = convert_table_to_pd_df(
             table_grid, use_first_row_as_header=use_first_row_as_header
         )
-        tables.append(
-            Table(df=table_df, locations=table_uid_to_locs_mapping[table_uid])
-        )
+        tables.append(Table(df=table_df, locations=table_uid_to_locs_mapping[table_uid]))
     return tables

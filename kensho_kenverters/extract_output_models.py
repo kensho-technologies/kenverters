@@ -6,6 +6,7 @@ from typing import NamedTuple, TypeAlias
 import pandas as pd
 from pydantic import BaseModel  # pylint: disable=no-name-in-module
 
+
 # Location types are either dictionaries of bbox coordinates and page numbers
 # or None if locations are not returned in the Extract output.
 LocationType: TypeAlias = dict[str, float | int] | None
@@ -33,6 +34,7 @@ class AnnotationDataModel(BaseModel):
 
     index: tuple[int, int]
     span: tuple[int, int]
+    value: str | None = None
 
 
 class AnnotationModel(BaseModel):

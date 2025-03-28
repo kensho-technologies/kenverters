@@ -4,6 +4,7 @@
 from enum import Enum
 from typing import TypeAlias
 
+
 CATEGORY_KEY = "category"
 TEXT_KEY = "text"
 TABLE_KEY = "table"
@@ -17,6 +18,7 @@ class AnnotationType(Enum):
     """Enum for the annotation type from the Extract output."""
 
     TABLE_STRUCTURE = "table_structure"
+    FIGURE_EXTRACTED_TABLE_STRUCTURE = "figure_extracted_table_structure"
 
 
 class ContentCategory(Enum):
@@ -51,6 +53,8 @@ class ContentCategory(Enum):
     PAGE_FOOTNOTE = "PAGE_FOOTNOTE"
     TABLE_OF_CONTENTS = "TABLE_OF_CONTENTS"
     TABLE_OF_CONTENTS_TITLE = "TABLE_OF_CONTENTS_TITLE"
+    FIGURE_EXTRACTED_TABLE = "FIGURE_EXTRACTED_TABLE"
+    FIGURE_EXTRACTED_TABLE_CELL = "FIGURE_EXTRACTED_TABLE_CELL"
 
 
 ELEMENT_TITLE_CONTENT_CATEGORIES = {
@@ -73,4 +77,5 @@ TITLE_CONTENT_CATEGORIES = {
 TABLE_CONTENT_CATEGORIES = {
     ContentCategory.TABLE.value,
     ContentCategory.TABLE_OF_CONTENTS.value,
+    ContentCategory.FIGURE_EXTRACTED_TABLE.value,
 }

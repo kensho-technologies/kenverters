@@ -1,5 +1,9 @@
 # Changelog
 
+## v1.2.3
+
+Add support of figure extracted table.
+
 ## v1.2.2
 
 Use underscores instead of hyphens for setuptools 78
