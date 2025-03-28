@@ -112,11 +112,8 @@ def _build_uids_grid_from_table_cell_annotations(
         annotation.type != AnnotationType.TABLE_STRUCTURE.value
         for annotation in annotations
     ):
-        raise ValueError("Content uids grid can only be built from table structure")
-    if len(set(annotation.type for annotation in annotations)) > 1:
         raise ValueError(
-            "Table structure and figure extracted table structure "
-            "cannot appear in the same table."
+            "Content uids grid can only be built from table structure annotations."
         )
     duplicated_annotations = duplicate_spanning_annotations(
         annotations, duplicate_content_flag
@@ -149,12 +146,6 @@ def _build_content_grid_from_figure_extracted_table_cell_annotations(
     ):
         raise ValueError(
             "Content grid can only be built from figure extracted table structure annotations."
-        )
-
-    if len(set(annotation.type for annotation in annotations)) > 1:
-        raise ValueError(
-            "Table structure and figure extracted table structure "
-            "cannot appear in the same table."
         )
 
     if any(annotation.data.value is None for annotation in annotations):
