@@ -103,11 +103,16 @@ def get_table_shape(
 ) -> tuple[int, int]:
     """Get table shape from table structure annotations."""
     if any(
-        annotation.type != AnnotationType.TABLE_STRUCTURE.value
+        annotation.type
+        not in (
+            AnnotationType.TABLE_STRUCTURE.value,
+            AnnotationType.FIGURE_EXTRACTED_TABLE_STRUCTURE.value,
+        )
         for annotation in table_structure_annotations
     ):
         raise ValueError(
-            "Table grid can only be built from table structure annotations."
+            "Table shape can only be calculated from table structure "
+            "or figure extracted table annotations."
         )
     n_rows = (
         max(

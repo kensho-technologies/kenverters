@@ -8,7 +8,7 @@ from kensho_kenverters.convert_output import convert_output_to_items_list
 
 
 def extract_organized_sections(
-    serialized_document: dict[str, Any]
+    serialized_document: dict[str, Any],
 ) -> list[list[dict[str, Any]]]:
     r"""Return a version of the output organized into sections split on titles.
 

@@ -33,6 +33,7 @@ class AnnotationDataModel(BaseModel):
 
     index: tuple[int, int]
     span: tuple[int, int]
+    value: str | None = None
 
 
 class AnnotationModel(BaseModel):

@@ -290,7 +290,7 @@ def convert_output_to_markdown(serialized_document: dict[str, Any]) -> str:
 
 
 def convert_output_to_markdown_by_page(
-    serialized_document: dict[str, Any]
+    serialized_document: dict[str, Any],
 ) -> list[str]:
     r"""Convert entire Extract output into a markdown string per page.
 

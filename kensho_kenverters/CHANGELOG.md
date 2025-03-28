@@ -2,7 +2,9 @@
 
 ## v1.2.3
 
-Remove table validation for rows and columns to not fail downstream of Extract model failures
+* Remove table validation for rows and columns to not fail downstream of Extract model failures
+
+* Added support of figure extracted table.
 
 ## v1.2.2
 
