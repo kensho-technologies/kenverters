@@ -51,7 +51,7 @@ def _get_table_uid_to_cells_mapping(
     return current_mapping
 
 
-def _get_table_uid_to_types(
+def _get_table_uid_to_types_mapping(
     content: ContentModel,
 ) -> dict[str, str]:
     """Recursively get table uids to table types mapping."""
@@ -62,7 +62,7 @@ def _get_table_uid_to_types(
     elif len(content.children) > 0:
         for child in content.children:
             # Recursive call to children
-            nested_mapping = _get_table_uid_to_types(child)
+            nested_mapping = _get_table_uid_to_types_mapping(child)
             table_uid_to_types.update(nested_mapping)
     return table_uid_to_types
 
@@ -227,7 +227,7 @@ def build_table_grids(
     content = parsed_serialized_document.content_tree
 
     table_uid_to_cells_mapping = _get_table_uid_to_cells_mapping(content)
-    table_uid_to_type = _get_table_uid_to_types(content)
+    table_uid_to_type = _get_table_uid_to_types_mapping(content)
 
     table_cell_annotations = [
         annotation
