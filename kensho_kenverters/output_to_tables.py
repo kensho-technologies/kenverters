@@ -118,7 +118,7 @@ def _build_uids_grid_from_table_cell_annotations(
     duplicated_annotations = duplicate_spanning_annotations(
         annotations, duplicate_content_flag
     )
-    # If annotations are table structure, we map uids into grids
+
     index_to_uids_mapping = defaultdict(
         list,
         {
