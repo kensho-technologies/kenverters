@@ -9,7 +9,6 @@ from pydantic_core._pydantic_core import ValidationError as PydanticValidationEr
 
 from kensho_kenverters.extract_output_models import ExtractOutputModel
 
-
 logger = getLogger(__name__)
 
 

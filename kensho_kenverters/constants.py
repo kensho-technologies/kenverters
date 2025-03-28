@@ -4,7 +4,6 @@
 from enum import Enum
 from typing import TypeAlias
 
-
 CATEGORY_KEY = "category"
 TEXT_KEY = "text"
 TABLE_KEY = "table"
