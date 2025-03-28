@@ -124,7 +124,8 @@ def _build_grid_from_table_cell_annotations(
 
     rows: list[list[list[str]]] = []
     if table_type in (ContentCategory.TABLE.value, ContentCategory.TABLE_OF_CONTENTS.value):
-        # If annotations are table structure, we apply the duplicate spanning to normalize the annotations
+        # If annotations are table structure, we apply the duplicate spanning
+        # to normalize the annotations
         normalized_annotations = duplicate_spanning_annotations(annotations, duplicate_content_flag)
         # If annotations are table structure, we map uids into grids
         index_to_uids_mapping = defaultdict(
@@ -146,7 +147,8 @@ def _build_grid_from_table_cell_annotations(
                 "Data value of figure extracted table structure "
                 "annotations cannot be None."
             )
-        # If annotations are figure extracted table structure, we fill the grids with extracted values.
+        # If annotations are figure extracted table structure, we fill the grids
+        # with extracted values.
         n_rows, n_cols = get_table_shape(annotations)
         index_to_annotation_value_mapping = {}
         for annotation in annotations:
