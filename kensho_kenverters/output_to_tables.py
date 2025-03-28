@@ -112,12 +112,14 @@ def _build_grid_from_table_cell_annotations(
         for annotation in annotations
     ):
         raise ValueError(
-            "Table grid can only be built from table structure or figure extracted table structure annotations."
+            "Table grid can only be built from table structure or "
+            "figure extracted table structure annotations."
         )
 
     if len(set(annotation.type for annotation in annotations)) > 1:
         raise ValueError(
-            "Table structure and figure extracted table structure cannot appear in the same table."
+            "Table structure and figure extracted table structure "
+            "cannot appear in the same table."
         )
 
     rows: list[list[list[str]]] = []
@@ -141,7 +143,8 @@ def _build_grid_from_table_cell_annotations(
     elif table_type == ContentCategory.FIGURE_EXTRACTED_TABLE_CELL.value:
         if any(annotation.data.value is None for annotation in annotations):
             raise ValueError(
-                "Data value of figure extracted table structure annotations cannot be None."
+                "Data value of figure extracted table structure "
+                "annotations cannot be None."
             )
         # If annotations are figure extracted table structure, we fill the grids with extracted values.
         n_rows, n_cols = get_table_shape(annotations)

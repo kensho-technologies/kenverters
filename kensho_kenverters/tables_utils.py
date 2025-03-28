@@ -92,7 +92,8 @@ def get_table_shape(
         for annotation in table_structure_annotations
     ):
         raise ValueError(
-            "Table grid can only be built from table structure or figure extracted table annotations."
+            "Table grid can only be built from table structure "
+            "or figure extracted table annotations."
         )
     n_rows = (
         max(
