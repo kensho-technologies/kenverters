@@ -227,7 +227,7 @@ def build_table_grids(
     content = parsed_serialized_document.content_tree
 
     table_uid_to_cells_mapping = _get_table_uid_to_cells_mapping(content)
-    table_uid_to_type = _get_table_uid_to_types_mapping(content)
+    table_uid_to_type_mapping = _get_table_uid_to_types_mapping(content)
 
     table_cell_annotations = [
         annotation
@@ -244,7 +244,7 @@ def build_table_grids(
 
     tables = {}
     for table_uid, cell_annotations in table_uid_to_cell_annotations.items():
-        if table_uid_to_type[table_uid] in (
+        if table_uid_to_type_mapping[table_uid] in (
             ContentCategory.TABLE.value,
             ContentCategory.TABLE_OF_CONTENTS.value,
         ):
