@@ -25,7 +25,11 @@ def _create_empty_annotation(row: int, col: int) -> AnnotationModel:
 def _validate_annotations(
     duplicated_annotations: list[AnnotationModel], max_row: int, max_col: int
 ) -> list[AnnotationModel]:
-    """Validate duplicated annotations."""
+    """Validate duplicated annotations.
+
+    Fill with empty annotations if rows or columns are missing.
+    """
+
     # Check all spans are 1 (annotations are duplicated)
     all_spans = [annotation.data.span for annotation in duplicated_annotations]
     if any(span != (1, 1) for span in all_spans):
@@ -36,6 +40,7 @@ def _validate_annotations(
     if len(set(all_indices)) != len(all_indices):
         raise ValueError("Overlapping indices in table.")
 
+    # Add any missing cells
     for row in range(max_row + 1):
         for col in range(max_col + 1):
             if (row, col) not in all_indices:
