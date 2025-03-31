@@ -66,7 +66,7 @@ class TestTableExtraction(TestCase):
         }
         extract_pd_dfs_from_output(output_with_empty_table)
 
-    def test_build_table_grids(self) -> None:
+    def test_build_table_grids_table_structure(self) -> None:
         # Test with a spanning cell: Make sure it's duplicated
         content = {
             "uid": "0",
@@ -984,14 +984,1657 @@ class TestTableExtraction(TestCase):
         ]
 
         expected_tables = {
-            "6": [
-                ["Kensho Revenue in millions $", "Q1", "Q2", "Q3", "Q4"],
-                ["2020", "100,000", "200,000", "300,000", "400,000"],
-                ["2021", "101,001", "201,001", "301,001", "401,001"],
-                ["2022", "102,004", "202,004", "302,004", "402,004"],
-                ["2023", "103,009", "203,009", "303,009", "303,009"],
-            ]
+            "6": (
+                "TABLE",
+                [
+                    ["Kensho Revenue in millions $", "Q1", "Q2", "Q3", "Q4"],
+                    ["2020", "100,000", "200,000", "300,000", "400,000"],
+                    ["2021", "101,001", "201,001", "301,001", "401,001"],
+                    ["2022", "102,004", "202,004", "302,004", "402,004"],
+                    ["2023", "103,009", "203,009", "303,009", "303,009"],
+                ],
+            )
         }
+        tables = build_table_grids(
+            {"content_tree": content, "annotations": annotations}, True
+        )
+        self.assertEqual(expected_tables, tables)
+
+    def test_build_table_grids_figure_extracted_table_structure(self) -> None:
+        # Test with a spanning cell: Make sure it's duplicated
+        content = {
+            "children": [
+                {
+                    "children": [
+                        {
+                            "children": [],
+                            "content": "12",
+                            "locations": [
+                                {
+                                    "height": 0.01069,
+                                    "page_number": 0,
+                                    "width": 0.20342,
+                                    "x": 0.09526,
+                                    "y": 0.15867,
+                                }
+                            ],
+                            "type": "TEXT",
+                            "uid": "2",
+                        },
+                        {
+                            "children": [],
+                            "content": "12",
+                            "locations": [
+                                {
+                                    "height": 0.01069,
+                                    "page_number": 0,
+                                    "width": 0.19072,
+                                    "x": 0.19001,
+                                    "y": 0.17463,
+                                }
+                            ],
+                            "type": "TEXT",
+                            "uid": "3",
+                        },
+                        {
+                            "children": [],
+                            "content": "123",
+                            "locations": [
+                                {
+                                    "height": 0.00621,
+                                    "page_number": 0,
+                                    "width": 0.01772,
+                                    "x": 0.19305,
+                                    "y": 0.30414,
+                                }
+                            ],
+                            "type": "TEXT",
+                            "uid": "4",
+                        },
+                        {
+                            "children": [],
+                            "content": "HIJ",
+                            "locations": [
+                                {
+                                    "height": 0.01069,
+                                    "page_number": 0,
+                                    "width": 0.18484,
+                                    "x": 0.19294,
+                                    "y": 0.32121,
+                                }
+                            ],
+                            "type": "TEXT",
+                            "uid": "5",
+                        },
+                        {
+                            "children": [
+                                {
+                                    "children": [],
+                                    "content": "SDFII",
+                                    "locations": [
+                                        {
+                                            "height": 0.1181,
+                                            "page_number": 0,
+                                            "width": 0.33085,
+                                            "x": 0.11975,
+                                            "y": 0.34856,
+                                        }
+                                    ],
+                                    "type": "FIGURE_EXTRACTED_TABLE_CELL",
+                                    "uid": "7",
+                                },
+                                {
+                                    "children": [],
+                                    "content": "YIUIO",
+                                    "locations": [
+                                        {
+                                            "height": 0.1181,
+                                            "page_number": 0,
+                                            "width": 0.33085,
+                                            "x": 0.11975,
+                                            "y": 0.34856,
+                                        }
+                                    ],
+                                    "type": "FIGURE_EXTRACTED_TABLE_CELL",
+                                    "uid": "8",
+                                },
+                                {
+                                    "children": [],
+                                    "content": "789",
+                                    "locations": [
+                                        {
+                                            "height": 0.1181,
+                                            "page_number": 0,
+                                            "width": 0.33085,
+                                            "x": 0.11975,
+                                            "y": 0.34856,
+                                        }
+                                    ],
+                                    "type": "FIGURE_EXTRACTED_TABLE_CELL",
+                                    "uid": "9",
+                                },
+                                {
+                                    "children": [],
+                                    "content": "234",
+                                    "locations": [
+                                        {
+                                            "height": 0.1181,
+                                            "page_number": 0,
+                                            "width": 0.33085,
+                                            "x": 0.11975,
+                                            "y": 0.34856,
+                                        }
+                                    ],
+                                    "type": "FIGURE_EXTRACTED_TABLE_CELL",
+                                    "uid": "10",
+                                },
+                                {
+                                    "children": [],
+                                    "content": "123",
+                                    "locations": [
+                                        {
+                                            "height": 0.1181,
+                                            "page_number": 0,
+                                            "width": 0.33085,
+                                            "x": 0.11975,
+                                            "y": 0.34856,
+                                        }
+                                    ],
+                                    "type": "FIGURE_EXTRACTED_TABLE_CELL",
+                                    "uid": "11",
+                                },
+                                {
+                                    "children": [],
+                                    "content": "123",
+                                    "locations": [
+                                        {
+                                            "height": 0.1181,
+                                            "page_number": 0,
+                                            "width": 0.33085,
+                                            "x": 0.11975,
+                                            "y": 0.34856,
+                                        }
+                                    ],
+                                    "type": "FIGURE_EXTRACTED_TABLE_CELL",
+                                    "uid": "12",
+                                },
+                                {
+                                    "children": [],
+                                    "content": "12",
+                                    "locations": [
+                                        {
+                                            "height": 0.1181,
+                                            "page_number": 0,
+                                            "width": 0.33085,
+                                            "x": 0.11975,
+                                            "y": 0.34856,
+                                        }
+                                    ],
+                                    "type": "FIGURE_EXTRACTED_TABLE_CELL",
+                                    "uid": "13",
+                                },
+                                {
+                                    "children": [],
+                                    "content": "789",
+                                    "locations": [
+                                        {
+                                            "height": 0.1181,
+                                            "page_number": 0,
+                                            "width": 0.33085,
+                                            "x": 0.11975,
+                                            "y": 0.34856,
+                                        }
+                                    ],
+                                    "type": "FIGURE_EXTRACTED_TABLE_CELL",
+                                    "uid": "14",
+                                },
+                                {
+                                    "children": [],
+                                    "content": "123",
+                                    "locations": [
+                                        {
+                                            "height": 0.1181,
+                                            "page_number": 0,
+                                            "width": 0.33085,
+                                            "x": 0.11975,
+                                            "y": 0.34856,
+                                        }
+                                    ],
+                                    "type": "FIGURE_EXTRACTED_TABLE_CELL",
+                                    "uid": "15",
+                                },
+                                {
+                                    "children": [],
+                                    "content": "789",
+                                    "locations": [
+                                        {
+                                            "height": 0.1181,
+                                            "page_number": 0,
+                                            "width": 0.33085,
+                                            "x": 0.11975,
+                                            "y": 0.34856,
+                                        }
+                                    ],
+                                    "type": "FIGURE_EXTRACTED_TABLE_CELL",
+                                    "uid": "16",
+                                },
+                                {
+                                    "children": [],
+                                    "content": "123",
+                                    "locations": [
+                                        {
+                                            "height": 0.1181,
+                                            "page_number": 0,
+                                            "width": 0.33085,
+                                            "x": 0.11975,
+                                            "y": 0.34856,
+                                        }
+                                    ],
+                                    "type": "FIGURE_EXTRACTED_TABLE_CELL",
+                                    "uid": "17",
+                                },
+                                {
+                                    "children": [],
+                                    "content": "789",
+                                    "locations": [
+                                        {
+                                            "height": 0.1181,
+                                            "page_number": 0,
+                                            "width": 0.33085,
+                                            "x": 0.11975,
+                                            "y": 0.34856,
+                                        }
+                                    ],
+                                    "type": "FIGURE_EXTRACTED_TABLE_CELL",
+                                    "uid": "18",
+                                },
+                                {
+                                    "children": [],
+                                    "content": "789",
+                                    "locations": [
+                                        {
+                                            "height": 0.1181,
+                                            "page_number": 0,
+                                            "width": 0.33085,
+                                            "x": 0.11975,
+                                            "y": 0.34856,
+                                        }
+                                    ],
+                                    "type": "FIGURE_EXTRACTED_TABLE_CELL",
+                                    "uid": "19",
+                                },
+                                {
+                                    "children": [],
+                                    "content": "456",
+                                    "locations": [
+                                        {
+                                            "height": 0.1181,
+                                            "page_number": 0,
+                                            "width": 0.33085,
+                                            "x": 0.11975,
+                                            "y": 0.34856,
+                                        }
+                                    ],
+                                    "type": "FIGURE_EXTRACTED_TABLE_CELL",
+                                    "uid": "20",
+                                },
+                                {
+                                    "children": [],
+                                    "content": "123",
+                                    "locations": [
+                                        {
+                                            "height": 0.1181,
+                                            "page_number": 0,
+                                            "width": 0.33085,
+                                            "x": 0.11975,
+                                            "y": 0.34856,
+                                        }
+                                    ],
+                                    "type": "FIGURE_EXTRACTED_TABLE_CELL",
+                                    "uid": "21",
+                                },
+                                {
+                                    "children": [],
+                                    "content": "123",
+                                    "locations": [
+                                        {
+                                            "height": 0.1181,
+                                            "page_number": 0,
+                                            "width": 0.33085,
+                                            "x": 0.11975,
+                                            "y": 0.34856,
+                                        }
+                                    ],
+                                    "type": "FIGURE_EXTRACTED_TABLE_CELL",
+                                    "uid": "22",
+                                },
+                                {
+                                    "children": [],
+                                    "content": "123",
+                                    "locations": [
+                                        {
+                                            "height": 0.1181,
+                                            "page_number": 0,
+                                            "width": 0.33085,
+                                            "x": 0.11975,
+                                            "y": 0.34856,
+                                        }
+                                    ],
+                                    "type": "FIGURE_EXTRACTED_TABLE_CELL",
+                                    "uid": "23",
+                                },
+                                {
+                                    "children": [],
+                                    "content": "234",
+                                    "locations": [
+                                        {
+                                            "height": 0.1181,
+                                            "page_number": 0,
+                                            "width": 0.33085,
+                                            "x": 0.11975,
+                                            "y": 0.34856,
+                                        }
+                                    ],
+                                    "type": "FIGURE_EXTRACTED_TABLE_CELL",
+                                    "uid": "24",
+                                },
+                                {
+                                    "children": [],
+                                    "content": "345",
+                                    "locations": [
+                                        {
+                                            "height": 0.1181,
+                                            "page_number": 0,
+                                            "width": 0.33085,
+                                            "x": 0.11975,
+                                            "y": 0.34856,
+                                        }
+                                    ],
+                                    "type": "FIGURE_EXTRACTED_TABLE_CELL",
+                                    "uid": "25",
+                                },
+                                {
+                                    "children": [],
+                                    "content": "456",
+                                    "locations": [
+                                        {
+                                            "height": 0.1181,
+                                            "page_number": 0,
+                                            "width": 0.33085,
+                                            "x": 0.11975,
+                                            "y": 0.34856,
+                                        }
+                                    ],
+                                    "type": "FIGURE_EXTRACTED_TABLE_CELL",
+                                    "uid": "26",
+                                },
+                                {
+                                    "children": [],
+                                    "content": "789",
+                                    "locations": [
+                                        {
+                                            "height": 0.1181,
+                                            "page_number": 0,
+                                            "width": 0.33085,
+                                            "x": 0.11975,
+                                            "y": 0.34856,
+                                        }
+                                    ],
+                                    "type": "FIGURE_EXTRACTED_TABLE_CELL",
+                                    "uid": "27",
+                                },
+                            ],
+                            "content": None,
+                            "locations": [
+                                {
+                                    "height": 0.1181,
+                                    "page_number": 0,
+                                    "width": 0.33085,
+                                    "x": 0.11975,
+                                    "y": 0.34856,
+                                }
+                            ],
+                            "type": "FIGURE_EXTRACTED_TABLE",
+                            "uid": "6",
+                        },
+                        {
+                            "children": [],
+                            "content": "123",
+                            "locations": [
+                                {
+                                    "height": 0.1181,
+                                    "page_number": 0,
+                                    "width": 0.33086,
+                                    "x": 0.11975,
+                                    "y": 0.34856,
+                                }
+                            ],
+                            "type": "TEXT",
+                            "uid": "28",
+                        },
+                        {
+                            "children": [],
+                            "content": "SDFB",
+                            "locations": [
+                                {
+                                    "height": 0.01069,
+                                    "page_number": 0,
+                                    "width": 0.17143,
+                                    "x": 0.19969,
+                                    "y": 0.47834,
+                                }
+                            ],
+                            "type": "TEXT",
+                            "uid": "29",
+                        },
+                        {
+                            "children": [],
+                            "content": "123",
+                            "locations": [
+                                {
+                                    "height": 0.00671,
+                                    "page_number": 0,
+                                    "width": 0.03699,
+                                    "x": 0.1381,
+                                    "y": 0.50235,
+                                }
+                            ],
+                            "type": "TEXT",
+                            "uid": "30",
+                        },
+                        {
+                            "children": [],
+                            "content": "910",
+                            "locations": [
+                                {
+                                    "height": 0.00671,
+                                    "page_number": 0,
+                                    "width": 0.05705,
+                                    "x": 0.37761,
+                                    "y": 0.50235,
+                                }
+                            ],
+                            "type": "TEXT",
+                            "uid": "31",
+                        },
+                        {
+                            "children": [],
+                            "content": "SDFB",
+                            "locations": [
+                                {
+                                    "height": 0.00834,
+                                    "page_number": 0,
+                                    "width": 0.20781,
+                                    "x": 0.09526,
+                                    "y": 0.79686,
+                                }
+                            ],
+                            "type": "TEXT",
+                            "uid": "32",
+                        },
+                        {
+                            "children": [],
+                            "content": "456",
+                            "locations": [
+                                {
+                                    "height": 0.01069,
+                                    "page_number": 0,
+                                    "width": 0.14368,
+                                    "x": 0.61359,
+                                    "y": 0.17463,
+                                }
+                            ],
+                            "type": "FIGURE_TITLE",
+                            "uid": "33",
+                        },
+                        {
+                            "children": [],
+                            "content": "YNC",
+                            "locations": [
+                                {
+                                    "height": 0.01069,
+                                    "page_number": 0,
+                                    "width": 0.18489,
+                                    "x": 0.59302,
+                                    "y": 0.32121,
+                                }
+                            ],
+                            "type": "TEXT",
+                            "uid": "34",
+                        },
+                        {
+                            "children": [
+                                {
+                                    "children": [],
+                                    "content": "EFG",
+                                    "locations": [
+                                        {
+                                            "height": 0.12461,
+                                            "page_number": 0,
+                                            "width": 0.34248,
+                                            "x": 0.50986,
+                                            "y": 0.34171,
+                                        }
+                                    ],
+                                    "type": "FIGURE_EXTRACTED_TABLE_CELL",
+                                    "uid": "36",
+                                },
+                                {
+                                    "children": [],
+                                    "content": "ELP",
+                                    "locations": [
+                                        {
+                                            "height": 0.12461,
+                                            "page_number": 0,
+                                            "width": 0.34248,
+                                            "x": 0.50986,
+                                            "y": 0.34171,
+                                        }
+                                    ],
+                                    "type": "FIGURE_EXTRACTED_TABLE_CELL",
+                                    "uid": "37",
+                                },
+                                {
+                                    "children": [],
+                                    "content": "345",
+                                    "locations": [
+                                        {
+                                            "height": 0.12461,
+                                            "page_number": 0,
+                                            "width": 0.34248,
+                                            "x": 0.50986,
+                                            "y": 0.34171,
+                                        }
+                                    ],
+                                    "type": "FIGURE_EXTRACTED_TABLE_CELL",
+                                    "uid": "38",
+                                },
+                                {
+                                    "children": [],
+                                    "content": "12",
+                                    "locations": [
+                                        {
+                                            "height": 0.12461,
+                                            "page_number": 0,
+                                            "width": 0.34248,
+                                            "x": 0.50986,
+                                            "y": 0.34171,
+                                        }
+                                    ],
+                                    "type": "FIGURE_EXTRACTED_TABLE_CELL",
+                                    "uid": "39",
+                                },
+                                {
+                                    "children": [],
+                                    "content": "123",
+                                    "locations": [
+                                        {
+                                            "height": 0.12461,
+                                            "page_number": 0,
+                                            "width": 0.34248,
+                                            "x": 0.50986,
+                                            "y": 0.34171,
+                                        }
+                                    ],
+                                    "type": "FIGURE_EXTRACTED_TABLE_CELL",
+                                    "uid": "40",
+                                },
+                                {
+                                    "children": [],
+                                    "content": "345",
+                                    "locations": [
+                                        {
+                                            "height": 0.12461,
+                                            "page_number": 0,
+                                            "width": 0.34248,
+                                            "x": 0.50986,
+                                            "y": 0.34171,
+                                        }
+                                    ],
+                                    "type": "FIGURE_EXTRACTED_TABLE_CELL",
+                                    "uid": "41",
+                                },
+                                {
+                                    "children": [],
+                                    "content": "321",
+                                    "locations": [
+                                        {
+                                            "height": 0.12461,
+                                            "page_number": 0,
+                                            "width": 0.34248,
+                                            "x": 0.50986,
+                                            "y": 0.34171,
+                                        }
+                                    ],
+                                    "type": "FIGURE_EXTRACTED_TABLE_CELL",
+                                    "uid": "42",
+                                },
+                                {
+                                    "children": [],
+                                    "content": "123",
+                                    "locations": [
+                                        {
+                                            "height": 0.12461,
+                                            "page_number": 0,
+                                            "width": 0.34248,
+                                            "x": 0.50986,
+                                            "y": 0.34171,
+                                        }
+                                    ],
+                                    "type": "FIGURE_EXTRACTED_TABLE_CELL",
+                                    "uid": "43",
+                                },
+                                {
+                                    "children": [],
+                                    "content": "123",
+                                    "locations": [
+                                        {
+                                            "height": 0.12461,
+                                            "page_number": 0,
+                                            "width": 0.34248,
+                                            "x": 0.50986,
+                                            "y": 0.34171,
+                                        }
+                                    ],
+                                    "type": "FIGURE_EXTRACTED_TABLE_CELL",
+                                    "uid": "44",
+                                },
+                                {
+                                    "children": [],
+                                    "content": "345",
+                                    "locations": [
+                                        {
+                                            "height": 0.12461,
+                                            "page_number": 0,
+                                            "width": 0.34248,
+                                            "x": 0.50986,
+                                            "y": 0.34171,
+                                        }
+                                    ],
+                                    "type": "FIGURE_EXTRACTED_TABLE_CELL",
+                                    "uid": "45",
+                                },
+                                {
+                                    "children": [],
+                                    "content": "234",
+                                    "locations": [
+                                        {
+                                            "height": 0.12461,
+                                            "page_number": 0,
+                                            "width": 0.34248,
+                                            "x": 0.50986,
+                                            "y": 0.34171,
+                                        }
+                                    ],
+                                    "type": "FIGURE_EXTRACTED_TABLE_CELL",
+                                    "uid": "46",
+                                },
+                                {
+                                    "children": [],
+                                    "content": "123",
+                                    "locations": [
+                                        {
+                                            "height": 0.12461,
+                                            "page_number": 0,
+                                            "width": 0.34248,
+                                            "x": 0.50986,
+                                            "y": 0.34171,
+                                        }
+                                    ],
+                                    "type": "FIGURE_EXTRACTED_TABLE_CELL",
+                                    "uid": "47",
+                                },
+                                {
+                                    "children": [],
+                                    "content": "12",
+                                    "locations": [
+                                        {
+                                            "height": 0.12461,
+                                            "page_number": 0,
+                                            "width": 0.34248,
+                                            "x": 0.50986,
+                                            "y": 0.34171,
+                                        }
+                                    ],
+                                    "type": "FIGURE_EXTRACTED_TABLE_CELL",
+                                    "uid": "48",
+                                },
+                                {
+                                    "children": [],
+                                    "content": "789",
+                                    "locations": [
+                                        {
+                                            "height": 0.12461,
+                                            "page_number": 0,
+                                            "width": 0.34248,
+                                            "x": 0.50986,
+                                            "y": 0.34171,
+                                        }
+                                    ],
+                                    "type": "FIGURE_EXTRACTED_TABLE_CELL",
+                                    "uid": "49",
+                                },
+                                {
+                                    "children": [],
+                                    "content": "12",
+                                    "locations": [
+                                        {
+                                            "height": 0.12461,
+                                            "page_number": 0,
+                                            "width": 0.34248,
+                                            "x": 0.50986,
+                                            "y": 0.34171,
+                                        }
+                                    ],
+                                    "type": "FIGURE_EXTRACTED_TABLE_CELL",
+                                    "uid": "50",
+                                },
+                                {
+                                    "children": [],
+                                    "content": "123",
+                                    "locations": [
+                                        {
+                                            "height": 0.12461,
+                                            "page_number": 0,
+                                            "width": 0.34248,
+                                            "x": 0.50986,
+                                            "y": 0.34171,
+                                        }
+                                    ],
+                                    "type": "FIGURE_EXTRACTED_TABLE_CELL",
+                                    "uid": "51",
+                                },
+                                {
+                                    "children": [],
+                                    "content": "789",
+                                    "locations": [
+                                        {
+                                            "height": 0.12461,
+                                            "page_number": 0,
+                                            "width": 0.34248,
+                                            "x": 0.50986,
+                                            "y": 0.34171,
+                                        }
+                                    ],
+                                    "type": "FIGURE_EXTRACTED_TABLE_CELL",
+                                    "uid": "52",
+                                },
+                                {
+                                    "children": [],
+                                    "content": "910",
+                                    "locations": [
+                                        {
+                                            "height": 0.12461,
+                                            "page_number": 0,
+                                            "width": 0.34248,
+                                            "x": 0.50986,
+                                            "y": 0.34171,
+                                        }
+                                    ],
+                                    "type": "FIGURE_EXTRACTED_TABLE_CELL",
+                                    "uid": "53",
+                                },
+                                {
+                                    "children": [],
+                                    "content": "12",
+                                    "locations": [
+                                        {
+                                            "height": 0.12461,
+                                            "page_number": 0,
+                                            "width": 0.34248,
+                                            "x": 0.50986,
+                                            "y": 0.34171,
+                                        }
+                                    ],
+                                    "type": "FIGURE_EXTRACTED_TABLE_CELL",
+                                    "uid": "54",
+                                },
+                                {
+                                    "children": [],
+                                    "content": "456",
+                                    "locations": [
+                                        {
+                                            "height": 0.12461,
+                                            "page_number": 0,
+                                            "width": 0.34248,
+                                            "x": 0.50986,
+                                            "y": 0.34171,
+                                        }
+                                    ],
+                                    "type": "FIGURE_EXTRACTED_TABLE_CELL",
+                                    "uid": "55",
+                                },
+                                {
+                                    "children": [],
+                                    "content": "321",
+                                    "locations": [
+                                        {
+                                            "height": 0.12461,
+                                            "page_number": 0,
+                                            "width": 0.34248,
+                                            "x": 0.50986,
+                                            "y": 0.34171,
+                                        }
+                                    ],
+                                    "type": "FIGURE_EXTRACTED_TABLE_CELL",
+                                    "uid": "56",
+                                },
+                                {
+                                    "children": [],
+                                    "content": "910",
+                                    "locations": [
+                                        {
+                                            "height": 0.12461,
+                                            "page_number": 0,
+                                            "width": 0.34248,
+                                            "x": 0.50986,
+                                            "y": 0.34171,
+                                        }
+                                    ],
+                                    "type": "FIGURE_EXTRACTED_TABLE_CELL",
+                                    "uid": "57",
+                                },
+                                {
+                                    "children": [],
+                                    "content": "345",
+                                    "locations": [
+                                        {
+                                            "height": 0.12461,
+                                            "page_number": 0,
+                                            "width": 0.34248,
+                                            "x": 0.50986,
+                                            "y": 0.34171,
+                                        }
+                                    ],
+                                    "type": "FIGURE_EXTRACTED_TABLE_CELL",
+                                    "uid": "58",
+                                },
+                                {
+                                    "children": [],
+                                    "content": "234",
+                                    "locations": [
+                                        {
+                                            "height": 0.12461,
+                                            "page_number": 0,
+                                            "width": 0.34248,
+                                            "x": 0.50986,
+                                            "y": 0.34171,
+                                        }
+                                    ],
+                                    "type": "FIGURE_EXTRACTED_TABLE_CELL",
+                                    "uid": "59",
+                                },
+                            ],
+                            "content": None,
+                            "locations": [
+                                {
+                                    "height": 0.12461,
+                                    "page_number": 0,
+                                    "width": 0.34248,
+                                    "x": 0.50986,
+                                    "y": 0.34171,
+                                }
+                            ],
+                            "type": "FIGURE_EXTRACTED_TABLE",
+                            "uid": "35",
+                        },
+                        {
+                            "children": [],
+                            "content": "789",
+                            "locations": [
+                                {
+                                    "height": 0.12461,
+                                    "page_number": 0,
+                                    "width": 0.34248,
+                                    "x": 0.50986,
+                                    "y": 0.34171,
+                                }
+                            ],
+                            "type": "TEXT",
+                            "uid": "60",
+                        },
+                        {
+                            "children": [],
+                            "content": "FJD",
+                            "locations": [
+                                {
+                                    "height": 0.01069,
+                                    "page_number": 0,
+                                    "width": 0.12609,
+                                    "x": 0.62236,
+                                    "y": 0.47834,
+                                }
+                            ],
+                            "type": "TEXT",
+                            "uid": "61",
+                        },
+                        {
+                            "children": [],
+                            "content": "234",
+                            "locations": [
+                                {
+                                    "height": 0.00672,
+                                    "page_number": 0,
+                                    "width": 0.07239,
+                                    "x": 0.53809,
+                                    "y": 0.50228,
+                                }
+                            ],
+                            "type": "TEXT",
+                            "uid": "62",
+                        },
+                        {
+                            "children": [],
+                            "content": "456",
+                            "locations": [
+                                {
+                                    "height": 0.00672,
+                                    "page_number": 0,
+                                    "width": 0.03711,
+                                    "x": 0.79764,
+                                    "y": 0.50228,
+                                }
+                            ],
+                            "type": "TEXT",
+                            "uid": "63",
+                        },
+                        {
+                            "children": [],
+                            "content": "321",
+                            "locations": [
+                                {
+                                    "height": 0.01221,
+                                    "page_number": 0,
+                                    "width": 0.83324,
+                                    "x": 0.09526,
+                                    "y": 0.96147,
+                                }
+                            ],
+                            "type": "PAGE_FOOTER",
+                            "uid": "64",
+                        },
+                    ],
+                    "content": "SDFL",
+                    "locations": [
+                        {
+                            "height": 0.01903,
+                            "page_number": 0,
+                            "width": 0.37017,
+                            "x": 0.28578,
+                            "y": 0.10378,
+                        }
+                    ],
+                    "type": "H1",
+                    "uid": "1",
+                }
+            ],
+            "content": None,
+            "locations": None,
+            "type": "DOCUMENT",
+            "uid": "0",
+        }
+
+        annotations = [
+            {
+                "content_uids": ["7"],
+                "data": {"index": [0, 0], "span": [1, 1], "value": "SDFII"},
+                "locations": [
+                    {
+                        "height": 0.1181,
+                        "page_number": 0,
+                        "width": 0.33085,
+                        "x": 0.11975,
+                        "y": 0.34856,
+                    }
+                ],
+                "type": "figure_extracted_table_structure",
+            },
+            {
+                "content_uids": ["8"],
+                "data": {"index": [0, 1], "span": [1, 1], "value": "YIUIO"},
+                "locations": [
+                    {
+                        "height": 0.1181,
+                        "page_number": 0,
+                        "width": 0.33085,
+                        "x": 0.11975,
+                        "y": 0.34856,
+                    }
+                ],
+                "type": "figure_extracted_table_structure",
+            },
+            {
+                "content_uids": ["9"],
+                "data": {"index": [0, 2], "span": [1, 1], "value": "789"},
+                "locations": [
+                    {
+                        "height": 0.1181,
+                        "page_number": 0,
+                        "width": 0.33085,
+                        "x": 0.11975,
+                        "y": 0.34856,
+                    }
+                ],
+                "type": "figure_extracted_table_structure",
+            },
+            {
+                "content_uids": ["10"],
+                "data": {"index": [1, 0], "span": [1, 1], "value": "234"},
+                "locations": [
+                    {
+                        "height": 0.1181,
+                        "page_number": 0,
+                        "width": 0.33085,
+                        "x": 0.11975,
+                        "y": 0.34856,
+                    }
+                ],
+                "type": "figure_extracted_table_structure",
+            },
+            {
+                "content_uids": ["11"],
+                "data": {"index": [1, 1], "span": [1, 1], "value": "123"},
+                "locations": [
+                    {
+                        "height": 0.1181,
+                        "page_number": 0,
+                        "width": 0.33085,
+                        "x": 0.11975,
+                        "y": 0.34856,
+                    }
+                ],
+                "type": "figure_extracted_table_structure",
+            },
+            {
+                "content_uids": ["12"],
+                "data": {"index": [1, 2], "span": [1, 1], "value": "123"},
+                "locations": [
+                    {
+                        "height": 0.1181,
+                        "page_number": 0,
+                        "width": 0.33085,
+                        "x": 0.11975,
+                        "y": 0.34856,
+                    }
+                ],
+                "type": "figure_extracted_table_structure",
+            },
+            {
+                "content_uids": ["13"],
+                "data": {"index": [2, 0], "span": [1, 1], "value": "12"},
+                "locations": [
+                    {
+                        "height": 0.1181,
+                        "page_number": 0,
+                        "width": 0.33085,
+                        "x": 0.11975,
+                        "y": 0.34856,
+                    }
+                ],
+                "type": "figure_extracted_table_structure",
+            },
+            {
+                "content_uids": ["14"],
+                "data": {"index": [2, 1], "span": [1, 1], "value": "789"},
+                "locations": [
+                    {
+                        "height": 0.1181,
+                        "page_number": 0,
+                        "width": 0.33085,
+                        "x": 0.11975,
+                        "y": 0.34856,
+                    }
+                ],
+                "type": "figure_extracted_table_structure",
+            },
+            {
+                "content_uids": ["15"],
+                "data": {"index": [2, 2], "span": [1, 1], "value": "123"},
+                "locations": [
+                    {
+                        "height": 0.1181,
+                        "page_number": 0,
+                        "width": 0.33085,
+                        "x": 0.11975,
+                        "y": 0.34856,
+                    }
+                ],
+                "type": "figure_extracted_table_structure",
+            },
+            {
+                "content_uids": ["16"],
+                "data": {"index": [3, 0], "span": [1, 1], "value": "789"},
+                "locations": [
+                    {
+                        "height": 0.1181,
+                        "page_number": 0,
+                        "width": 0.33085,
+                        "x": 0.11975,
+                        "y": 0.34856,
+                    }
+                ],
+                "type": "figure_extracted_table_structure",
+            },
+            {
+                "content_uids": ["17"],
+                "data": {"index": [3, 1], "span": [1, 1], "value": "123"},
+                "locations": [
+                    {
+                        "height": 0.1181,
+                        "page_number": 0,
+                        "width": 0.33085,
+                        "x": 0.11975,
+                        "y": 0.34856,
+                    }
+                ],
+                "type": "figure_extracted_table_structure",
+            },
+            {
+                "content_uids": ["18"],
+                "data": {"index": [3, 2], "span": [1, 1], "value": "789"},
+                "locations": [
+                    {
+                        "height": 0.1181,
+                        "page_number": 0,
+                        "width": 0.33085,
+                        "x": 0.11975,
+                        "y": 0.34856,
+                    }
+                ],
+                "type": "figure_extracted_table_structure",
+            },
+            {
+                "content_uids": ["19"],
+                "data": {"index": [4, 0], "span": [1, 1], "value": "789"},
+                "locations": [
+                    {
+                        "height": 0.1181,
+                        "page_number": 0,
+                        "width": 0.33085,
+                        "x": 0.11975,
+                        "y": 0.34856,
+                    }
+                ],
+                "type": "figure_extracted_table_structure",
+            },
+            {
+                "content_uids": ["20"],
+                "data": {"index": [4, 1], "span": [1, 1], "value": "456"},
+                "locations": [
+                    {
+                        "height": 0.1181,
+                        "page_number": 0,
+                        "width": 0.33085,
+                        "x": 0.11975,
+                        "y": 0.34856,
+                    }
+                ],
+                "type": "figure_extracted_table_structure",
+            },
+            {
+                "content_uids": ["21"],
+                "data": {"index": [4, 2], "span": [1, 1], "value": "123"},
+                "locations": [
+                    {
+                        "height": 0.1181,
+                        "page_number": 0,
+                        "width": 0.33085,
+                        "x": 0.11975,
+                        "y": 0.34856,
+                    }
+                ],
+                "type": "figure_extracted_table_structure",
+            },
+            {
+                "content_uids": ["22"],
+                "data": {"index": [5, 0], "span": [1, 1], "value": "123"},
+                "locations": [
+                    {
+                        "height": 0.1181,
+                        "page_number": 0,
+                        "width": 0.33085,
+                        "x": 0.11975,
+                        "y": 0.34856,
+                    }
+                ],
+                "type": "figure_extracted_table_structure",
+            },
+            {
+                "content_uids": ["23"],
+                "data": {"index": [5, 1], "span": [1, 1], "value": "123"},
+                "locations": [
+                    {
+                        "height": 0.1181,
+                        "page_number": 0,
+                        "width": 0.33085,
+                        "x": 0.11975,
+                        "y": 0.34856,
+                    }
+                ],
+                "type": "figure_extracted_table_structure",
+            },
+            {
+                "content_uids": ["24"],
+                "data": {"index": [5, 2], "span": [1, 1], "value": "234"},
+                "locations": [
+                    {
+                        "height": 0.1181,
+                        "page_number": 0,
+                        "width": 0.33085,
+                        "x": 0.11975,
+                        "y": 0.34856,
+                    }
+                ],
+                "type": "figure_extracted_table_structure",
+            },
+            {
+                "content_uids": ["25"],
+                "data": {"index": [6, 0], "span": [1, 1], "value": "345"},
+                "locations": [
+                    {
+                        "height": 0.1181,
+                        "page_number": 0,
+                        "width": 0.33085,
+                        "x": 0.11975,
+                        "y": 0.34856,
+                    }
+                ],
+                "type": "figure_extracted_table_structure",
+            },
+            {
+                "content_uids": ["26"],
+                "data": {"index": [6, 1], "span": [1, 1], "value": "456"},
+                "locations": [
+                    {
+                        "height": 0.1181,
+                        "page_number": 0,
+                        "width": 0.33085,
+                        "x": 0.11975,
+                        "y": 0.34856,
+                    }
+                ],
+                "type": "figure_extracted_table_structure",
+            },
+            {
+                "content_uids": ["27"],
+                "data": {"index": [6, 2], "span": [1, 1], "value": "789"},
+                "locations": [
+                    {
+                        "height": 0.1181,
+                        "page_number": 0,
+                        "width": 0.33085,
+                        "x": 0.11975,
+                        "y": 0.34856,
+                    }
+                ],
+                "type": "figure_extracted_table_structure",
+            },
+            {
+                "content_uids": ["36"],
+                "data": {"index": [0, 0], "span": [1, 1], "value": "EFG"},
+                "locations": [
+                    {
+                        "height": 0.12461,
+                        "page_number": 0,
+                        "width": 0.34248,
+                        "x": 0.50986,
+                        "y": 0.34171,
+                    }
+                ],
+                "type": "figure_extracted_table_structure",
+            },
+            {
+                "content_uids": ["37"],
+                "data": {"index": [0, 1], "span": [1, 1], "value": "ELP"},
+                "locations": [
+                    {
+                        "height": 0.12461,
+                        "page_number": 0,
+                        "width": 0.34248,
+                        "x": 0.50986,
+                        "y": 0.34171,
+                    }
+                ],
+                "type": "figure_extracted_table_structure",
+            },
+            {
+                "content_uids": ["38"],
+                "data": {"index": [0, 2], "span": [1, 1], "value": "345"},
+                "locations": [
+                    {
+                        "height": 0.12461,
+                        "page_number": 0,
+                        "width": 0.34248,
+                        "x": 0.50986,
+                        "y": 0.34171,
+                    }
+                ],
+                "type": "figure_extracted_table_structure",
+            },
+            {
+                "content_uids": ["39"],
+                "data": {"index": [1, 0], "span": [1, 1], "value": "12"},
+                "locations": [
+                    {
+                        "height": 0.12461,
+                        "page_number": 0,
+                        "width": 0.34248,
+                        "x": 0.50986,
+                        "y": 0.34171,
+                    }
+                ],
+                "type": "figure_extracted_table_structure",
+            },
+            {
+                "content_uids": ["40"],
+                "data": {"index": [1, 1], "span": [1, 1], "value": "123"},
+                "locations": [
+                    {
+                        "height": 0.12461,
+                        "page_number": 0,
+                        "width": 0.34248,
+                        "x": 0.50986,
+                        "y": 0.34171,
+                    }
+                ],
+                "type": "figure_extracted_table_structure",
+            },
+            {
+                "content_uids": ["41"],
+                "data": {"index": [1, 2], "span": [1, 1], "value": "345"},
+                "locations": [
+                    {
+                        "height": 0.12461,
+                        "page_number": 0,
+                        "width": 0.34248,
+                        "x": 0.50986,
+                        "y": 0.34171,
+                    }
+                ],
+                "type": "figure_extracted_table_structure",
+            },
+            {
+                "content_uids": ["42"],
+                "data": {"index": [2, 0], "span": [1, 1], "value": "321"},
+                "locations": [
+                    {
+                        "height": 0.12461,
+                        "page_number": 0,
+                        "width": 0.34248,
+                        "x": 0.50986,
+                        "y": 0.34171,
+                    }
+                ],
+                "type": "figure_extracted_table_structure",
+            },
+            {
+                "content_uids": ["43"],
+                "data": {"index": [2, 1], "span": [1, 1], "value": "123"},
+                "locations": [
+                    {
+                        "height": 0.12461,
+                        "page_number": 0,
+                        "width": 0.34248,
+                        "x": 0.50986,
+                        "y": 0.34171,
+                    }
+                ],
+                "type": "figure_extracted_table_structure",
+            },
+            {
+                "content_uids": ["44"],
+                "data": {"index": [2, 2], "span": [1, 1], "value": "123"},
+                "locations": [
+                    {
+                        "height": 0.12461,
+                        "page_number": 0,
+                        "width": 0.34248,
+                        "x": 0.50986,
+                        "y": 0.34171,
+                    }
+                ],
+                "type": "figure_extracted_table_structure",
+            },
+            {
+                "content_uids": ["45"],
+                "data": {"index": [3, 0], "span": [1, 1], "value": "345"},
+                "locations": [
+                    {
+                        "height": 0.12461,
+                        "page_number": 0,
+                        "width": 0.34248,
+                        "x": 0.50986,
+                        "y": 0.34171,
+                    }
+                ],
+                "type": "figure_extracted_table_structure",
+            },
+            {
+                "content_uids": ["46"],
+                "data": {"index": [3, 1], "span": [1, 1], "value": "234"},
+                "locations": [
+                    {
+                        "height": 0.12461,
+                        "page_number": 0,
+                        "width": 0.34248,
+                        "x": 0.50986,
+                        "y": 0.34171,
+                    }
+                ],
+                "type": "figure_extracted_table_structure",
+            },
+            {
+                "content_uids": ["47"],
+                "data": {"index": [3, 2], "span": [1, 1], "value": "123"},
+                "locations": [
+                    {
+                        "height": 0.12461,
+                        "page_number": 0,
+                        "width": 0.34248,
+                        "x": 0.50986,
+                        "y": 0.34171,
+                    }
+                ],
+                "type": "figure_extracted_table_structure",
+            },
+            {
+                "content_uids": ["48"],
+                "data": {"index": [4, 0], "span": [1, 1], "value": "12"},
+                "locations": [
+                    {
+                        "height": 0.12461,
+                        "page_number": 0,
+                        "width": 0.34248,
+                        "x": 0.50986,
+                        "y": 0.34171,
+                    }
+                ],
+                "type": "figure_extracted_table_structure",
+            },
+            {
+                "content_uids": ["49"],
+                "data": {"index": [4, 1], "span": [1, 1], "value": "789"},
+                "locations": [
+                    {
+                        "height": 0.12461,
+                        "page_number": 0,
+                        "width": 0.34248,
+                        "x": 0.50986,
+                        "y": 0.34171,
+                    }
+                ],
+                "type": "figure_extracted_table_structure",
+            },
+            {
+                "content_uids": ["50"],
+                "data": {"index": [4, 2], "span": [1, 1], "value": "12"},
+                "locations": [
+                    {
+                        "height": 0.12461,
+                        "page_number": 0,
+                        "width": 0.34248,
+                        "x": 0.50986,
+                        "y": 0.34171,
+                    }
+                ],
+                "type": "figure_extracted_table_structure",
+            },
+            {
+                "content_uids": ["51"],
+                "data": {"index": [5, 0], "span": [1, 1], "value": "123"},
+                "locations": [
+                    {
+                        "height": 0.12461,
+                        "page_number": 0,
+                        "width": 0.34248,
+                        "x": 0.50986,
+                        "y": 0.34171,
+                    }
+                ],
+                "type": "figure_extracted_table_structure",
+            },
+            {
+                "content_uids": ["52"],
+                "data": {"index": [5, 1], "span": [1, 1], "value": "789"},
+                "locations": [
+                    {
+                        "height": 0.12461,
+                        "page_number": 0,
+                        "width": 0.34248,
+                        "x": 0.50986,
+                        "y": 0.34171,
+                    }
+                ],
+                "type": "figure_extracted_table_structure",
+            },
+            {
+                "content_uids": ["53"],
+                "data": {"index": [5, 2], "span": [1, 1], "value": "910"},
+                "locations": [
+                    {
+                        "height": 0.12461,
+                        "page_number": 0,
+                        "width": 0.34248,
+                        "x": 0.50986,
+                        "y": 0.34171,
+                    }
+                ],
+                "type": "figure_extracted_table_structure",
+            },
+            {
+                "content_uids": ["54"],
+                "data": {"index": [6, 0], "span": [1, 1], "value": "12"},
+                "locations": [
+                    {
+                        "height": 0.12461,
+                        "page_number": 0,
+                        "width": 0.34248,
+                        "x": 0.50986,
+                        "y": 0.34171,
+                    }
+                ],
+                "type": "figure_extracted_table_structure",
+            },
+            {
+                "content_uids": ["55"],
+                "data": {"index": [6, 1], "span": [1, 1], "value": "456"},
+                "locations": [
+                    {
+                        "height": 0.12461,
+                        "page_number": 0,
+                        "width": 0.34248,
+                        "x": 0.50986,
+                        "y": 0.34171,
+                    }
+                ],
+                "type": "figure_extracted_table_structure",
+            },
+            {
+                "content_uids": ["56"],
+                "data": {"index": [6, 2], "span": [1, 1], "value": "321"},
+                "locations": [
+                    {
+                        "height": 0.12461,
+                        "page_number": 0,
+                        "width": 0.34248,
+                        "x": 0.50986,
+                        "y": 0.34171,
+                    }
+                ],
+                "type": "figure_extracted_table_structure",
+            },
+            {
+                "content_uids": ["57"],
+                "data": {"index": [7, 0], "span": [1, 1], "value": "910"},
+                "locations": [
+                    {
+                        "height": 0.12461,
+                        "page_number": 0,
+                        "width": 0.34248,
+                        "x": 0.50986,
+                        "y": 0.34171,
+                    }
+                ],
+                "type": "figure_extracted_table_structure",
+            },
+            {
+                "content_uids": ["58"],
+                "data": {"index": [7, 1], "span": [1, 1], "value": "345"},
+                "locations": [
+                    {
+                        "height": 0.12461,
+                        "page_number": 0,
+                        "width": 0.34248,
+                        "x": 0.50986,
+                        "y": 0.34171,
+                    }
+                ],
+                "type": "figure_extracted_table_structure",
+            },
+            {
+                "content_uids": ["59"],
+                "data": {"index": [7, 2], "span": [1, 1], "value": "234"},
+                "locations": [
+                    {
+                        "height": 0.12461,
+                        "page_number": 0,
+                        "width": 0.34248,
+                        "x": 0.50986,
+                        "y": 0.34171,
+                    }
+                ],
+                "type": "figure_extracted_table_structure",
+            },
+        ]
+
+        expected_tables = {
+            "6": (
+                "FIGURE_EXTRACTED_TABLE",
+                [
+                    ["SDFII", "YIUIO", "789"],
+                    ["234", "123", "123"],
+                    ["12", "789", "123"],
+                    ["789", "123", "789"],
+                    ["789", "456", "123"],
+                    ["123", "123", "234"],
+                    ["345", "456", "789"],
+                ],
+            ),
+            "35": (
+                "FIGURE_EXTRACTED_TABLE",
+                [
+                    ["EFG", "ELP", "345"],
+                    ["12", "123", "345"],
+                    ["321", "123", "123"],
+                    ["345", "234", "123"],
+                    ["12", "789", "12"],
+                    ["123", "789", "910"],
+                    ["12", "456", "321"],
+                    ["910", "345", "234"],
+                ],
+            ),
+        }
+
         tables = build_table_grids(
             {"content_tree": content, "annotations": annotations}, True
         )
