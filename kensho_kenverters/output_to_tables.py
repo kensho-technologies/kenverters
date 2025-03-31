@@ -1,6 +1,7 @@
 # Copyright 2024-present Kensho Technologies, LLC.
 """Functions to extract the tables in the output and turn them into pandas DataFrames."""
 
+import typing
 from collections import defaultdict
 from typing import Any, Sequence
 
@@ -17,6 +18,7 @@ from kensho_kenverters.extract_output_models import (
     LocationModel,
     LocationType,
     Table,
+    TableCategoryType,
 )
 from kensho_kenverters.tables_utils import (
     convert_table_to_pd_df,
@@ -53,12 +55,12 @@ def _get_table_uid_to_cells_mapping(
 
 def _get_table_uid_to_types_mapping(
     content: ContentModel,
-) -> dict[str, str]:
+) -> dict[str, TableCategoryType]:
     """Recursively get table uids to table types mapping."""
-    table_uid_to_types: dict[str, str] = {}
+    table_uid_to_types: dict[str, TableCategoryType] = {}
     if content.type in TABLE_CONTENT_CATEGORIES:
         # Termination condition 1
-        table_uid_to_types[content.uid] = content.type
+        table_uid_to_types[content.uid] = typing.cast(TableCategoryType, content.type)
     elif len(content.children) > 0:
         for child in content.children:
             # Recursive call to children
@@ -204,7 +206,7 @@ def _convert_uid_grid_to_content_grid(
 def build_table_grids(
     serialized_document: dict[str, Any],
     duplicate_merged_cells_content_flag: bool = True,
-) -> dict[str, tuple[str, list[list[str]]]]:
+) -> dict[str, tuple[TableCategoryType, list[list[str]]]]:
     """Convert serialized tables to a table type and a 2D grid of strings.
 
     Args:
@@ -369,7 +371,7 @@ def extract_pd_dfs_with_locs_from_output(
             tables.append(
                 Table(
                     df=table_df,
-                    type=table_type_and_grid[0],
+                    table_type=table_type_and_grid[0],
                     locations=table_uid_to_locs_mapping[table_uid],
                 )
             )

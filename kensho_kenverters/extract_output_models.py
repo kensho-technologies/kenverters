@@ -1,7 +1,7 @@
 # Copyright 2024-present Kensho Technologies, LLC.
 """Pydantic models for the output JSON."""
 
-from typing import NamedTuple, TypeAlias
+from typing import Literal, NamedTuple, TypeAlias
 
 import pandas as pd
 from pydantic import BaseModel  # pylint: disable=no-name-in-module
@@ -9,13 +9,18 @@ from pydantic import BaseModel  # pylint: disable=no-name-in-module
 # Location types are either dictionaries of bbox coordinates and page numbers
 # or None if locations are not returned in the Extract output.
 LocationType: TypeAlias = dict[str, float | int] | None
+TableCategoryType: TypeAlias = Literal[
+    "TABLE",
+    "TABLE_OF_CONTENTS",
+    "FIGURE_EXTRACTED_TABLE",
+]
 
 
 class Table(NamedTuple):
     """Converted table types consisting of the table as a pandas DataFrame and its location(s)."""
 
     df: pd.DataFrame
-    type: str
+    table_type: TableCategoryType
     locations: list[LocationType] | None = None
 
 
