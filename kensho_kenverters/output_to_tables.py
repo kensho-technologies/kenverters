@@ -204,8 +204,8 @@ def _convert_uid_grid_to_content_grid(
 def build_table_grids(
     serialized_document: dict[str, Any],
     duplicate_merged_cells_content_flag: bool = True,
-) -> dict[str, list[list[str]]]:
-    """Convert serialized tables to a 2D grid of strings.
+) -> dict[str, tuple[str, list[list[str]]]]:
+    """Convert serialized tables to a table type and a 2D grid of strings.
 
     Args:
         serialized_document: a serialized document
@@ -214,12 +214,12 @@ def build_table_grids(
             empty.
 
     Returns:
-        a mapping of table UIDs to table grid structures
+        a mapping of table UIDs to the tuple of table type and table grid structures
 
     Example Output:
         {
-            '1': [['header1', 'header2'], ['row1_val', 'row2_val']],
-            '2': [['another_header1'], ['another_row1_val']]
+            '1': ("TABLE",[['header1', 'header2'], ['row1_val', 'row2_val']]),
+            '2': ("FIGURE_EXTRACTED_TABLE",[['another_header1'], ['another_row1_val']])
         }
     """
     parsed_serialized_document = load_output_to_pydantic(serialized_document)
@@ -254,14 +254,14 @@ def build_table_grids(
             )
             cell_contents = table_uid_to_cells_mapping[table_uid]
             content_grid = _convert_uid_grid_to_content_grid(uids_grid, cell_contents)
-            tables[table_uid] = content_grid
+            tables[table_uid] = (table_uid_to_type_mapping[table_uid], content_grid)
         else:
             content_grid = (
                 _build_content_grid_from_figure_extracted_table_cell_annotations(
-                    annotations
+                    cell_annotations
                 )
             )
-            tables[table_uid] = content_grid
+            tables[table_uid] = (table_uid_to_type_mapping[table_uid], content_grid)
     return tables
 
 
@@ -269,6 +269,7 @@ def extract_pd_dfs_from_output(
     serialized_document: dict[str, Any],
     duplicate_merged_cells_content_flag: bool = True,
     use_first_row_as_header: bool = True,
+    include_figure_extracted_table: bool = False,
 ) -> list[pd.DataFrame]:
     """Extract Extract output's tables and convert them to a list of pandas DataFrames.
 
@@ -290,15 +291,22 @@ def extract_pd_dfs_from_output(
         2                         2022  102,004  202,004  302,004  402,004
         3                         2023  103,009  203,009  303,009  403,009]
     """
-    table_grids = build_table_grids(
+    table_types_and_grids = build_table_grids(
         serialized_document, duplicate_merged_cells_content_flag
     )
     table_dfs = []
-    for table_grid in table_grids.values():
-        table_df = convert_table_to_pd_df(
-            table_grid, use_first_row_as_header=use_first_row_as_header
-        )
-        table_dfs.append(table_df)
+    for table_type_and_grid in table_types_and_grids.values():
+        if table_type_and_grid[0] in (
+            ContentCategory.TABLE.value,
+            ContentCategory.TABLE_OF_CONTENTS.value,
+        ) or (
+            include_figure_extracted_table
+            and table_type_and_grid[0] == ContentCategory.FIGURE_EXTRACTED_TABLE.value
+        ):
+            table_df = convert_table_to_pd_df(
+                table_type_and_grid[1], use_first_row_as_header=use_first_row_as_header
+            )
+            table_dfs.append(table_df)
 
     return table_dfs
 
@@ -307,6 +315,7 @@ def extract_pd_dfs_with_locs_from_output(
     serialized_document: dict[str, Any],
     duplicate_merged_cells_content_flag: bool = True,
     use_first_row_as_header: bool = True,
+    include_figure_extracted_table: bool = False,
 ) -> list[Table]:
     """Extract tables from output and convert them to a list of pd DataFrames and table locations.
 
@@ -334,7 +343,7 @@ def extract_pd_dfs_with_locs_from_output(
         )]
     """
     # Get dfs
-    table_grids = build_table_grids(
+    table_types_and_grids = build_table_grids(
         serialized_document, duplicate_merged_cells_content_flag
     )
 
@@ -346,11 +355,22 @@ def extract_pd_dfs_with_locs_from_output(
 
     # Match dfs and locations
     tables: list[Table] = []
-    for table_uid, table_grid in table_grids.items():
-        table_df = convert_table_to_pd_df(
-            table_grid, use_first_row_as_header=use_first_row_as_header
-        )
-        tables.append(
-            Table(df=table_df, locations=table_uid_to_locs_mapping[table_uid])
-        )
+    for table_uid, table_type_and_grid in table_types_and_grids.items():
+        if table_type_and_grid[0] in (
+            ContentCategory.TABLE.value,
+            ContentCategory.TABLE_OF_CONTENTS.value,
+        ) or (
+            include_figure_extracted_table
+            and table_type_and_grid[0] == ContentCategory.FIGURE_EXTRACTED_TABLE.value
+        ):
+            table_df = convert_table_to_pd_df(
+                table_type_and_grid[1], use_first_row_as_header=use_first_row_as_header
+            )
+            tables.append(
+                Table(
+                    df=table_df,
+                    type=table_type_and_grid[0],
+                    locations=table_uid_to_locs_mapping[table_uid],
+                )
+            )
     return tables

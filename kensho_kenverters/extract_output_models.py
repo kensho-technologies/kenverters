@@ -15,6 +15,7 @@ class Table(NamedTuple):
     """Converted table types consisting of the table as a pandas DataFrame and its location(s)."""
 
     df: pd.DataFrame
+    type: str
     locations: list[LocationType] | None = None
 
 
