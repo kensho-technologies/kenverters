@@ -1,5 +1,5 @@
 import itertools
-from typing import Mapping, TypeVar
+from typing import Generic, Mapping, NamedTuple, TypeVar
 
 from kensho_kenverters.constants import AnnotationType
 
@@ -10,6 +10,14 @@ from .output_to_tables import (
 )
 
 T = TypeVar("T")
+
+
+class GridAndTextObject(NamedTuple, Generic[T]):
+    uid_grid: list[list[str | None]]
+    text_data: list[list[str | None]]
+    merges: list[tuple[int, int]]
+    first_text_node: T
+    last_text_node: T
 
 
 def _calculate_merge_group_for_cell(
@@ -34,7 +42,7 @@ def get_grid_and_merges_from_structured_output_table_annotation(
     annotation_content_uid_to_text_contents: Mapping[str, list[T]],
     annotations_related_to_table: list[AnnotationModel],
     table_content: ContentModel,
-) -> tuple[list[list[str | None]], list[list[str | None]], list[tuple[int, int]], T, T]:
+) -> GridAndTextObject[T]:
     """Get the table grid, structure, and first/last text objects from a table annotation.
 
     Args:
@@ -43,7 +51,7 @@ def get_grid_and_merges_from_structured_output_table_annotation(
         table_content: Table content from the structured output.
 
     Returns:
-        Tuple of grid, data, merges, first text object, and last text object.
+        Tuple of uid grid, text data, merges, first text object, and last text object.
     """
 
     merges: list[list[tuple[int, int]]] = []
@@ -55,18 +63,18 @@ def get_grid_and_merges_from_structured_output_table_annotation(
         if cell.type == AnnotationType.TABLE_STRUCTURE.value
     ]
     # Build grid from table cell annotations
-    grid = build_uids_grid_from_table_cell_annotations(
+    uid_grid = build_uids_grid_from_table_cell_annotations(
         table_cell_annotations, duplicate_content_flag=False
     )
     cell_contents = table_content.children  # Safe to do in the current setup
-    data: list[list[str | None]] = convert_uid_grid_to_content_grid(
-        grid, cell_contents
+    text_data: list[list[str | None]] = convert_uid_grid_to_content_grid(
+        uid_grid, cell_contents
     )  # type: ignore
     # Convert "" to None
-    for row_index, row in enumerate(data):
-        for col in range(len(data[row_index])):
+    for row_index, row in enumerate(text_data):
+        for col in range(len(text_data[row_index])):
             if row[col] == "":
-                data[row_index][col] = None
+                text_data[row_index][col] = None
 
     # Get first and last text objects based on the ordering of the table
     first_text_node: T | None = None
@@ -97,4 +105,4 @@ def get_grid_and_merges_from_structured_output_table_annotation(
             "one text object associated with it."
         )
 
-    return grid, data, merges, first_text_node, last_text_node  # type: ignore
+    return uid_grid, text_data, merges, first_text_node, last_text_node  # type: ignore
