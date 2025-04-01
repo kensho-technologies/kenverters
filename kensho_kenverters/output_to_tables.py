@@ -203,7 +203,7 @@ def convert_uid_grid_to_content_grid(
     return content_grid
 
 
-##### Main API #####
+# --------- Main API ---------
 
 
 def build_table_grids(
