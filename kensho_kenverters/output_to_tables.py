@@ -28,7 +28,7 @@ from kensho_kenverters.tables_utils import (
 from kensho_kenverters.utils import load_output_to_pydantic
 
 
-def _get_table_uid_to_cells_mapping(
+def get_table_uid_to_cells_mapping(
     content: ContentModel,
 ) -> dict[str, list[ContentModel]]:
     """Recursively get table uids to cells mapping from nested structured document."""
@@ -48,7 +48,7 @@ def _get_table_uid_to_cells_mapping(
     elif len(content.children) > 0:
         for child in content.children:
             # Recursive call to children
-            nested_mapping = _get_table_uid_to_cells_mapping(child)
+            nested_mapping = get_table_uid_to_cells_mapping(child)
             current_mapping.update(nested_mapping)
     return current_mapping
 
@@ -90,7 +90,7 @@ def _get_table_uid_to_locations_mapping(
     return current_mapping
 
 
-def _get_table_uid_to_annotations_mapping(
+def get_table_uid_to_annotations_mapping(
     table_uid_to_cells: dict[str, list[ContentModel]],
     table_cell_annotations: list[AnnotationModel],
 ) -> dict[str, list[AnnotationModel]]:
@@ -105,7 +105,7 @@ def _get_table_uid_to_annotations_mapping(
     return table_to_annotations
 
 
-def _build_uids_grid_from_table_cell_annotations(
+def build_uids_grid_from_table_cell_annotations(
     annotations: Sequence[AnnotationModel],
     duplicate_content_flag: bool = False,
 ) -> list[list[list[str]]]:
@@ -177,7 +177,7 @@ def _build_content_grid_from_figure_extracted_table_cell_annotations(
     return rows
 
 
-def _convert_uid_grid_to_content_grid(
+def convert_uid_grid_to_content_grid(
     uid_grid: list[list[list[str]]], cell_contents: Sequence[ContentModel]
 ) -> list[list[str]]:
     """Convert a UID grid to content grid."""
@@ -201,6 +201,9 @@ def _convert_uid_grid_to_content_grid(
             content_row.append(text)
         content_grid.append(content_row)
     return content_grid
+
+
+# --------- Main API ---------
 
 
 def build_table_grids(
@@ -228,7 +231,7 @@ def build_table_grids(
     annotations = parsed_serialized_document.annotations
     content = parsed_serialized_document.content_tree
 
-    table_uid_to_cells_mapping = _get_table_uid_to_cells_mapping(content)
+    table_uid_to_cells_mapping = get_table_uid_to_cells_mapping(content)
     table_uid_to_type_mapping = _get_table_uid_to_types_mapping(content)
 
     table_cell_annotations = [
@@ -240,7 +243,7 @@ def build_table_grids(
             AnnotationType.FIGURE_EXTRACTED_TABLE_STRUCTURE.value,
         )
     ]
-    table_uid_to_cell_annotations = _get_table_uid_to_annotations_mapping(
+    table_uid_to_cell_annotations = get_table_uid_to_annotations_mapping(
         table_uid_to_cells_mapping, table_cell_annotations
     )
 
@@ -250,12 +253,12 @@ def build_table_grids(
             ContentCategory.TABLE.value,
             ContentCategory.TABLE_OF_CONTENTS.value,
         ):
-            uids_grid = _build_uids_grid_from_table_cell_annotations(
+            uids_grid = build_uids_grid_from_table_cell_annotations(
                 cell_annotations,
                 duplicate_content_flag=duplicate_merged_cells_content_flag,
             )
             cell_contents = table_uid_to_cells_mapping[table_uid]
-            content_grid = _convert_uid_grid_to_content_grid(uids_grid, cell_contents)
+            content_grid = convert_uid_grid_to_content_grid(uids_grid, cell_contents)
             tables[table_uid] = (table_uid_to_type_mapping[table_uid], content_grid)
         else:
             content_grid = (
