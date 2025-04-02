@@ -1,5 +1,6 @@
 import itertools
-from typing import Generic, Mapping, NamedTuple, TypeVar
+from dataclasses import dataclass
+from typing import Generic, Mapping, TypeVar
 
 from kensho_kenverters.constants import AnnotationType
 
@@ -12,7 +13,8 @@ from .output_to_tables import (
 T = TypeVar("T")
 
 
-class GridAndTextObject(NamedTuple, Generic[T]):
+@dataclass(frozen=True)
+class GridAndTextObject(Generic[T]):
     uid_grid: list[list[str | None]]
     text_data: list[list[str | None]]
     merges: list[tuple[int, int]]
@@ -105,4 +107,6 @@ def get_grid_and_merges_from_structured_output_table_annotation(
             "one text object associated with it."
         )
 
-    return uid_grid, text_data, merges, first_text_node, last_text_node  # type: ignore
+    return GridAndTextObject(
+        uid_grid, text_data, merges, first_text_node, last_text_node  # type: ignore
+    )
