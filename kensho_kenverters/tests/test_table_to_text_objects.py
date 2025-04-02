@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+from typing import ClassVar
 from unittest import TestCase
 
 from ..extract_output_models import (
@@ -22,10 +23,13 @@ class TestTextNode:
 
 
 class TestGetGridAndMergesFromStructuredOutputTableAnnotation(TestCase):
-    def test_get_grid_and_merges_from_structured_output_table_annotation_no_merges(
-        self,
-    ) -> None:
-        annotation_content_uid_to_text_contents = {
+
+    annotation_content_uid_to_text_contents: ClassVar[dict[str, list[TestTextNode]]]
+    table_content: ClassVar[ContentModel]
+
+    @classmethod
+    def setUpClass(cls) -> None:
+        cls.annotation_content_uid_to_text_contents = {
             "1": [
                 TestTextNode(
                     id="1",
@@ -3376,359 +3380,7 @@ class TestGetGridAndMergesFromStructuredOutputTableAnnotation(TestCase):
                 )
             ],
         }
-        annotations_related_to_table = [
-            AnnotationModel(
-                content_uids=["7"],
-                data=AnnotationDataModel(index=(0, 0), span=(1, 1), value=None),
-                type="table_structure",
-                locations=[
-                    LocationModel(
-                        height=0.01188,
-                        width=0.22128,
-                        x=0.16008,
-                        y=0.40464,
-                        page_number=0,
-                    )
-                ],
-            ),
-            AnnotationModel(
-                content_uids=["8"],
-                data=AnnotationDataModel(index=(1, 0), span=(1, 1), value=None),
-                type="table_structure",
-                locations=[
-                    LocationModel(
-                        height=0.01188,
-                        width=0.22128,
-                        x=0.16008,
-                        y=0.42464,
-                        page_number=0,
-                    )
-                ],
-            ),
-            AnnotationModel(
-                content_uids=["9"],
-                data=AnnotationDataModel(index=(2, 0), span=(1, 1), value=None),
-                type="table_structure",
-                locations=[
-                    LocationModel(
-                        height=0.01188,
-                        width=0.22128,
-                        x=0.16008,
-                        y=0.44464,
-                        page_number=0,
-                    )
-                ],
-            ),
-            AnnotationModel(
-                content_uids=["10"],
-                data=AnnotationDataModel(index=(3, 0), span=(1, 1), value=None),
-                type="table_structure",
-                locations=[
-                    LocationModel(
-                        height=0.01188,
-                        width=0.22128,
-                        x=0.16008,
-                        y=0.46465,
-                        page_number=0,
-                    )
-                ],
-            ),
-            AnnotationModel(
-                content_uids=["11"],
-                data=AnnotationDataModel(index=(4, 0), span=(1, 1), value=None),
-                type="table_structure",
-                locations=[
-                    LocationModel(
-                        height=0.01188,
-                        width=0.22128,
-                        x=0.16008,
-                        y=0.48464,
-                        page_number=0,
-                    )
-                ],
-            ),
-            AnnotationModel(
-                content_uids=["12"],
-                data=AnnotationDataModel(index=(0, 1), span=(1, 1), value=None),
-                type="table_structure",
-                locations=[
-                    LocationModel(
-                        height=0.01188,
-                        width=0.06071,
-                        x=0.46007,
-                        y=0.40464,
-                        page_number=0,
-                    )
-                ],
-            ),
-            AnnotationModel(
-                content_uids=["13"],
-                data=AnnotationDataModel(index=(1, 1), span=(1, 1), value=None),
-                type="table_structure",
-                locations=[
-                    LocationModel(
-                        height=0.01188,
-                        width=0.06071,
-                        x=0.46007,
-                        y=0.42464,
-                        page_number=0,
-                    )
-                ],
-            ),
-            AnnotationModel(
-                content_uids=["14"],
-                data=AnnotationDataModel(index=(2, 1), span=(1, 1), value=None),
-                type="table_structure",
-                locations=[
-                    LocationModel(
-                        height=0.01188,
-                        width=0.06071,
-                        x=0.46007,
-                        y=0.44464,
-                        page_number=0,
-                    )
-                ],
-            ),
-            AnnotationModel(
-                content_uids=["15"],
-                data=AnnotationDataModel(index=(3, 1), span=(1, 1), value=None),
-                type="table_structure",
-                locations=[
-                    LocationModel(
-                        height=0.01188,
-                        width=0.06071,
-                        x=0.46007,
-                        y=0.46465,
-                        page_number=0,
-                    )
-                ],
-            ),
-            AnnotationModel(
-                content_uids=["16"],
-                data=AnnotationDataModel(index=(4, 1), span=(1, 1), value=None),
-                type="table_structure",
-                locations=[
-                    LocationModel(
-                        height=0.01188,
-                        width=0.06071,
-                        x=0.46007,
-                        y=0.48464,
-                        page_number=0,
-                    )
-                ],
-            ),
-            AnnotationModel(
-                content_uids=["17"],
-                data=AnnotationDataModel(index=(0, 2), span=(1, 1), value=None),
-                type="table_structure",
-                locations=[
-                    LocationModel(
-                        height=0.01188,
-                        width=0.06071,
-                        x=0.56008,
-                        y=0.40464,
-                        page_number=0,
-                    )
-                ],
-            ),
-            AnnotationModel(
-                content_uids=["18"],
-                data=AnnotationDataModel(index=(1, 2), span=(1, 1), value=None),
-                type="table_structure",
-                locations=[
-                    LocationModel(
-                        height=0.01188,
-                        width=0.06071,
-                        x=0.56008,
-                        y=0.42464,
-                        page_number=0,
-                    )
-                ],
-            ),
-            AnnotationModel(
-                content_uids=["19"],
-                data=AnnotationDataModel(index=(2, 2), span=(1, 1), value=None),
-                type="table_structure",
-                locations=[
-                    LocationModel(
-                        height=0.01188,
-                        width=0.06071,
-                        x=0.56008,
-                        y=0.44464,
-                        page_number=0,
-                    )
-                ],
-            ),
-            AnnotationModel(
-                content_uids=["20"],
-                data=AnnotationDataModel(index=(3, 2), span=(1, 1), value=None),
-                type="table_structure",
-                locations=[
-                    LocationModel(
-                        height=0.01188,
-                        width=0.06071,
-                        x=0.56008,
-                        y=0.46465,
-                        page_number=0,
-                    )
-                ],
-            ),
-            AnnotationModel(
-                content_uids=["21"],
-                data=AnnotationDataModel(index=(4, 2), span=(1, 1), value=None),
-                type="table_structure",
-                locations=[
-                    LocationModel(
-                        height=0.01188,
-                        width=0.06071,
-                        x=0.56008,
-                        y=0.48464,
-                        page_number=0,
-                    )
-                ],
-            ),
-            AnnotationModel(
-                content_uids=["22"],
-                data=AnnotationDataModel(index=(0, 3), span=(1, 1), value=None),
-                type="table_structure",
-                locations=[
-                    LocationModel(
-                        height=0.01188,
-                        width=0.06071,
-                        x=0.66008,
-                        y=0.40464,
-                        page_number=0,
-                    )
-                ],
-            ),
-            AnnotationModel(
-                content_uids=["23"],
-                data=AnnotationDataModel(index=(1, 3), span=(1, 1), value=None),
-                type="table_structure",
-                locations=[
-                    LocationModel(
-                        height=0.01188,
-                        width=0.06071,
-                        x=0.66008,
-                        y=0.42464,
-                        page_number=0,
-                    )
-                ],
-            ),
-            AnnotationModel(
-                content_uids=["24"],
-                data=AnnotationDataModel(index=(2, 3), span=(1, 1), value=None),
-                type="table_structure",
-                locations=[
-                    LocationModel(
-                        height=0.01188,
-                        width=0.06071,
-                        x=0.66008,
-                        y=0.44464,
-                        page_number=0,
-                    )
-                ],
-            ),
-            AnnotationModel(
-                content_uids=["25"],
-                data=AnnotationDataModel(index=(3, 3), span=(1, 1), value=None),
-                type="table_structure",
-                locations=[
-                    LocationModel(
-                        height=0.01188,
-                        width=0.06071,
-                        x=0.66008,
-                        y=0.46465,
-                        page_number=0,
-                    )
-                ],
-            ),
-            AnnotationModel(
-                content_uids=["26"],
-                data=AnnotationDataModel(index=(4, 3), span=(1, 1), value=None),
-                type="table_structure",
-                locations=[
-                    LocationModel(
-                        height=0.01188,
-                        width=0.06071,
-                        x=0.66008,
-                        y=0.48464,
-                        page_number=0,
-                    )
-                ],
-            ),
-            AnnotationModel(
-                content_uids=["27"],
-                data=AnnotationDataModel(index=(0, 4), span=(1, 1), value=None),
-                type="table_structure",
-                locations=[
-                    LocationModel(
-                        height=0.01188,
-                        width=0.06071,
-                        x=0.76008,
-                        y=0.40464,
-                        page_number=0,
-                    )
-                ],
-            ),
-            AnnotationModel(
-                content_uids=["28"],
-                data=AnnotationDataModel(index=(1, 4), span=(1, 1), value=None),
-                type="table_structure",
-                locations=[
-                    LocationModel(
-                        height=0.01188,
-                        width=0.06071,
-                        x=0.76008,
-                        y=0.42464,
-                        page_number=0,
-                    )
-                ],
-            ),
-            AnnotationModel(
-                content_uids=["29"],
-                data=AnnotationDataModel(index=(2, 4), span=(1, 1), value=None),
-                type="table_structure",
-                locations=[
-                    LocationModel(
-                        height=0.01188,
-                        width=0.06071,
-                        x=0.76008,
-                        y=0.44464,
-                        page_number=0,
-                    )
-                ],
-            ),
-            AnnotationModel(
-                content_uids=["30"],
-                data=AnnotationDataModel(index=(3, 4), span=(1, 1), value=None),
-                type="table_structure",
-                locations=[
-                    LocationModel(
-                        height=0.01188,
-                        width=0.06071,
-                        x=0.76008,
-                        y=0.46465,
-                        page_number=0,
-                    )
-                ],
-            ),
-            AnnotationModel(
-                content_uids=["31"],
-                data=AnnotationDataModel(index=(4, 4), span=(1, 1), value=None),
-                type="table_structure",
-                locations=[
-                    LocationModel(
-                        height=0.01188,
-                        width=0.06071,
-                        x=0.76008,
-                        y=0.48464,
-                        page_number=0,
-                    )
-                ],
-            ),
-        ]
-        table_content = ContentModel(
+        cls.table_content = ContentModel(
             uid="6",
             type="TABLE",
             content=None,
@@ -4506,6 +4158,363 @@ class TestGetGridAndMergesFromStructuredOutputTableAnnotation(TestCase):
                 texts=None, text_locations=None, character_offsets=None
             ),
         )
+
+    def test_get_grid_and_merges_from_structured_output_table_annotation_no_merges(
+        self,
+    ) -> None:
+        annotations_related_to_table = [
+            AnnotationModel(
+                content_uids=["7"],
+                data=AnnotationDataModel(index=(0, 0), span=(1, 1), value=None),
+                type="table_structure",
+                locations=[
+                    LocationModel(
+                        height=0.01188,
+                        width=0.22128,
+                        x=0.16008,
+                        y=0.40464,
+                        page_number=0,
+                    )
+                ],
+            ),
+            AnnotationModel(
+                content_uids=["8"],
+                data=AnnotationDataModel(index=(1, 0), span=(1, 1), value=None),
+                type="table_structure",
+                locations=[
+                    LocationModel(
+                        height=0.01188,
+                        width=0.22128,
+                        x=0.16008,
+                        y=0.42464,
+                        page_number=0,
+                    )
+                ],
+            ),
+            AnnotationModel(
+                content_uids=["9"],
+                data=AnnotationDataModel(index=(2, 0), span=(1, 1), value=None),
+                type="table_structure",
+                locations=[
+                    LocationModel(
+                        height=0.01188,
+                        width=0.22128,
+                        x=0.16008,
+                        y=0.44464,
+                        page_number=0,
+                    )
+                ],
+            ),
+            AnnotationModel(
+                content_uids=["10"],
+                data=AnnotationDataModel(index=(3, 0), span=(1, 1), value=None),
+                type="table_structure",
+                locations=[
+                    LocationModel(
+                        height=0.01188,
+                        width=0.22128,
+                        x=0.16008,
+                        y=0.46465,
+                        page_number=0,
+                    )
+                ],
+            ),
+            AnnotationModel(
+                content_uids=["11"],
+                data=AnnotationDataModel(index=(4, 0), span=(1, 1), value=None),
+                type="table_structure",
+                locations=[
+                    LocationModel(
+                        height=0.01188,
+                        width=0.22128,
+                        x=0.16008,
+                        y=0.48464,
+                        page_number=0,
+                    )
+                ],
+            ),
+            AnnotationModel(
+                content_uids=["12"],
+                data=AnnotationDataModel(index=(0, 1), span=(1, 1), value=None),
+                type="table_structure",
+                locations=[
+                    LocationModel(
+                        height=0.01188,
+                        width=0.06071,
+                        x=0.46007,
+                        y=0.40464,
+                        page_number=0,
+                    )
+                ],
+            ),
+            AnnotationModel(
+                content_uids=["13"],
+                data=AnnotationDataModel(index=(1, 1), span=(1, 1), value=None),
+                type="table_structure",
+                locations=[
+                    LocationModel(
+                        height=0.01188,
+                        width=0.06071,
+                        x=0.46007,
+                        y=0.42464,
+                        page_number=0,
+                    )
+                ],
+            ),
+            AnnotationModel(
+                content_uids=["14"],
+                data=AnnotationDataModel(index=(2, 1), span=(1, 1), value=None),
+                type="table_structure",
+                locations=[
+                    LocationModel(
+                        height=0.01188,
+                        width=0.06071,
+                        x=0.46007,
+                        y=0.44464,
+                        page_number=0,
+                    )
+                ],
+            ),
+            AnnotationModel(
+                content_uids=["15"],
+                data=AnnotationDataModel(index=(3, 1), span=(1, 1), value=None),
+                type="table_structure",
+                locations=[
+                    LocationModel(
+                        height=0.01188,
+                        width=0.06071,
+                        x=0.46007,
+                        y=0.46465,
+                        page_number=0,
+                    )
+                ],
+            ),
+            AnnotationModel(
+                content_uids=["16"],
+                data=AnnotationDataModel(index=(4, 1), span=(1, 1), value=None),
+                type="table_structure",
+                locations=[
+                    LocationModel(
+                        height=0.01188,
+                        width=0.06071,
+                        x=0.46007,
+                        y=0.48464,
+                        page_number=0,
+                    )
+                ],
+            ),
+            AnnotationModel(
+                content_uids=["17"],
+                data=AnnotationDataModel(index=(0, 2), span=(1, 1), value=None),
+                type="table_structure",
+                locations=[
+                    LocationModel(
+                        height=0.01188,
+                        width=0.06071,
+                        x=0.56008,
+                        y=0.40464,
+                        page_number=0,
+                    )
+                ],
+            ),
+            AnnotationModel(
+                content_uids=["18"],
+                data=AnnotationDataModel(index=(1, 2), span=(1, 1), value=None),
+                type="table_structure",
+                locations=[
+                    LocationModel(
+                        height=0.01188,
+                        width=0.06071,
+                        x=0.56008,
+                        y=0.42464,
+                        page_number=0,
+                    )
+                ],
+            ),
+            AnnotationModel(
+                content_uids=["19"],
+                data=AnnotationDataModel(index=(2, 2), span=(1, 1), value=None),
+                type="table_structure",
+                locations=[
+                    LocationModel(
+                        height=0.01188,
+                        width=0.06071,
+                        x=0.56008,
+                        y=0.44464,
+                        page_number=0,
+                    )
+                ],
+            ),
+            AnnotationModel(
+                content_uids=["20"],
+                data=AnnotationDataModel(index=(3, 2), span=(1, 1), value=None),
+                type="table_structure",
+                locations=[
+                    LocationModel(
+                        height=0.01188,
+                        width=0.06071,
+                        x=0.56008,
+                        y=0.46465,
+                        page_number=0,
+                    )
+                ],
+            ),
+            AnnotationModel(
+                content_uids=["21"],
+                data=AnnotationDataModel(index=(4, 2), span=(1, 1), value=None),
+                type="table_structure",
+                locations=[
+                    LocationModel(
+                        height=0.01188,
+                        width=0.06071,
+                        x=0.56008,
+                        y=0.48464,
+                        page_number=0,
+                    )
+                ],
+            ),
+            AnnotationModel(
+                content_uids=["22"],
+                data=AnnotationDataModel(index=(0, 3), span=(1, 1), value=None),
+                type="table_structure",
+                locations=[
+                    LocationModel(
+                        height=0.01188,
+                        width=0.06071,
+                        x=0.66008,
+                        y=0.40464,
+                        page_number=0,
+                    )
+                ],
+            ),
+            AnnotationModel(
+                content_uids=["23"],
+                data=AnnotationDataModel(index=(1, 3), span=(1, 1), value=None),
+                type="table_structure",
+                locations=[
+                    LocationModel(
+                        height=0.01188,
+                        width=0.06071,
+                        x=0.66008,
+                        y=0.42464,
+                        page_number=0,
+                    )
+                ],
+            ),
+            AnnotationModel(
+                content_uids=["24"],
+                data=AnnotationDataModel(index=(2, 3), span=(1, 1), value=None),
+                type="table_structure",
+                locations=[
+                    LocationModel(
+                        height=0.01188,
+                        width=0.06071,
+                        x=0.66008,
+                        y=0.44464,
+                        page_number=0,
+                    )
+                ],
+            ),
+            AnnotationModel(
+                content_uids=["25"],
+                data=AnnotationDataModel(index=(3, 3), span=(1, 1), value=None),
+                type="table_structure",
+                locations=[
+                    LocationModel(
+                        height=0.01188,
+                        width=0.06071,
+                        x=0.66008,
+                        y=0.46465,
+                        page_number=0,
+                    )
+                ],
+            ),
+            AnnotationModel(
+                content_uids=["26"],
+                data=AnnotationDataModel(index=(4, 3), span=(1, 1), value=None),
+                type="table_structure",
+                locations=[
+                    LocationModel(
+                        height=0.01188,
+                        width=0.06071,
+                        x=0.66008,
+                        y=0.48464,
+                        page_number=0,
+                    )
+                ],
+            ),
+            AnnotationModel(
+                content_uids=["27"],
+                data=AnnotationDataModel(index=(0, 4), span=(1, 1), value=None),
+                type="table_structure",
+                locations=[
+                    LocationModel(
+                        height=0.01188,
+                        width=0.06071,
+                        x=0.76008,
+                        y=0.40464,
+                        page_number=0,
+                    )
+                ],
+            ),
+            AnnotationModel(
+                content_uids=["28"],
+                data=AnnotationDataModel(index=(1, 4), span=(1, 1), value=None),
+                type="table_structure",
+                locations=[
+                    LocationModel(
+                        height=0.01188,
+                        width=0.06071,
+                        x=0.76008,
+                        y=0.42464,
+                        page_number=0,
+                    )
+                ],
+            ),
+            AnnotationModel(
+                content_uids=["29"],
+                data=AnnotationDataModel(index=(2, 4), span=(1, 1), value=None),
+                type="table_structure",
+                locations=[
+                    LocationModel(
+                        height=0.01188,
+                        width=0.06071,
+                        x=0.76008,
+                        y=0.44464,
+                        page_number=0,
+                    )
+                ],
+            ),
+            AnnotationModel(
+                content_uids=["30"],
+                data=AnnotationDataModel(index=(3, 4), span=(1, 1), value=None),
+                type="table_structure",
+                locations=[
+                    LocationModel(
+                        height=0.01188,
+                        width=0.06071,
+                        x=0.76008,
+                        y=0.46465,
+                        page_number=0,
+                    )
+                ],
+            ),
+            AnnotationModel(
+                content_uids=["31"],
+                data=AnnotationDataModel(index=(4, 4), span=(1, 1), value=None),
+                type="table_structure",
+                locations=[
+                    LocationModel(
+                        height=0.01188,
+                        width=0.06071,
+                        x=0.76008,
+                        y=0.48464,
+                        page_number=0,
+                    )
+                ],
+            ),
+        ]
+
         expected_first_text_node = TestTextNode(
             id="17",
             character_offsets=[
@@ -4559,6 +4568,7 @@ class TestGetGridAndMergesFromStructuredOutputTableAnnotation(TestCase):
                 page_number=0, x=0.76008, y=0.48464, width=0.06071, height=0.01188
             ),
         )
+
         expected_grid = [
             [["7"], ["12"], ["17"], ["22"], ["27"]],
             [["8"], ["13"], ["18"], ["23"], ["28"]],
@@ -4569,9 +4579,438 @@ class TestGetGridAndMergesFromStructuredOutputTableAnnotation(TestCase):
         expected_merges: list[tuple[int, int]] = []
         grid_and_text_object = (
             get_grid_and_merges_from_structured_output_table_annotation(
-                annotation_content_uid_to_text_contents,
+                self.annotation_content_uid_to_text_contents,
                 annotations_related_to_table,
-                table_content,
+                self.table_content,
+            )
+        )
+        self.assertEqual(grid_and_text_object.first_text_node, expected_first_text_node)
+        self.assertEqual(grid_and_text_object.last_text_node, expected_last_text_node)
+        self.assertEqual(grid_and_text_object.uid_grid, expected_grid)
+        self.assertEqual(grid_and_text_object.merges, expected_merges)
+
+    def test_get_grid_and_merges_from_structured_output_table_annotation_with_merges(
+        self,
+    ) -> None:
+        expected_merges = [[(4, 4), (4, 5), (5, 4), (5, 5)]]
+        expected_grid = [
+            [["7"], ["12"], ["17"], ["22"], ["27"], []],
+            [["8"], ["13"], ["18"], ["23"], ["28"], []],
+            [["9"], ["14"], ["19"], ["24"], ["29"], []],
+            [["10"], ["15"], ["20"], ["25"], ["30"], []],
+            [["11"], ["16"], ["21"], ["26"], ["31"], []],
+            [[], [], [], [], [], []],
+        ]
+        expected_first_text_node = TestTextNode(
+            id="17",
+            character_offsets=[
+                0.0,
+                0.05064,
+                0.09285,
+                0.13506,
+                0.17302,
+                0.21523,
+                0.25744,
+                0.27855,
+                0.33336,
+                0.37557,
+                0.41353,
+                0.45574,
+                0.49795,
+                0.54016,
+                0.58237,
+                0.60348,
+                0.62033,
+                0.66254,
+                0.68365,
+                0.74689,
+                0.76374,
+                0.7806,
+                0.79745,
+                0.8143,
+                0.85651,
+                0.89872,
+                0.93668,
+                0.95779,
+            ],
+            content="Kensho Revenue in millions $",
+            location=LocationModel(
+                page_number=0, x=0.16008, y=0.40464, width=0.22128, height=0.01188
+            ),
+        )
+        expected_last_text_node = TestTextNode(
+            id="41",
+            character_offsets=[
+                0.0,
+                0.15385,
+                0.30769,
+                0.46154,
+                0.53846,
+                0.69231,
+                0.84615,
+            ],
+            content="403,009",
+            location=LocationModel(
+                page_number=0, x=0.76008, y=0.48464, width=0.06071, height=0.01188
+            ),
+        )
+        annotations_related_to_table = [
+            AnnotationModel(
+                content_uids=["7"],
+                data=AnnotationDataModel(index=(0, 0), span=(1, 1), value=None),
+                type="table_structure",
+                locations=[
+                    LocationModel(
+                        height=0.01188,
+                        width=0.22128,
+                        x=0.16008,
+                        y=0.40464,
+                        page_number=0,
+                    )
+                ],
+            ),
+            AnnotationModel(
+                content_uids=["8"],
+                data=AnnotationDataModel(index=(1, 0), span=(1, 1), value=None),
+                type="table_structure",
+                locations=[
+                    LocationModel(
+                        height=0.01188,
+                        width=0.22128,
+                        x=0.16008,
+                        y=0.42464,
+                        page_number=0,
+                    )
+                ],
+            ),
+            AnnotationModel(
+                content_uids=["9"],
+                data=AnnotationDataModel(index=(2, 0), span=(1, 1), value=None),
+                type="table_structure",
+                locations=[
+                    LocationModel(
+                        height=0.01188,
+                        width=0.22128,
+                        x=0.16008,
+                        y=0.44464,
+                        page_number=0,
+                    )
+                ],
+            ),
+            AnnotationModel(
+                content_uids=["10"],
+                data=AnnotationDataModel(index=(3, 0), span=(1, 1), value=None),
+                type="table_structure",
+                locations=[
+                    LocationModel(
+                        height=0.01188,
+                        width=0.22128,
+                        x=0.16008,
+                        y=0.46465,
+                        page_number=0,
+                    )
+                ],
+            ),
+            AnnotationModel(
+                content_uids=["11"],
+                data=AnnotationDataModel(index=(4, 0), span=(1, 1), value=None),
+                type="table_structure",
+                locations=[
+                    LocationModel(
+                        height=0.01188,
+                        width=0.22128,
+                        x=0.16008,
+                        y=0.48464,
+                        page_number=0,
+                    )
+                ],
+            ),
+            AnnotationModel(
+                content_uids=["12"],
+                data=AnnotationDataModel(index=(0, 1), span=(1, 1), value=None),
+                type="table_structure",
+                locations=[
+                    LocationModel(
+                        height=0.01188,
+                        width=0.06071,
+                        x=0.46007,
+                        y=0.40464,
+                        page_number=0,
+                    )
+                ],
+            ),
+            AnnotationModel(
+                content_uids=["13"],
+                data=AnnotationDataModel(index=(1, 1), span=(1, 1), value=None),
+                type="table_structure",
+                locations=[
+                    LocationModel(
+                        height=0.01188,
+                        width=0.06071,
+                        x=0.46007,
+                        y=0.42464,
+                        page_number=0,
+                    )
+                ],
+            ),
+            AnnotationModel(
+                content_uids=["14"],
+                data=AnnotationDataModel(index=(2, 1), span=(1, 1), value=None),
+                type="table_structure",
+                locations=[
+                    LocationModel(
+                        height=0.01188,
+                        width=0.06071,
+                        x=0.46007,
+                        y=0.44464,
+                        page_number=0,
+                    )
+                ],
+            ),
+            AnnotationModel(
+                content_uids=["15"],
+                data=AnnotationDataModel(index=(3, 1), span=(1, 1), value=None),
+                type="table_structure",
+                locations=[
+                    LocationModel(
+                        height=0.01188,
+                        width=0.06071,
+                        x=0.46007,
+                        y=0.46465,
+                        page_number=0,
+                    )
+                ],
+            ),
+            AnnotationModel(
+                content_uids=["16"],
+                data=AnnotationDataModel(index=(4, 1), span=(1, 1), value=None),
+                type="table_structure",
+                locations=[
+                    LocationModel(
+                        height=0.01188,
+                        width=0.06071,
+                        x=0.46007,
+                        y=0.48464,
+                        page_number=0,
+                    )
+                ],
+            ),
+            AnnotationModel(
+                content_uids=["17"],
+                data=AnnotationDataModel(index=(0, 2), span=(1, 1), value=None),
+                type="table_structure",
+                locations=[
+                    LocationModel(
+                        height=0.01188,
+                        width=0.06071,
+                        x=0.56008,
+                        y=0.40464,
+                        page_number=0,
+                    )
+                ],
+            ),
+            AnnotationModel(
+                content_uids=["18"],
+                data=AnnotationDataModel(index=(1, 2), span=(1, 1), value=None),
+                type="table_structure",
+                locations=[
+                    LocationModel(
+                        height=0.01188,
+                        width=0.06071,
+                        x=0.56008,
+                        y=0.42464,
+                        page_number=0,
+                    )
+                ],
+            ),
+            AnnotationModel(
+                content_uids=["19"],
+                data=AnnotationDataModel(index=(2, 2), span=(1, 1), value=None),
+                type="table_structure",
+                locations=[
+                    LocationModel(
+                        height=0.01188,
+                        width=0.06071,
+                        x=0.56008,
+                        y=0.44464,
+                        page_number=0,
+                    )
+                ],
+            ),
+            AnnotationModel(
+                content_uids=["20"],
+                data=AnnotationDataModel(index=(3, 2), span=(1, 1), value=None),
+                type="table_structure",
+                locations=[
+                    LocationModel(
+                        height=0.01188,
+                        width=0.06071,
+                        x=0.56008,
+                        y=0.46465,
+                        page_number=0,
+                    )
+                ],
+            ),
+            AnnotationModel(
+                content_uids=["21"],
+                data=AnnotationDataModel(index=(4, 2), span=(1, 1), value=None),
+                type="table_structure",
+                locations=[
+                    LocationModel(
+                        height=0.01188,
+                        width=0.06071,
+                        x=0.56008,
+                        y=0.48464,
+                        page_number=0,
+                    )
+                ],
+            ),
+            AnnotationModel(
+                content_uids=["22"],
+                data=AnnotationDataModel(index=(0, 3), span=(1, 1), value=None),
+                type="table_structure",
+                locations=[
+                    LocationModel(
+                        height=0.01188,
+                        width=0.06071,
+                        x=0.66008,
+                        y=0.40464,
+                        page_number=0,
+                    )
+                ],
+            ),
+            AnnotationModel(
+                content_uids=["23"],
+                data=AnnotationDataModel(index=(1, 3), span=(1, 1), value=None),
+                type="table_structure",
+                locations=[
+                    LocationModel(
+                        height=0.01188,
+                        width=0.06071,
+                        x=0.66008,
+                        y=0.42464,
+                        page_number=0,
+                    )
+                ],
+            ),
+            AnnotationModel(
+                content_uids=["24"],
+                data=AnnotationDataModel(index=(2, 3), span=(1, 1), value=None),
+                type="table_structure",
+                locations=[
+                    LocationModel(
+                        height=0.01188,
+                        width=0.06071,
+                        x=0.66008,
+                        y=0.44464,
+                        page_number=0,
+                    )
+                ],
+            ),
+            AnnotationModel(
+                content_uids=["25"],
+                data=AnnotationDataModel(index=(3, 3), span=(1, 1), value=None),
+                type="table_structure",
+                locations=[
+                    LocationModel(
+                        height=0.01188,
+                        width=0.06071,
+                        x=0.66008,
+                        y=0.46465,
+                        page_number=0,
+                    )
+                ],
+            ),
+            AnnotationModel(
+                content_uids=["26"],
+                data=AnnotationDataModel(index=(4, 3), span=(1, 1), value=None),
+                type="table_structure",
+                locations=[
+                    LocationModel(
+                        height=0.01188,
+                        width=0.06071,
+                        x=0.66008,
+                        y=0.48464,
+                        page_number=0,
+                    )
+                ],
+            ),
+            AnnotationModel(
+                content_uids=["27"],
+                data=AnnotationDataModel(index=(0, 4), span=(1, 1), value=None),
+                type="table_structure",
+                locations=[
+                    LocationModel(
+                        height=0.01188,
+                        width=0.06071,
+                        x=0.76008,
+                        y=0.40464,
+                        page_number=0,
+                    )
+                ],
+            ),
+            AnnotationModel(
+                content_uids=["28"],
+                data=AnnotationDataModel(index=(1, 4), span=(1, 1), value=None),
+                type="table_structure",
+                locations=[
+                    LocationModel(
+                        height=0.01188,
+                        width=0.06071,
+                        x=0.76008,
+                        y=0.42464,
+                        page_number=0,
+                    )
+                ],
+            ),
+            AnnotationModel(
+                content_uids=["29"],
+                data=AnnotationDataModel(index=(2, 4), span=(1, 1), value=None),
+                type="table_structure",
+                locations=[
+                    LocationModel(
+                        height=0.01188,
+                        width=0.06071,
+                        x=0.76008,
+                        y=0.44464,
+                        page_number=0,
+                    )
+                ],
+            ),
+            AnnotationModel(
+                content_uids=["30"],
+                data=AnnotationDataModel(index=(3, 4), span=(1, 1), value=None),
+                type="table_structure",
+                locations=[
+                    LocationModel(
+                        height=0.01188,
+                        width=0.06071,
+                        x=0.76008,
+                        y=0.46465,
+                        page_number=0,
+                    )
+                ],
+            ),
+            AnnotationModel(
+                content_uids=["31"],
+                data=AnnotationDataModel(index=(4, 4), span=(2, 2), value=None),
+                type="table_structure",
+                locations=[
+                    LocationModel(
+                        height=0.01188,
+                        width=0.06071,
+                        x=0.76008,
+                        y=0.48464,
+                        page_number=0,
+                    )
+                ],
+            ),
+        ]
+        grid_and_text_object = (
+            get_grid_and_merges_from_structured_output_table_annotation(
+                self.annotation_content_uid_to_text_contents,
+                annotations_related_to_table,
+                self.table_content,
             )
         )
         self.assertEqual(grid_and_text_object.first_text_node, expected_first_text_node)
