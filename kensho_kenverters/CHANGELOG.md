@@ -2,7 +2,8 @@
 
 ## v1.2.4
 
-Add conversion from a given table annotation to grid, finding the first and last associated text object
+* Add conversion from a given table annotation to grid, finding the first and last associated text object
+* Fix markdown table bug by adding an extra newline before and after the table text
 
 ## v1.2.3
 
