@@ -91,8 +91,8 @@ class TestMarkdownConversion(TestCase):
                     ["2022", "102,004", "202,004", "302,004", "402,004"],
                     ["2023", "103,009", "203,009", "303,009", "403,009"],
                 ],
-                "text": "| Kensho Revenue in millions $ | Q1 | Q2 | Q3 | Q4 |\n| --- | --- | --- |"
-                " --- | --- |\n| 2020 | 100,000 | "
+                "text": "\n| Kensho Revenue in millions $ | Q1 | Q2 | Q3 | Q4 |\n| --- | --- | "
+                "--- | --- | --- |\n| 2020 | 100,000 | "
                 "200,000 | 300,000 | 400,000 |\n| 2021 | 101,001 | 201,001 | 301,001 | 401,001 |\n"
                 "| 2022 | 102,004 | 202,004 | 302,004 | 402,004 |\n| 2023 | 103,009 | 203,009 | "
                 "303,009 | 403,009 |\n",
@@ -207,8 +207,8 @@ class TestMarkdownConversion(TestCase):
                     ["2022", "102,004", "202,004", "302,004", "402,004"],
                     ["2023", "103,009", "203,009", "303,009", "403,009"],
                 ],
-                "text": "| Kensho Revenue in millions $ | Q1 | Q2 | Q3 | Q4 |\n| --- | --- | --- |"
-                " --- | --- |\n| 2020 | 100,000 | "
+                "text": "\n| Kensho Revenue in millions $ | Q1 | Q2 | Q3 | Q4 |\n| --- | --- | "
+                "--- | --- | --- |\n| 2020 | 100,000 | "
                 "200,000 | 300,000 | 400,000 |\n| 2021 | 101,001 | 201,001 | 301,001 | 401,001 |\n"
                 "| 2022 | 102,004 | 202,004 | 302,004 | 402,004 |\n| 2023 | 103,009 | 203,009 | "
                 "303,009 | 403,009 |\n",
@@ -463,7 +463,7 @@ class TestMarkdownConversion(TestCase):
                         "",
                     ],
                 ],
-                "text": "| ABC | ABC | ABC | ABC | Bank |  |  |  |  |  |  |  |  |\n| --- | --- | "
+                "text": "\n| ABC | ABC | ABC | ABC | Bank |  |  |  |  |  |  |  |  |\n| --- | --- | "
                 "--- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |\n|  | "
                 "Counterparty | Counterparty | credit | credit | rating | rating |  | "
                 "AAAAAAAAAAAAAA | AAAAAAAAAAAAAA |  |  |  |\n|  | Certificate | Certificate | of "
@@ -483,6 +483,7 @@ class TestMarkdownConversion(TestCase):
             {"category": "paragraph", "text": "email"},
             {"category": "text", "text": "email"},
         ]
+        self.maxDiff = None
         self.assertEqual(expected_list, output_list)
 
     def test_convert_output_to_items_hierarchical_v2(self) -> None:
@@ -520,7 +521,7 @@ class TestMarkdownConversion(TestCase):
                     ["2022", "102,004", "202,004", "302,004", "402,004"],
                     ["2023", "103,009", "203,009", "303,009", "403,009"],
                 ],
-                "text": "| Kensho Revenue in millions $ | Q1 | Q2 | Q3 | Q4 |\n| --- | --- "
+                "text": "\n| Kensho Revenue in millions $ | Q1 | Q2 | Q3 | Q4 |\n| --- | --- "
                 "| --- | --- | --- |\n| 2020 | 100,000 | 200,000 | 300,000 | 400,000 |\n| 2021 "
                 "| 101,001 | 201,001 | 301,001 | 401,001 |\n| 2022 | 102,004 | 202,004 | 302,004 "
                 "| 402,004 |\n| 2023 | 103,009 | 203,009 | 303,009 | 403,009 |\n",
@@ -590,7 +591,7 @@ class TestMarkdownConversion(TestCase):
                     ["2022", "102,004", "202,004", "302,004", "402,004"],
                     ["2023", "103,009", "203,009", "303,009", "403,009"],
                 ],
-                "text": "| Kensho Revenue in millions $ | Q1 | Q2 | Q3 | Q4 |\n| --- | --- "
+                "text": "\n| Kensho Revenue in millions $ | Q1 | Q2 | Q3 | Q4 |\n| --- | --- "
                 "| --- | --- | --- |\n| 2020 | 100,000 | 200,000 | 300,000 | 400,000 |\n| "
                 "2021 | 101,001 | 201,001 | 301,001 | 401,001 |\n| 2022 | 102,004 "
                 "| 202,004 | 302,004 | 402,004 |\n| 2023 | 103,009 | 203,009 | 303,009 | 403,009 "
@@ -647,7 +648,7 @@ class TestMarkdownConversion(TestCase):
             "ocuses on exploratory data analysis through unsupervised lea"
             "rning. In its application across business problems, machine "
             "learning is also referred to as predictive analytics.\nESTIMA"
-            "TE for Kensho\n| Kensho Revenue in millions $ | Q1 | Q2 | Q3 "
+            "TE for Kensho\n\n| Kensho Revenue in millions $ | Q1 | Q2 | Q3 "
             "| Q4 |\n| --- | --- | --- | --- | --- |\n| 2020 | 100,000 | "
             "200,000 | 300,000 | 400,000 |\n| 20"
             "21 | 101,001 | 201,001 | 301,001 | 401,001 |\n| 2022 | 102,00"
@@ -684,8 +685,8 @@ class TestMarkdownConversion(TestCase):
             "Table Of Contents\nRatings List\nE-Mail Addresses\nResearch Update: The Company\n"
             "Credit "
             "Rating\nRationale\nS&P assigned it a AAAAAAA\nOutlook\nThe unstable outlook,\nthe "
-            "discontinued support of the parent company.\nRatings List\n| ABC | ABC | ABC | ABC | "
-            "Bank"
+            "discontinued support of the parent company.\nRatings List\n\n| ABC | ABC | ABC | ABC"
+            " | Bank"
             " |  |  |  |  |  |  |  |  |\n| --- | --- | --- | --- | --- | --- | --- | --- | --- | "
             "--- | --- | --- | --- |\n|  | Counterparty | Counterparty | credit | credit | "
             "rating |"
@@ -730,7 +731,7 @@ class TestMarkdownConversion(TestCase):
             "y within machine learning, and focuses on exploratory data analysis th"
             "rough unsupervised learning. In its application across business proble"
             "ms, machine learning is also referred to as predictive analytics.\nESTI"
-            "MATE for Kensho\n| Kensho Revenue in millions $ | Q1 | Q2 | Q3 | Q4 |\n|"
+            "MATE for Kensho\n\n| Kensho Revenue in millions $ | Q1 | Q2 | Q3 | Q4 |\n|"
             " --- | --- | --- | --- | --- |\n| 2020 | 100,000 | 200,000 | 300,000 | "
             "400,000 |\n| 2021 | 101,001 | 201,001 | 301,001 | 401,001 |\n| 2022 | 10"
             "2,004 | 202,004 | 302,004 | 402,004 |\n| 2023 | 103,009 | 203,009 | 303"
@@ -779,7 +780,7 @@ class TestMarkdownConversion(TestCase):
             " focuses on exploratory data analysis through unsupervised l"
             "earning. In its application across business problems, machin"
             "e learning is also referred to as predictive analytics.\n# ES"
-            "TIMATE for Kensho\n| Kensho Revenue in millions $ | Q1 | Q2 |"
+            "TIMATE for Kensho\n\n| Kensho Revenue in millions $ | Q1 | Q2 |"
             " Q3 | Q4 |\n| --- | --- | --- | --- | --- |\n| 2020 | 100,000"
             " | 200,000 | 300,000 | 400,000 |\n"
             "| 2021 | 101,001 | 201,001 | 301,001 | 401,001 |\n| 2022 | 10"
@@ -815,8 +816,8 @@ class TestMarkdownConversion(TestCase):
             "July 1, 2000\n# Research Update: A Company\n# Bank\nCredit Analyst:\nA Guy\n"
             "Table Of Contents\nRatings List\nE-Mail Addresses\n# Research Update: The Company\n"
             "### Credit Rating\n### Rationale\nS&P assigned it a AAAAAAA\n# Outlook\nThe unstable "
-            "outlook,\nthe discontinued support of the parent company.\n### Ratings List\n| ABC | "
-            "ABC | ABC | ABC | Bank |  |  |  |  |  |  |  |  |\n| --- | --- | --- | --- | --- "
+            "outlook,\nthe discontinued support of the parent company.\n### Ratings List\n\n| ABC"
+            " | ABC | ABC | ABC | Bank |  |  |  |  |  |  |  |  |\n| --- | --- | --- | --- | --- "
             "| --- | --- | --- | --- | --- | --- | --- | --- |\n|  | Counterparty | Counterparty |"
             " credit | credit | rating | rating |  | AAAAAAAAAAAAAA | AAAAAAAAAAAAAA |  |  |  |\n|"
             "  | Certificate | Certificate | of | deposit |  |  |  | AAAAAAAAAAAAAA |  |  |  |  "
@@ -851,7 +852,7 @@ class TestMarkdownConversion(TestCase):
             "field of study within machine learning, and focuses on exploratory data analysis "
             "through unsupervised learning. In its application across business problems, "
             "machine learning is also referred to as predictive analytics.\nESTIMATE for "
-            "Kensho\n| Kensho Revenue in millions $ | Q1 | Q2 | Q3 | Q4 |\n| --- | --- | --- "
+            "Kensho\n\n| Kensho Revenue in millions $ | Q1 | Q2 | Q3 | Q4 |\n| --- | --- | --- "
             "| --- | --- |\n| 2020 | 100,000 | 200,000 | 300,000 | 400,000 |\n| 2021 | 101,001 "
             "| 201,001 | 301,001 | 401,001 |\n| 2022 | 102,004 | 202,004 | 302,004 | 402,004 |\n"
             "| 2023 | 103,009 | 203,009 | 303,009 | 403,009 |\n\nMachine learning (ML) is the "
@@ -1323,7 +1324,7 @@ class TestMarkdownConversion(TestCase):
         # Test markdown conversion
         markdown_table = table_to_markdown(table)
         expected_markdown = (
-            "| Kensho Revenue in millions $ | Q1 | Q2 | Q3 | Q4 |\n| --- | --- | --- |"
+            "\n| Kensho Revenue in millions $ | Q1 | Q2 | Q3 | Q4 |\n| --- | --- | --- |"
             " --- | --- |\n| 2020 | 100,000 | 200"
             ",000 | 300,000 | 400,000 |\n| 2021 | 101,001 | 201,001 | 301,001 | 401,001 |"
             "\n| 2022 | 102,004 | 202,004 | 302,004 | 402,004 |\n| 2023 | 103,009 | 203,00"
@@ -2811,7 +2812,7 @@ class TestMarkdownConversion(TestCase):
                 "tructured"
             ),
             (
-                "| Name | Structure ( ) | Parts ( |  | ) |  | Algorithm (A(`)) | LoC | T/S |"
+                "\n| Name | Structure ( ) | Parts ( |  | ) |  | Algorithm (A(`)) | LoC | T/S |"
                 " Sample Reference | Sample Reference |  |\n| --- | --- | --- | --- | --- | "
                 "--- | --- | --- | --- | --- | --- | --- |\n|  | Z |  | P | P |  |  |  |  |  "
                 "|  |  |\n| Linear-Chain | Labeled Chain | Edges (TC^2 | Edges (TC^2 | Edges "
@@ -2890,7 +2891,7 @@ class TestMarkdownConversion(TestCase):
                 "latent-tree"
                 " RL model which we brieﬂy summarize. The objective is to maximize the probability"
                 " of the correct predic- tion under the expectation of a prior tree model, p(z | x"
-                ";\x00),\n| Figure | 2: | Latent | Tree | CRF | example. | (a) | Log- |\n| --- |"
+                ";\x00),\n\n| Figure | 2: | Latent | Tree | CRF | example. | (a) | Log- |\n| --- |"
                 " --- | --- | --- | --- | --- | --- | --- |\n| "
                 "potentials"
                 " | ` | for | each | part/span. | (b) Marginals | (b) Marginals | for |\n| CRF(`) "
@@ -2971,8 +2972,8 @@ class TestMarkdownConversion(TestCase):
             "y within machine learning, and focuses on exploratory data analysis through"
             " unsupervised learning. In its application across business problems, machin"
             "e learning is also referred to as predictive analytics.\n# ESTIMATE for Kens"
-            "ho\n| Kensho Revenue in millions $ | Q1 | Q2 | Q3 | Q4 |\n| --- | --- | --- "
-            "| --- | --- |\n| 2020 | 100,000 | "
+            "ho\n\n| Kensho Revenue in millions $ | Q1 | Q2 | Q3 | Q4 |\n| --- | --- |"
+            " --- | --- | --- |\n| 2020 | 100,000 | "
             "200,000 | 300,000 | 400,000 |\n| 2021 | 101,001 | 201,001 | 301,001 | 401,00"
             "1 |\n| 2022 | 102,004 | 202,004 | 302,004 | 402,004 |\n| 2023 | 103,009 | 203"
             ",009 | 303,009 | 403,009 |\n\nMachine learning (ML) is the scientific study of"
@@ -3015,7 +3016,7 @@ class TestMarkdownConversion(TestCase):
             " domains to the field of machine learning. Data mining is a field of study "
             "within machine learning, and focuses on exploratory data analysis through u"
             "nsupervised learning. In its application across business problems, machine "
-            "learning is also referred to as predictive analytics.\nESTIMATE for Kensho\n|"
+            "learning is also referred to as predictive analytics.\nESTIMATE for Kensho\n\n|"
             " Kensho Revenue in millions $ | Q1 | Q2 | Q3 | Q4 |\n| --- | --- | --- | --- "
             "| --- |\n| 2020 | 100,000 | 200,"
             "000 | 300,000 | 400,000 |\n| 2021 | 101,001 | 201,001 | 301,001 | 401,001 |\n"
@@ -3089,7 +3090,7 @@ class TestMarkdownConversion(TestCase):
                 "tructured"
             ),
             (
-                "| Name | Structure ( ) | Parts ( |  | ) |  | Algorithm (A(`)) | LoC | T/S |"
+                "\n| Name | Structure ( ) | Parts ( |  | ) |  | Algorithm (A(`)) | LoC | T/S |"
                 " Sample Reference | Sample Reference |  |\n| --- | --- | --- | --- | --- | "
                 "--- | --- | --- | --- | --- | --- | --- |\n|  | Z |  | P | P |  |  |  |  |  "
                 "|  |  |\n| Linear-Chain | Labeled Chain | Edges (TC^2 | Edges (TC^2 | Edges "
@@ -3168,7 +3169,7 @@ class TestMarkdownConversion(TestCase):
                 "latent-tree"
                 " RL model which we brieﬂy summarize. The objective is to maximize the probability "
                 "of the correct predic- tion under the expectation of a prior tree model, p(z | x;"
-                "\x00),\n| Figure | 2: | Latent | Tree | CRF | example. | (a) | Log- |\n| --- | "
+                "\x00),\n\n| Figure | 2: | Latent | Tree | CRF | example. | (a) | Log- |\n| --- | "
                 "--- | --- | --- | --- | --- | --- | --- |\n| "
                 "potentials"
                 " | ` | for | each | part/span. | (b) Marginals | (b) Marginals | for |\n| CRF(`) "

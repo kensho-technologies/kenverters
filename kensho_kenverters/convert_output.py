@@ -31,10 +31,11 @@ def table_to_markdown(table: TableType) -> str:
         line = "| " + " | ".join(row) + " |"
         lines.append(line)
         # Markdown tables only render correctly if there's a header row
-        # and an extra line at the end to mark the end of the table
+        # and an extra line at the beginning and end to mark the
+        # bounds of the table
         if row_index == 0:
             lines.append("| " + " | ".join(["---" for _ in row]) + " |")
-    table_text = "\n".join(lines) + "\n"
+    table_text = "\n" + "\n".join(lines) + "\n"
     return table_text
 
 

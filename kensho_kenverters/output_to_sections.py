@@ -30,8 +30,8 @@ def extract_organized_sections(
                     ['Kensho Revenue in millions $', 'Q1', 'Q2', 'Q3', 'Q4'],
                     ['2020', '100,000', '200,000', '300,000', '400,000']
                 ],
-                'text': '| Kensho Revenue in millions $ | Q1 | Q2 | Q3 | Q4 |\n| 2020 | '
-                        '100,000 | 200,000 | 300,000 | 400,000 |'
+                'text': '\n| Kensho Revenue in millions $ | Q1 | Q2 | Q3 | Q4 |\n| 2020 | '
+                        '100,000 | 200,000 | 300,000 | 400,000 |\n'
             },
             {
                 'category': 'text',
