@@ -6,13 +6,13 @@ from distutils.core import setup  # pylint: disable=deprecated-module
 setup(
     name="kensho_kenverters",
     packages=["kensho_kenverters"],
-    version="1.2.3",
+    version="1.2.4",
     license="Apache-2.0",
     description="Python Toolkit for Kensho Extract",
     author="Valerie Faucon-Morin",
     author_email="valerie.fauconmorin@spglobal.com",
     url="https://github.com/kensho-technologies/kenverters",
-    download_url="https://github.com/kensho-technologies/kenverters/archive/refs/tags/v_1_2_3.tar.gz",  # noqa:E501
+    download_url="https://github.com/kensho-technologies/kenverters/archive/refs/tags/v_1_2_4.tar.gz",  # noqa:E501
     keywords=["Kensho Extract", "Python Toolkit"],
     install_requires=[
         "pandas",
