@@ -1907,7 +1907,7 @@ class TestMarkdownConversion(TestCase):
                             }
                         ],
                         "type": "FIGURE",
-                        "uid": "333",
+                        "uid": "33",
                     },
                     {
                         "children": [],
@@ -1922,7 +1922,7 @@ class TestMarkdownConversion(TestCase):
                             }
                         ],
                         "type": "TITLE",
-                        "uid": "33",
+                        "uid": "34",
                     },
                 ],
                 "content": None,
