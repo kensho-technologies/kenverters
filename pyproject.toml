@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "kensho_kenverters"
-version = "1.2.4"
+version = "1.2.5"
 description = "Extract Output Translator Tools"
 readme = "README.md"
 authors = ["Valerie Faucon-Morin <valerie.fauconmorin@kensho.com>"]

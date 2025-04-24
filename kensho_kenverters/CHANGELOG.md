@@ -1,5 +1,8 @@
 # Changelog
 
+## v1.2.5
+* Add handling for FIGURE types in Extract output
+
 ## v1.2.4
 
 * Add conversion from a given table annotation to grid, finding the first and last associated text object
