@@ -9,6 +9,7 @@ from kensho_kenverters.constants import (
     CATEGORY_KEY,
     DOCUMENT_CATEGORY_KEY,
     ELEMENT_TITLE_CONTENT_CATEGORIES,
+    EMPTY_STRING,
     LOCATIONS_KEY,
     TABLE_CONTENT_CATEGORIES,
     TABLE_KEY,
@@ -138,7 +139,7 @@ def _create_segment(
     elif content.type in [e.value for e in ContentCategory]:
         segment = {
             CATEGORY_KEY: content.type.lower(),
-            TEXT_KEY: content.content or "",
+            TEXT_KEY: content.content or EMPTY_STRING,
         }
     else:
         raise TypeError(

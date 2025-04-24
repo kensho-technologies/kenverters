@@ -9,6 +9,7 @@ from logging import getLogger
 from typing import Any, TypeAlias
 
 from kensho_kenverters.constants import (
+    EMPTY_STRING,
     LOCATIONS_KEY,
     TABLE_CONTENT_CATEGORIES,
     TEXT_KEY,
@@ -87,7 +88,7 @@ def _convert_output_to_texts_with_locs(
             segments += table_cell_segments
         elif content.type in [e.value for e in ContentCategory]:
             segment: dict[str, Any] = {
-                TEXT_KEY: content.content or "",
+                TEXT_KEY: content.content or EMPTY_STRING,
                 LOCATIONS_KEY: content.locations,
             }
             segments.append(segment)
