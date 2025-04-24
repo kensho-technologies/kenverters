@@ -1880,6 +1880,21 @@ class TestTableExtraction(TestCase):
                         },
                         {
                             "children": [],
+                            "content": None,
+                            "locations": [
+                                {
+                                    "height": 0.12461,
+                                    "page_number": 0,
+                                    "width": 0.34248,
+                                    "x": 0.50986,
+                                    "y": 0.34171,
+                                }
+                            ],
+                            "type": "FIGURE",
+                            "uid": "599",
+                        },
+                        {
+                            "children": [],
                             "content": "789",
                             "locations": [
                                 {

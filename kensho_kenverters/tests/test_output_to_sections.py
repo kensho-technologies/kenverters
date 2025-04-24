@@ -17,6 +17,7 @@ class TestMarkdownConversion(TestCase):
     def setUpClass(cls) -> None:
         with open(OUTPUT_FILE_PATH, "r") as f:
             cls.extract_output = json.load(f)
+        cls.maxDiff = None
 
     def test_extract_organized_sections(self) -> None:
         # Example not starting with a title
@@ -99,6 +100,7 @@ class TestMarkdownConversion(TestCase):
                         "hine learning is also referred to as predictive analytics."
                     ),
                 },
+                {"category": "figure", "text": ""},
             ],
             [
                 {"category": "title", "text": "Recommendation: BUY"},
@@ -961,6 +963,21 @@ class TestMarkdownConversion(TestCase):
                     },
                     {
                         "children": [],
+                        "content": None,
+                        "locations": [
+                            {
+                                "height": 0.01425,
+                                "page_number": 0,
+                                "width": 0.21622,
+                                "x": 0.60002,
+                                "y": 0.8388,
+                            }
+                        ],
+                        "type": "FIGURE",
+                        "uid": "33",
+                    },
+                    {
+                        "children": [],
                         "content": "Recommendation: BUY",
                         "locations": [
                             {
@@ -972,7 +989,7 @@ class TestMarkdownConversion(TestCase):
                             }
                         ],
                         "type": "TITLE",
-                        "uid": "33",
+                        "uid": "34",
                     },
                     {
                         "children": [],
@@ -987,7 +1004,7 @@ class TestMarkdownConversion(TestCase):
                             }
                         ],
                         "type": "TEXT",
-                        "uid": "34",
+                        "uid": "35",
                     },
                     {
                         "children": [],
@@ -1002,7 +1019,7 @@ class TestMarkdownConversion(TestCase):
                             }
                         ],
                         "type": "TEXT",
-                        "uid": "35",
+                        "uid": "36",
                     },
                     {
                         "children": [],
@@ -1017,7 +1034,7 @@ class TestMarkdownConversion(TestCase):
                             }
                         ],
                         "type": "TEXT",
-                        "uid": "36",
+                        "uid": "37",
                     },
                 ],
                 "content": None,
@@ -1880,6 +1897,21 @@ class TestMarkdownConversion(TestCase):
                     },
                     {
                         "children": [],
+                        "content": None,
+                        "locations": [
+                            {
+                                "height": 0.01425,
+                                "page_number": 0,
+                                "width": 0.21622,
+                                "x": 0.60002,
+                                "y": 0.8388,
+                            }
+                        ],
+                        "type": "FIGURE",
+                        "uid": "333",
+                    },
+                    {
+                        "children": [],
                         "content": "Recommendation: BUY",
                         "locations": [
                             {
@@ -1975,6 +2007,7 @@ class TestMarkdownConversion(TestCase):
                         "hine learning is also referred to as predictive analytics."
                     ),
                 },
+                {"category": "figure", "text": ""},
             ],
             [{"category": "title", "text": "Recommendation: BUY"}],
         ]

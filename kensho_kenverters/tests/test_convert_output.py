@@ -56,6 +56,7 @@ class TestMarkdownConversion(TestCase):
             cls.extract_output_no_locs = json.load(f)
         with open(OUTPUT_CHAR_OFFSETS_FILE_PATH, "r") as f:
             cls.extract_output_char_offsets = json.load(f)
+        cls.maxDiff = None
 
     def test_convert_output_to_items(self) -> None:
         expected_list = [
@@ -116,6 +117,7 @@ class TestMarkdownConversion(TestCase):
                 " In its application across business problems, machine learning is also referred "
                 "to as predictive analytics.",
             },
+            {"category": "figure", "text": ""},
             {"category": "title", "text": "Recommendation: BUY"},
             {"category": "text", "text": "42"},
             {"category": "text", "text": "test noise string at bottom"},
@@ -249,6 +251,19 @@ class TestMarkdownConversion(TestCase):
                 "locations": [
                     LocationModel(
                         height=0.16867, width=0.8, x=0.1, y=0.58142, page_number=0
+                    )
+                ],
+            },
+            {
+                "category": "figure",
+                "text": "",
+                "locations": [
+                    LocationModel(
+                        height=0.01425,
+                        width=0.21622,
+                        x=0.60002,
+                        y=0.8388,
+                        page_number=0,
                     )
                 ],
             },
