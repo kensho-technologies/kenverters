@@ -9,6 +9,7 @@ from kensho_kenverters.constants import (
     CATEGORY_KEY,
     DOCUMENT_CATEGORY_KEY,
     ELEMENT_TITLE_CONTENT_CATEGORIES,
+    EMPTY_STRING,
     LOCATIONS_KEY,
     TABLE_CONTENT_CATEGORIES,
     TABLE_KEY,
@@ -138,7 +139,7 @@ def _create_segment(
     elif content.type in [e.value for e in ContentCategory]:
         segment = {
             CATEGORY_KEY: content.type.lower(),
-            TEXT_KEY: content.content,
+            TEXT_KEY: content.content or EMPTY_STRING,
         }
     else:
         raise TypeError(
@@ -235,7 +236,7 @@ def convert_output_to_str(serialized_document: dict[str, Any]) -> str:
         full text string of the document with markdown-style tables using | as a delimiter
     """
     document_items = convert_output_to_items_list(serialized_document)
-    return "\n".join(item[TEXT_KEY] for item in document_items)
+    return "\n".join(item[TEXT_KEY] for item in document_items if item[TEXT_KEY])
 
 
 def convert_output_to_str_by_page(serialized_document: dict[str, Any]) -> list[str]:
@@ -285,6 +286,9 @@ def convert_output_to_markdown(serialized_document: dict[str, Any]) -> str:
     document_items = convert_output_to_items_list(serialized_document)
     item_texts = []
     for item in document_items:
+        # Some types like figures don't have content
+        if not item[TEXT_KEY]:
+            continue
         item_text = _get_markdown_text(item)
         item_texts.append(item_text)
     return "\n".join(item_texts)
