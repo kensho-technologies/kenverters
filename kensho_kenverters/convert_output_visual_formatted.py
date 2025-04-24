@@ -87,7 +87,7 @@ def _convert_output_to_texts_with_locs(
             segments += table_cell_segments
         elif content.type in [e.value for e in ContentCategory]:
             segment: dict[str, Any] = {
-                TEXT_KEY: content.content,
+                TEXT_KEY: content.content or "",
                 LOCATIONS_KEY: content.locations,
             }
             segments.append(segment)

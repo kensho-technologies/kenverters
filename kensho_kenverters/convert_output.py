@@ -138,7 +138,7 @@ def _create_segment(
     elif content.type in [e.value for e in ContentCategory]:
         segment = {
             CATEGORY_KEY: content.type.lower(),
-            TEXT_KEY: content.content,
+            TEXT_KEY: content.content or "",
         }
     else:
         raise TypeError(
