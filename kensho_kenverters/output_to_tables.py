@@ -8,6 +8,7 @@ from typing import Any, Sequence
 import pandas as pd
 
 from kensho_kenverters.constants import (
+    EMPTY_STRING,
     TABLE_CONTENT_CATEGORIES,
     AnnotationType,
     ContentCategory,
@@ -181,7 +182,7 @@ def convert_uid_grid_to_content_grid(
     uid_grid: list[list[list[str]]], cell_contents: Sequence[ContentModel]
 ) -> list[list[str]]:
     """Convert a UID grid to content grid."""
-    uids_to_content = {cell.uid: cell.content or "" for cell in cell_contents}
+    uids_to_content = {cell.uid: cell.content or EMPTY_STRING for cell in cell_contents}
 
     content_grid = []
     for uid_row in uid_grid:
