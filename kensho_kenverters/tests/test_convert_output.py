@@ -56,7 +56,6 @@ class TestMarkdownConversion(TestCase):
             cls.extract_output_no_locs = json.load(f)
         with open(OUTPUT_CHAR_OFFSETS_FILE_PATH, "r") as f:
             cls.extract_output_char_offsets = json.load(f)
-        cls.maxDiff = None
 
     def test_convert_output_to_items(self) -> None:
         expected_list = [

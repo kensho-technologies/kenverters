@@ -17,7 +17,6 @@ class TestMarkdownConversion(TestCase):
     def setUpClass(cls) -> None:
         with open(OUTPUT_FILE_PATH, "r") as f:
             cls.extract_output = json.load(f)
-        cls.maxDiff = None
 
     def test_extract_organized_sections(self) -> None:
         # Example not starting with a title
