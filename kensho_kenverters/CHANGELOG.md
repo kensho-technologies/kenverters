@@ -1,5 +1,13 @@
 # Changelog
 
+## v1.2.7
+
+Fixing PyPI version mismatch - no code changes
+
+## v1.2.6
+* Another addition to enable FIGURE types
+
+
 ## v1.2.5
 * Add handling for FIGURE types in Extract output
 
