@@ -104,7 +104,9 @@ def get_table_uid_to_annotations_mapping(
         cell_uids = [cell.uid for cell in cells]
         # It's possible that we're only passing in table structure annotations or only figure table structure annotations.
         # In that case, we only want to keep the annotations that match the cell uids.
-        table_to_annotations[table_uid] = [uid_to_annotation[uid] for uid in cell_uids if uid in uid_to_annotation]
+        table_to_annotations[table_uid] = [
+            uid_to_annotation[uid] for uid in cell_uids if uid in uid_to_annotation
+        ]
     return table_to_annotations
 
 
