@@ -102,7 +102,12 @@ def get_table_uid_to_annotations_mapping(
     table_to_annotations = {}
     for table_uid, cells in table_uid_to_cells.items():
         cell_uids = [cell.uid for cell in cells]
-        table_to_annotations[table_uid] = [uid_to_annotation[uid] for uid in cell_uids]
+        # It's possible that we're only passing in table structure annotations or only
+        # figure table structure annotations. In that case, we only want to keep the
+        # annotations that match the cell uids.
+        table_to_annotations[table_uid] = [
+            uid_to_annotation[uid] for uid in cell_uids if uid in uid_to_annotation
+        ]
     return table_to_annotations
 
 
@@ -139,7 +144,7 @@ def build_uids_grid_from_table_cell_annotations(
     return rows
 
 
-def _build_content_grid_from_figure_extracted_table_cell_annotations(
+def build_content_grid_from_figure_extracted_table_cell_annotations(
     annotations: Sequence[AnnotationModel],
 ) -> list[list[str]]:
     """Build content grid where each location has a string of content."""
@@ -263,7 +268,7 @@ def build_table_grids(
             tables[table_uid] = (table_uid_to_type_mapping[table_uid], content_grid)
         else:
             content_grid = (
-                _build_content_grid_from_figure_extracted_table_cell_annotations(
+                build_content_grid_from_figure_extracted_table_cell_annotations(
                     cell_annotations
                 )
             )

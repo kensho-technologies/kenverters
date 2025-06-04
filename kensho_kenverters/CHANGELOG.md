@@ -1,5 +1,10 @@
 # Changelog
 
+## v1.2.8
+
+* Fixing edge case where we want to build a table with only figure extracted table annotations or only table annotations
+* Making build_content_grid_from_figure_extracted_table_cell_annotations public
+
 ## v1.2.7
 
 * Fixing PyPI version mismatch - no code changes
