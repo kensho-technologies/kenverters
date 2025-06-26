@@ -3,7 +3,7 @@ import os
 from typing import Any, ClassVar
 from unittest import TestCase
 
-from kensho_kenverters.convert_output import (
+from ..convert_output import (
     _construct_table_from_cells,
     convert_output_to_items_list,
     convert_output_to_markdown,
@@ -12,7 +12,7 @@ from kensho_kenverters.convert_output import (
     convert_output_to_str_by_page,
     table_to_markdown,
 )
-from kensho_kenverters.extract_output_models import ContentModel, LocationModel
+from ..extract_output_models import ContentModel, LocationModel
 
 OUTPUT_FILE_PATH = os.path.join(
     os.path.dirname(__file__), "data", "extract_output.json"
@@ -44,6 +44,7 @@ class TestMarkdownConversion(TestCase):
     extract_output_no_locs: ClassVar[dict[str, Any]]
     extract_output_char_offsets: ClassVar[dict[str, Any]]
     extract_output_hierarchical_v2: ClassVar[dict[str, Any]]
+    extract_output_figure_extraction: ClassVar[dict[str, Any]]
 
     @classmethod
     def setUpClass(cls) -> None:
@@ -338,7 +339,8 @@ class TestMarkdownConversion(TestCase):
             },
             {
                 "category": "figure_title",
-                "text": "Figure BR1. | Notification rate of reported1 confirmed cases of human brucellosis in the EU2, 2004-2007",
+                "text": "Figure BR1. | Notification rate of reported1 confirmed cases of "
+                "human brucellosis in the EU2, 2004-2007",
                 "locations": [
                     LocationModel(
                         height=0.01333,
@@ -364,7 +366,8 @@ class TestMarkdownConversion(TestCase):
             },
             {
                 "category": "text",
-                "text": "0.350 0.300 0.250 0.200 Conifrmed cases per 100,000 population 0.150 0.100 0.050 0.000 2004 2005 2006 2007",
+                "text": "0.350 0.300 0.250 0.200 Conifrmed cases per 100,000 population "
+                "0.150 0.100 0.050 0.000 2004 2005 2006 2007",
                 "locations": [
                     LocationModel(
                         height=0.29487,
@@ -390,7 +393,9 @@ class TestMarkdownConversion(TestCase):
             },
             {
                 "category": "figure_footer",
-                "text": "1. includes total cases for 2004 and confirmed cases from 2005-2007 2. includes data from: AT, BE, Cy, EE, Fi, FR, DE, GR, iE, iT, LT, nL, pL, pT, ES, SE, UK",
+                "text": "1. includes total cases for 2004 and confirmed cases from 2005-2007 2. "
+                "includes data from: AT, BE, Cy, EE, Fi, FR, DE, GR, iE, iT, LT, nL, pL, pT, ES, "
+                "SE, UK",
                 "locations": [
                     LocationModel(
                         height=0.019, width=0.39546, x=0.14286, y=0.4719, page_number=0
@@ -399,7 +404,10 @@ class TestMarkdownConversion(TestCase):
             },
             {
                 "category": "paragraph",
-                "text": "The highest notification rate of human brucellosis was noted in the age group 25-44 followed by the age group 45-64, (36.3% and 31.2% of confirmed cases, respectively) (Figure BR2). Brucellosis exhibited a slight seasonal pattern in 2007 with more cases occurring in the summer (Figure BR3).",
+                "text": "The highest notification rate of human brucellosis was noted in the age "
+                "group 25-44 followed by the age group 45-64, (36.3% and 31.2% of confirmed cases"
+                ", respectively) (Figure BR2). Brucellosis exhibited a slight seasonal pattern in "
+                "2007 with more cases occurring in the summer (Figure BR3).",
                 "locations": [
                     LocationModel(
                         height=0.03801,
@@ -412,7 +420,8 @@ class TestMarkdownConversion(TestCase):
             },
             {
                 "category": "figure_title",
-                "text": "Figure BR2. | Age-specific notification rate of reported confirmed human cases of brucellosis, TESSy data for reporting MSs¹, 2007",
+                "text": "Figure BR2. | Age-specific notification rate of reported confirmed human "
+                "cases of brucellosis, TESSy data for reporting MSs¹, 2007",
                 "locations": [
                     LocationModel(
                         height=0.02569,
@@ -434,7 +443,9 @@ class TestMarkdownConversion(TestCase):
                     ["45-64", "0.1358"],
                     ["≥65", "0.0984"],
                 ],
-                "text": "\n| Age group | Conifrmed cases per 100,000 population |\n| --- | --- |\n| 0-4 | 0.0330 |\n| 5-14 | 0.0756 |\n| 15-24 | 0.0706 |\n| 25-44 | 0.1682 |\n| 45-64 | 0.1358 |\n| ≥65 | 0.0984 |\n",
+                "text": "\n| Age group | Conifrmed cases per 100,000 population |\n| --- | --- "
+                "|\n| 0-4 | 0.0330 |\n| 5-14 | 0.0756 |\n| 15-24 | 0.0706 |\n| 25-44 | 0.1682 "
+                "|\n| 45-64 | 0.1358 |\n| ≥65 | 0.0984 |\n",
                 "locations": [
                     LocationModel(
                         height=0.26441,
@@ -460,7 +471,8 @@ class TestMarkdownConversion(TestCase):
             },
             {
                 "category": "text",
-                "text": "0.2 0.18 0.16 0.14 0.12 0.1 Conifrmed cases per 100,000 population 0.08 0.06 0.04 0.02 0 0-4 5-14 15-24 25-44 45-64 ≥65 Age group",
+                "text": "0.2 0.18 0.16 0.14 0.12 0.1 Conifrmed cases per 100,000 population "
+                "0.08 0.06 0.04 0.02 0 0-4 5-14 15-24 25-44 45-64 ≥65 Age group",
                 "locations": [
                     LocationModel(
                         height=0.26689,
@@ -473,7 +485,8 @@ class TestMarkdownConversion(TestCase):
             },
             {
                 "category": "figure_footer",
-                "text": "1. includes data from all EU mSs, except Cy, CZ, DK, EE, LV, LT, LU, mT, SK (n=526)",
+                "text": "1. includes data from all EU mSs, except Cy, CZ, DK, EE, LV, LT, "
+                "LU, mT, SK (n=526)",
                 "locations": [
                     LocationModel(
                         height=0.00831, width=0.3982, x=0.14286, y=0.8845, page_number=0
@@ -508,7 +521,8 @@ class TestMarkdownConversion(TestCase):
             },
             {
                 "category": "figure_title",
-                "text": "Figure BR3. | Seasonal distribution of reported confirmed human cases of brucellosis in reporting MSs1, 2007",
+                "text": "Figure BR3. | Seasonal distribution of reported confirmed "
+                "human cases of brucellosis in reporting MSs1, 2007",
                 "locations": [
                     LocationModel(
                         height=0.01333,
@@ -530,7 +544,8 @@ class TestMarkdownConversion(TestCase):
             },
             {
                 "category": "text",
-                "text": "70 60 50 40 Conifrmed cases 30 20 10 0 Jan Feb Mar Apr May Jun Jul Aug Sep Oct Nov Dec",
+                "text": "70 60 50 40 Conifrmed cases 30 20 10 0 Jan Feb Mar Apr May Jun "
+                "Jul Aug Sep Oct Nov Dec",
                 "locations": [
                     LocationModel(
                         height=0.23863,
@@ -543,7 +558,8 @@ class TestMarkdownConversion(TestCase):
             },
             {
                 "category": "figure_footer",
-                "text": "1. includes data from: BE, Fi, FR, DE, GR, hU, iE, iT, nL, pL, pT, Ro, Si, ES, SE and UK (n = 532)",
+                "text": "1. includes data from: BE, Fi, FR, DE, GR, hU, iE, iT, nL, pL, pT, Ro, "
+                "Si, ES, SE and UK (n = 532)",
                 "locations": [
                     LocationModel(
                         height=0.00831,
@@ -556,7 +572,12 @@ class TestMarkdownConversion(TestCase):
             },
             {
                 "category": "paragraph",
-                "text": "nine mSs with confirmed human cases reported whether the cases were imported or domestically acquired. All brucellosis cases in Austria, France, hungary, Slovenia and Sweden were reported to be imported, whereas in Spain, all cases were reported to be acquired domestically (Table BR3). Also Germany and the netherlands reported most of their cases as imported. Less than half (42.2%) of the infections at EU level remain of unknown geographical origin.",
+                "text": "nine mSs with confirmed human cases reported whether the cases were "
+                "imported or domestically acquired. All brucellosis cases in Austria, France, "
+                "hungary, Slovenia and Sweden were reported to be imported, whereas in Spain, "
+                "all cases were reported to be acquired domestically (Table BR3). Also Germany "
+                "and the netherlands reported most of their cases as imported. Less than half "
+                "(42.2%) of the infections at EU level remain of unknown geographical origin.",
                 "locations": [
                     LocationModel(
                         height=0.06414,
@@ -569,7 +590,11 @@ class TestMarkdownConversion(TestCase):
             },
             {
                 "category": "paragraph",
-                "text": "The suspected vehicle of transmission was reported for 306 of the confirmed cases, however in 251 of these cases the vehicle was reported as unknown.  The known vehicles reported were contact with farm  animals (31  cases),  cheese (21  cases),  milk (two  cases)  and  sheep  meat (one  case).  portugal contributed with the most information.",
+                "text": "The suspected vehicle of transmission was reported for 306 of the "
+                "confirmed cases, however in 251 of these cases the vehicle was reported as "
+                "unknown.  The known vehicles reported were contact with farm  animals "
+                "(31  cases),  cheese (21  cases),  milk (two  cases)  and  sheep  meat "
+                "(one  case).  portugal contributed with the most information.",
                 "locations": [
                     LocationModel(
                         height=0.05108,
@@ -608,7 +633,8 @@ class TestMarkdownConversion(TestCase):
             },
             {
                 "category": "table_title",
-                "text": "Table BR3. | Reported confirmed brucellosis cases in humans by reporting countries and origin of case (imported/domestic), 2007",
+                "text": "Table BR3. | Reported confirmed brucellosis cases in humans by "
+                "reporting countries and origin of case (imported/domestic), 2007",
                 "locations": [
                     LocationModel(
                         height=0.02569,
@@ -648,7 +674,16 @@ class TestMarkdownConversion(TestCase):
                     ["United Kingdom 0", "United Kingdom 0", "46.2", "53.9", "13"],
                     ["EU Total 46.3", "EU Total 46.3", "11.6", "42.2", "441"],
                 ],
-                "text": "\n| Country | domestic (%) | Imported (%) | Unknown (%) | Total (n) |\n| --- | --- | --- | --- | --- |\n| Austria | 0 | 100 | 0 | 1 |\n| Belgium | 0 | 0 | 100 | 3 |\n| Bulgaria | 0 | 0 | 100 | 9 |\n| Finland | 0 | 0 | 100 | 2 |\n| France | 0 | 100 | 0 | 14 |\n| Germany | 14.3 | 76.2 | 9.5 | 21 |\n| hungary | 0 | 100 | 0 | 1 |\n| ireland | 0 | 0 | 100 | 7 |\n| italy | 0 | 0 | 100 | 76 |\n| netherlands | 0 | 80.0 | 20.0 | 5 |\n| poland | 0 | 0 | 100 | 1 |\n| portugal | 0 | 0 | 100 | 74 |\n| Romania | 0 | 0 | 100 | 4 |\n| Slovenia | 0 | 100 | 0 | 1 |\n| Spain | 100 | 0 | 0 | 201 |\n| Sweden | 0 | 100 | 0 | 8 |\n| United Kingdom 0 | United Kingdom 0 | 46.2 | 53.9 | 13 |\n| EU Total 46.3 | EU Total 46.3 | 11.6 | 42.2 | 441 |\n",
+                "text": "\n| Country | domestic (%) | Imported (%) | Unknown (%) | "
+                "Total (n) |\n| --- | --- | --- | --- | --- |\n| Austria | 0 | 100 | 0 | 1 |\n| "
+                "Belgium | 0 | 0 | 100 | 3 |\n| Bulgaria | 0 | 0 | 100 | 9 |\n| Finland | 0 | 0 | "
+                "100 | 2 |\n| France | 0 | 100 | 0 | 14 |\n| Germany | 14.3 | 76.2 | 9.5 | 21 |\n"
+                "| hungary | 0 | 100 | 0 | 1 |\n| ireland | 0 | 0 | 100 | 7 |\n| italy | 0 | 0 | "
+                "100 | 76 |\n| netherlands | 0 | 80.0 | 20.0 | 5 |\n| poland | 0 | 0 | 100 | 1 "
+                "|\n| portugal | 0 | 0 | 100 | 74 |\n| Romania | 0 | 0 | 100 | 4 |\n| Slovenia "
+                "| 0 | 100 | 0 | 1 |\n| Spain | 100 | 0 | 0 | 201 |\n| Sweden | 0 | 100 | 0 | 8 "
+                "|\n| United Kingdom 0 | United Kingdom 0 | 46.2 | 53.9 | 13 |\n| EU Total 46.3 "
+                "| EU Total 46.3 | 11.6 | 42.2 | 441 |\n",
                 "locations": [
                     LocationModel(
                         height=0.31764,
@@ -661,7 +696,9 @@ class TestMarkdownConversion(TestCase):
             },
             {
                 "category": "paragraph",
-                "text": "only  12%  of  Brucella isolates in the  EU  were further  speciated.  B. melitensis represented  8%  and B. abortus 4% of reported confirmed cases (n= 357).",
+                "text": "only  12%  of  Brucella isolates in the  EU  were further  speciated.  "
+                "B. melitensis represented  8%  and B. abortus 4% of reported confirmed cases "
+                "(n= 357).",
                 "locations": [
                     LocationModel(
                         height=0.02495,
@@ -683,7 +720,17 @@ class TestMarkdownConversion(TestCase):
             },
             {
                 "category": "paragraph",
-                "text": "only Belgium and italy reported investigations including more than 25 samples of milk and cheese for the presence of Brucella. The majority of samples were of raw or low heat-treated milk and cheeses. Belgium did not detect any positive samples out of the 70,067 batches of raw cow’s milk tested. italy reported investigations where 20% and 9% of the batches of raw cow’s milk and raw sheep’s milk were positive, respectively. These findings are relatively high and indicate a human health risk related to the consumption of raw milk products present in the country (Table BR4). only few positive samples of raw cow’s milk have previously been reported by italy (2001, 2003, 2004 and 2006). Brucella was also isolated from (single) raw milk samples from italian sheep and italy also reported one sample of cheese made from cow’s milk to be positive for Brucella.",
+                "text": "only Belgium and italy reported investigations including more than 25 "
+                "samples of milk and cheese for the presence of Brucella. The majority of "
+                "samples were of raw or low heat-treated milk and cheeses. Belgium did not detect "
+                "any positive samples out of the 70,067 batches of raw cow’s milk tested. italy "
+                "reported investigations where 20% and 9% of the batches of raw cow’s milk and "
+                "raw sheep’s milk were positive, respectively. These findings are relatively high "
+                "and indicate a human health risk related to the consumption of raw milk products "
+                "present in the country (Table BR4). only few positive samples of raw cow’s milk "
+                "have previously been reported by italy (2001, 2003, 2004 and 2006). Brucella was "
+                "also isolated from (single) raw milk samples from italian sheep and italy also "
+                "reported one sample of cheese made from cow’s milk to be positive for Brucella.",
                 "locations": [
                     LocationModel(
                         height=0.11641,
@@ -696,7 +743,8 @@ class TestMarkdownConversion(TestCase):
             },
             {
                 "category": "paragraph",
-                "text": "overall, since 2001, only Greece, italy and portugal have reported findings of Brucella in raw cow’s milk.",
+                "text": "overall, since 2001, only Greece, italy and portugal have reported "
+                "findings of Brucella in raw cow’s milk.",
                 "locations": [
                     LocationModel(
                         height=0.02495,
@@ -733,7 +781,6 @@ class TestMarkdownConversion(TestCase):
         output_list_with_locs = convert_output_to_items_list(
             self.extract_output_figure_extraction, return_locations=True
         )
-        print(output_list_with_locs)
         self.assertEqual(expected_list_with_locs, output_list_with_locs)
 
     def test_convert_output_to_items_hierarchical(self) -> None:
