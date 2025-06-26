@@ -7,6 +7,7 @@ from typing import TypeAlias
 CATEGORY_KEY = "category"
 TEXT_KEY = "text"
 TABLE_KEY = "table"
+FIGURE_EXTRACTED_TABLE_KEY = "figure_extracted_table"
 LOCATIONS_KEY = "locations"
 DOCUMENT_CATEGORY_KEY = "DOCUMENT"
 

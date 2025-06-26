@@ -5,21 +5,26 @@ from collections import defaultdict
 from logging import getLogger
 from typing import Any
 
-from kensho_kenverters.constants import (
+from .constants import (
     CATEGORY_KEY,
     DOCUMENT_CATEGORY_KEY,
     ELEMENT_TITLE_CONTENT_CATEGORIES,
     EMPTY_STRING,
+    FIGURE_EXTRACTED_TABLE_KEY,
     LOCATIONS_KEY,
-    TABLE_CONTENT_CATEGORIES,
     TABLE_KEY,
     TEXT_KEY,
     AnnotationType,
     ContentCategory,
     TableType,
 )
-from kensho_kenverters.extract_output_models import ContentModel, LocationModel
-from kensho_kenverters.utils import load_output_to_pydantic
+from .extract_output_models import AnnotationModel, ContentModel, LocationModel
+from .output_to_tables import (
+    build_content_grid_from_figure_extracted_table_cell_annotations,
+    get_table_uid_to_annotations_mapping,
+    get_table_uid_to_cells_mapping,
+)
+from .utils import load_output_to_pydantic
 
 logger = getLogger(__name__)
 
@@ -110,6 +115,7 @@ def _create_segment(
     content: ContentModel,
     uid_to_index: dict[str, tuple[int, int]],
     uid_to_span: dict[str, tuple[int, int]],
+    figure_extracted_table_uid_to_cell_annotations: dict[str, list[AnnotationModel]],
 ) -> dict[str, Any]:
     """Create segment dictionary from the content, and if applicable its matching table cells."""
     segment: dict[str, Any] = {}
@@ -117,7 +123,10 @@ def _create_segment(
     if content.type == DOCUMENT_CATEGORY_KEY:
         return {}
     # For tables, use table cell structures read above
-    elif content.type in TABLE_CONTENT_CATEGORIES:
+    elif content.type in (
+        ContentCategory.TABLE.value,
+        ContentCategory.TABLE_OF_CONTENTS.value,
+    ):
         # Construct the table from cells
         table_cells = content.children
         # Drop tables with no cells
@@ -131,6 +140,20 @@ def _create_segment(
             CATEGORY_KEY: content.type.lower(),
             TABLE_KEY: table,
             TEXT_KEY: table_to_markdown(table),
+        }
+    elif content.type == ContentCategory.FIGURE_EXTRACTED_TABLE.value:
+        figure_extracted_table = (
+            build_content_grid_from_figure_extracted_table_cell_annotations(
+                figure_extracted_table_uid_to_cell_annotations[content.uid]
+            )
+        )
+        # Drop tables with length 0
+        if len(figure_extracted_table) == 0:
+            return {}
+        segment = {
+            CATEGORY_KEY: content.type.lower(),
+            FIGURE_EXTRACTED_TABLE_KEY: figure_extracted_table,
+            TEXT_KEY: table_to_markdown(figure_extracted_table),
         }
     elif content.type == ContentCategory.TABLE_CELL.value:
         # Skip - already accounted for in tables
@@ -153,6 +176,7 @@ def _get_segments_from_all_children(
     content: ContentModel,
     uid_to_index: dict[str, tuple[int, int]],
     uid_to_span: dict[str, tuple[int, int]],
+    figure_extracted_table_uid_to_cell_annotations: dict[str, list[AnnotationModel]],
     return_locations: bool,
     segments: list[dict[str, Any]],
     visited: list[str],
@@ -162,7 +186,12 @@ def _get_segments_from_all_children(
         return
 
     # Get current segment from content and add to list
-    segment = _create_segment(content, uid_to_index, uid_to_span)
+    segment = _create_segment(
+        content,
+        uid_to_index,
+        uid_to_span,
+        figure_extracted_table_uid_to_cell_annotations,
+    )
     visited.append(content.uid)
     if segment:
         if return_locations:
@@ -172,7 +201,13 @@ def _get_segments_from_all_children(
     # Get all children segments
     for child in content.children:
         _get_segments_from_all_children(
-            child, uid_to_index, uid_to_span, return_locations, segments, visited
+            child,
+            uid_to_index,
+            uid_to_span,
+            figure_extracted_table_uid_to_cell_annotations,
+            return_locations,
+            segments,
+            visited,
         )
 
 
@@ -213,15 +248,38 @@ def convert_output_to_items_list(
             for uid in content_uids:
                 uid_to_index[uid] = (row, col)
                 uid_to_span[uid] = annotation.data.span
+        elif annotation.type == AnnotationType.FIGURE_EXTRACTED_TABLE_STRUCTURE.value:
+            continue
         else:
             raise TypeError(f"{annotation.type} is not a supported annotation type")
+
+    figure_extracted_table_cell_annotations = [
+        annotation
+        for annotation in annotations
+        if annotation.type == AnnotationType.FIGURE_EXTRACTED_TABLE_STRUCTURE.value
+    ]
+    figure_extracted_table_uid_to_cells_mapping = get_table_uid_to_cells_mapping(
+        parsed_serialized_document.content_tree
+    )
+    figure_extracted_table_uid_to_cell_annotations = (
+        get_table_uid_to_annotations_mapping(
+            figure_extracted_table_uid_to_cells_mapping,
+            figure_extracted_table_cell_annotations,
+        )
+    )
 
     # Parse content into segments
     content_tree = parsed_serialized_document.content_tree
     segments: list[dict[str, Any]] = []
     visited: list[str] = []
     _get_segments_from_all_children(
-        content_tree, uid_to_index, uid_to_span, return_locations, segments, visited
+        content_tree,
+        uid_to_index,
+        uid_to_span,
+        figure_extracted_table_uid_to_cell_annotations,
+        return_locations,
+        segments,
+        visited,
     )
     return segments
 

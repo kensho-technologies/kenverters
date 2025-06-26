@@ -1,5 +1,9 @@
 # Changelog
 
+## v1.2.9
+
+* Fixed bug for creating figure extraction segments in convert_output_to_items_list 
+
 ## v1.2.8
 
 * Fixing edge case where we want to build a table with only figure extracted table annotations or only table annotations

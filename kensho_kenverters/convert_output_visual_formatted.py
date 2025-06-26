@@ -11,7 +11,6 @@ from typing import Any, TypeAlias
 from kensho_kenverters.constants import (
     EMPTY_STRING,
     LOCATIONS_KEY,
-    TABLE_CONTENT_CATEGORIES,
     TEXT_KEY,
     AnnotationType,
     ContentCategory,
@@ -68,6 +67,9 @@ def _convert_output_to_texts_with_locs(
             content_uids = annotation.content_uids  # a list
             for uid in content_uids:
                 uid_to_location[uid] = annotation.locations
+        # For visual formatting, we don't want to include figure extracted tables
+        elif annotation.type == AnnotationType.FIGURE_EXTRACTED_TABLE_STRUCTURE.value:
+            continue
         else:
             raise TypeError(f"{annotation.type} is not a supported annotation type")
 
@@ -76,7 +78,10 @@ def _convert_output_to_texts_with_locs(
     segments: list[dict[str, Any]] = []
     for content in content_tree.children:
         # For tables, use table cell structures read above
-        if content.type in TABLE_CONTENT_CATEGORIES:
+        if content.type in (
+            ContentCategory.TABLE.value,
+            ContentCategory.TABLE_OF_CONTENTS.value,
+        ):
             # Construct the table from cells
             table_cells = content.children
             # Drop tables with no cells
@@ -86,6 +91,9 @@ def _convert_output_to_texts_with_locs(
                 table_cells, uid_to_location
             )
             segments += table_cell_segments
+        # For visual formatting, we don't want to include figure extracted tables
+        elif content.type == ContentCategory.FIGURE_EXTRACTED_TABLE.value:
+            continue
         elif content.type in [e.value for e in ContentCategory]:
             segment: dict[str, Any] = {
                 TEXT_KEY: content.content or EMPTY_STRING,
