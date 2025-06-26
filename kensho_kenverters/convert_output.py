@@ -155,7 +155,10 @@ def _create_segment(
             FIGURE_EXTRACTED_TABLE_KEY: figure_extracted_table,
             TEXT_KEY: table_to_markdown(figure_extracted_table),
         }
-    elif content.type == ContentCategory.TABLE_CELL.value:
+    elif content.type in (
+        ContentCategory.TABLE_CELL.value,
+        ContentCategory.FIGURE_EXTRACTED_TABLE_CELL.value,
+    ):
         # Skip - already accounted for in tables
         return {}
     # For texts and titles, add the text content and the category
