@@ -3,7 +3,7 @@ import os
 from typing import Any, ClassVar
 from unittest import TestCase
 
-from kensho_kenverters.output_to_sections import extract_organized_sections
+from ..output_to_sections import extract_organized_sections
 
 OUTPUT_FILE_PATH = os.path.join(
     os.path.dirname(__file__), "data", "extract_output.json"

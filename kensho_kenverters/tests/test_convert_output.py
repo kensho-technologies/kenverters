@@ -3,7 +3,7 @@ import os
 from typing import Any, ClassVar
 from unittest import TestCase
 
-from kensho_kenverters.convert_output import (
+from ..convert_output import (
     _construct_table_from_cells,
     convert_output_to_items_list,
     convert_output_to_markdown,
@@ -12,7 +12,7 @@ from kensho_kenverters.convert_output import (
     convert_output_to_str_by_page,
     table_to_markdown,
 )
-from kensho_kenverters.extract_output_models import ContentModel, LocationModel
+from ..extract_output_models import ContentModel, LocationModel
 
 OUTPUT_FILE_PATH = os.path.join(
     os.path.dirname(__file__), "data", "extract_output.json"
@@ -22,6 +22,9 @@ HIERARCHICAL_OUTPUT_FILE_PATH = os.path.join(
 )
 HIERARCHICAL_v2_OUTPUT_FILE_PATH = os.path.join(
     os.path.dirname(__file__), "data", "extract_output_hierarchical_v2.json"
+)
+FIGURE_EXTRACTED_TABLE_OUTPUT_FILE_PATH = os.path.join(
+    os.path.dirname(__file__), "data", "extract_output_figure_extraction.json"
 )
 MULTI_PAGE_OUTPUT_FILE_PATH = os.path.join(
     os.path.dirname(__file__), "data", "output_multi_page_locs.json"
@@ -41,6 +44,7 @@ class TestMarkdownConversion(TestCase):
     extract_output_no_locs: ClassVar[dict[str, Any]]
     extract_output_char_offsets: ClassVar[dict[str, Any]]
     extract_output_hierarchical_v2: ClassVar[dict[str, Any]]
+    extract_output_figure_extraction: ClassVar[dict[str, Any]]
 
     @classmethod
     def setUpClass(cls) -> None:
@@ -56,6 +60,8 @@ class TestMarkdownConversion(TestCase):
             cls.extract_output_no_locs = json.load(f)
         with open(OUTPUT_CHAR_OFFSETS_FILE_PATH, "r") as f:
             cls.extract_output_char_offsets = json.load(f)
+        with open(FIGURE_EXTRACTED_TABLE_OUTPUT_FILE_PATH, "r") as f:
+            cls.extract_output_figure_extraction = json.load(f)
 
     def test_convert_output_to_items(self) -> None:
         expected_list = [
@@ -313,6 +319,467 @@ class TestMarkdownConversion(TestCase):
         ]
         output_list_with_locs = convert_output_to_items_list(
             self.extract_output, return_locations=True
+        )
+        self.assertEqual(expected_list_with_locs, output_list_with_locs)
+
+    def test_convert_output_to_items_figure_extracted_table(self) -> None:
+        expected_list_with_locs = [
+            {
+                "category": "page_header",
+                "text": "3.  |  InForMATIon on SPECIFIC ZoonoSES",
+                "locations": [
+                    LocationModel(
+                        height=0.01663,
+                        width=0.41581,
+                        x=0.10476,
+                        y=0.0446,
+                        page_number=0,
+                    )
+                ],
+            },
+            {
+                "category": "figure_title",
+                "text": "Figure BR1. | Notification rate of reported1 confirmed cases of "
+                "human brucellosis in the EU2, 2004-2007",
+                "locations": [
+                    LocationModel(
+                        height=0.01333,
+                        width=0.70786,
+                        x=0.14286,
+                        y=0.11757,
+                        page_number=0,
+                    )
+                ],
+            },
+            {
+                "category": "figure",
+                "text": "",
+                "locations": [
+                    LocationModel(
+                        height=0.30722,
+                        width=0.68439,
+                        x=0.15457,
+                        y=0.14899,
+                        page_number=0,
+                    )
+                ],
+            },
+            {
+                "category": "text",
+                "text": "0.350 0.300 0.250 0.200 Conifrmed cases per 100,000 population "
+                "0.150 0.100 0.050 0.000 2004 2005 2006 2007",
+                "locations": [
+                    LocationModel(
+                        height=0.29487,
+                        width=0.62654,
+                        x=0.15532,
+                        y=0.14785,
+                        page_number=0,
+                    )
+                ],
+            },
+            {
+                "category": "text",
+                "text": "Year",
+                "locations": [
+                    LocationModel(
+                        height=0.0095,
+                        width=0.02627,
+                        x=0.52345,
+                        y=0.45235,
+                        page_number=0,
+                    )
+                ],
+            },
+            {
+                "category": "figure_footer",
+                "text": "1. includes total cases for 2004 and confirmed cases from 2005-2007 2. "
+                "includes data from: AT, BE, Cy, EE, Fi, FR, DE, GR, iE, iT, LT, nL, pL, pT, ES, "
+                "SE, UK",
+                "locations": [
+                    LocationModel(
+                        height=0.019, width=0.39546, x=0.14286, y=0.4719, page_number=0
+                    )
+                ],
+            },
+            {
+                "category": "paragraph",
+                "text": "The highest notification rate of human brucellosis was noted in the age "
+                "group 25-44 followed by the age group 45-64, (36.3% and 31.2% of confirmed cases"
+                ", respectively) (Figure BR2). Brucellosis exhibited a slight seasonal pattern in "
+                "2007 with more cases occurring in the summer (Figure BR3).",
+                "locations": [
+                    LocationModel(
+                        height=0.03801,
+                        width=0.71777,
+                        x=0.14286,
+                        y=0.50605,
+                        page_number=0,
+                    )
+                ],
+            },
+            {
+                "category": "figure_title",
+                "text": "Figure BR2. | Age-specific notification rate of reported confirmed human "
+                "cases of brucellosis, TESSy data for reporting MSs¹, 2007",
+                "locations": [
+                    LocationModel(
+                        height=0.02569,
+                        width=0.71703,
+                        x=0.14286,
+                        y=0.56416,
+                        page_number=0,
+                    )
+                ],
+            },
+            {
+                "category": "figure_extracted_table",
+                "figure_extracted_table": [
+                    ["Age group", "Conifrmed cases per 100,000 population"],
+                    ["0-4", "0.0330"],
+                    ["5-14", "0.0756"],
+                    ["15-24", "0.0706"],
+                    ["25-44", "0.1682"],
+                    ["45-64", "0.1358"],
+                    ["≥65", "0.0984"],
+                ],
+                "text": "\n| Age group | Conifrmed cases per 100,000 population |\n| --- | --- "
+                "|\n| 0-4 | 0.0330 |\n| 5-14 | 0.0756 |\n| 15-24 | 0.0706 |\n| 25-44 | 0.1682 "
+                "|\n| 45-64 | 0.1358 |\n| ≥65 | 0.0984 |\n",
+                "locations": [
+                    LocationModel(
+                        height=0.26441,
+                        width=0.62174,
+                        x=0.14665,
+                        y=0.60632,
+                        page_number=0,
+                    )
+                ],
+            },
+            {
+                "category": "figure",
+                "text": "",
+                "locations": [
+                    LocationModel(
+                        height=0.26441,
+                        width=0.62174,
+                        x=0.14665,
+                        y=0.60632,
+                        page_number=0,
+                    )
+                ],
+            },
+            {
+                "category": "text",
+                "text": "0.2 0.18 0.16 0.14 0.12 0.1 Conifrmed cases per 100,000 population "
+                "0.08 0.06 0.04 0.02 0 0-4 5-14 15-24 25-44 45-64 ≥65 Age group",
+                "locations": [
+                    LocationModel(
+                        height=0.26689,
+                        width=0.58365,
+                        x=0.1483,
+                        y=0.60654,
+                        page_number=0,
+                    )
+                ],
+            },
+            {
+                "category": "figure_footer",
+                "text": "1. includes data from all EU mSs, except Cy, CZ, DK, EE, LV, LT, "
+                "LU, mT, SK (n=526)",
+                "locations": [
+                    LocationModel(
+                        height=0.00831, width=0.3982, x=0.14286, y=0.8845, page_number=0
+                    )
+                ],
+            },
+            {
+                "category": "page_footer",
+                "text": "180  The EFSA Journal 2009 – 223  180/312",
+                "locations": [
+                    LocationModel(
+                        height=0.00891,
+                        width=0.25254,
+                        x=0.11326,
+                        y=0.95622,
+                        page_number=0,
+                    )
+                ],
+            },
+            {
+                "category": "page_header",
+                "text": "Brucella  |  3.5.",
+                "locations": [
+                    LocationModel(
+                        height=0.01663,
+                        width=0.12409,
+                        x=0.77312,
+                        y=0.0446,
+                        page_number=1,
+                    )
+                ],
+            },
+            {
+                "category": "figure_title",
+                "text": "Figure BR3. | Seasonal distribution of reported confirmed "
+                "human cases of brucellosis in reporting MSs1, 2007",
+                "locations": [
+                    LocationModel(
+                        height=0.01333,
+                        width=0.71357,
+                        x=0.14286,
+                        y=0.11757,
+                        page_number=1,
+                    )
+                ],
+            },
+            {
+                "category": "figure",
+                "text": "",
+                "locations": [
+                    LocationModel(
+                        height=0.235, width=0.63002, x=0.18372, y=0.14819, page_number=1
+                    )
+                ],
+            },
+            {
+                "category": "text",
+                "text": "70 60 50 40 Conifrmed cases 30 20 10 0 Jan Feb Mar Apr May Jun "
+                "Jul Aug Sep Oct Nov Dec",
+                "locations": [
+                    LocationModel(
+                        height=0.23863,
+                        width=0.62303,
+                        x=0.18349,
+                        y=0.14739,
+                        page_number=1,
+                    )
+                ],
+            },
+            {
+                "category": "figure_footer",
+                "text": "1. includes data from: BE, Fi, FR, DE, GR, hU, iE, iT, nL, pL, pT, Ro, "
+                "Si, ES, SE and UK (n = 532)",
+                "locations": [
+                    LocationModel(
+                        height=0.00831,
+                        width=0.44789,
+                        x=0.14286,
+                        y=0.39776,
+                        page_number=1,
+                    )
+                ],
+            },
+            {
+                "category": "paragraph",
+                "text": "nine mSs with confirmed human cases reported whether the cases were "
+                "imported or domestically acquired. All brucellosis cases in Austria, France, "
+                "hungary, Slovenia and Sweden were reported to be imported, whereas in Spain, "
+                "all cases were reported to be acquired domestically (Table BR3). Also Germany "
+                "and the netherlands reported most of their cases as imported. Less than half "
+                "(42.2%) of the infections at EU level remain of unknown geographical origin.",
+                "locations": [
+                    LocationModel(
+                        height=0.06414,
+                        width=0.71782,
+                        x=0.14286,
+                        y=0.42122,
+                        page_number=1,
+                    )
+                ],
+            },
+            {
+                "category": "paragraph",
+                "text": "The suspected vehicle of transmission was reported for 306 of the "
+                "confirmed cases, however in 251 of these cases the vehicle was reported as "
+                "unknown.  The known vehicles reported were contact with farm  animals "
+                "(31  cases),  cheese (21  cases),  milk (two  cases)  and  sheep  meat "
+                "(one  case).  portugal contributed with the most information.",
+                "locations": [
+                    LocationModel(
+                        height=0.05108,
+                        width=0.71789,
+                        x=0.14286,
+                        y=0.49961,
+                        page_number=1,
+                    )
+                ],
+            },
+            {
+                "category": "page_footer",
+                "text": "The EFSA Journal 2009 – 223  181/312 181",
+                "locations": [
+                    LocationModel(
+                        height=0.00891,
+                        width=0.26086,
+                        x=0.63179,
+                        y=0.95622,
+                        page_number=1,
+                    )
+                ],
+            },
+            {
+                "category": "page_header",
+                "text": "3.  |  InForMATIon on SPECIFIC ZoonoSES",
+                "locations": [
+                    LocationModel(
+                        height=0.01663,
+                        width=0.41581,
+                        x=0.10476,
+                        y=0.0446,
+                        page_number=2,
+                    )
+                ],
+            },
+            {
+                "category": "table_title",
+                "text": "Table BR3. | Reported confirmed brucellosis cases in humans by "
+                "reporting countries and origin of case (imported/domestic), 2007",
+                "locations": [
+                    LocationModel(
+                        height=0.02569,
+                        width=0.7176,
+                        x=0.14286,
+                        y=0.11783,
+                        page_number=2,
+                    )
+                ],
+            },
+            {
+                "category": "table",
+                "table": [
+                    [
+                        "Country",
+                        "domestic (%)",
+                        "Imported (%)",
+                        "Unknown (%)",
+                        "Total (n)",
+                    ],
+                    ["Austria", "0", "100", "0", "1"],
+                    ["Belgium", "0", "0", "100", "3"],
+                    ["Bulgaria", "0", "0", "100", "9"],
+                    ["Finland", "0", "0", "100", "2"],
+                    ["France", "0", "100", "0", "14"],
+                    ["Germany", "14.3", "76.2", "9.5", "21"],
+                    ["hungary", "0", "100", "0", "1"],
+                    ["ireland", "0", "0", "100", "7"],
+                    ["italy", "0", "0", "100", "76"],
+                    ["netherlands", "0", "80.0", "20.0", "5"],
+                    ["poland", "0", "0", "100", "1"],
+                    ["portugal", "0", "0", "100", "74"],
+                    ["Romania", "0", "0", "100", "4"],
+                    ["Slovenia", "0", "100", "0", "1"],
+                    ["Spain", "100", "0", "0", "201"],
+                    ["Sweden", "0", "100", "0", "8"],
+                    ["United Kingdom 0", "United Kingdom 0", "46.2", "53.9", "13"],
+                    ["EU Total 46.3", "EU Total 46.3", "11.6", "42.2", "441"],
+                ],
+                "text": "\n| Country | domestic (%) | Imported (%) | Unknown (%) | "
+                "Total (n) |\n| --- | --- | --- | --- | --- |\n| Austria | 0 | 100 | 0 | 1 |\n| "
+                "Belgium | 0 | 0 | 100 | 3 |\n| Bulgaria | 0 | 0 | 100 | 9 |\n| Finland | 0 | 0 | "
+                "100 | 2 |\n| France | 0 | 100 | 0 | 14 |\n| Germany | 14.3 | 76.2 | 9.5 | 21 |\n"
+                "| hungary | 0 | 100 | 0 | 1 |\n| ireland | 0 | 0 | 100 | 7 |\n| italy | 0 | 0 | "
+                "100 | 76 |\n| netherlands | 0 | 80.0 | 20.0 | 5 |\n| poland | 0 | 0 | 100 | 1 "
+                "|\n| portugal | 0 | 0 | 100 | 74 |\n| Romania | 0 | 0 | 100 | 4 |\n| Slovenia "
+                "| 0 | 100 | 0 | 1 |\n| Spain | 100 | 0 | 0 | 201 |\n| Sweden | 0 | 100 | 0 | 8 "
+                "|\n| United Kingdom 0 | United Kingdom 0 | 46.2 | 53.9 | 13 |\n| EU Total 46.3 "
+                "| EU Total 46.3 | 11.6 | 42.2 | 441 |\n",
+                "locations": [
+                    LocationModel(
+                        height=0.31764,
+                        width=0.50661,
+                        x=0.14916,
+                        y=0.16872,
+                        page_number=2,
+                    )
+                ],
+            },
+            {
+                "category": "paragraph",
+                "text": "only  12%  of  Brucella isolates in the  EU  were further  speciated.  "
+                "B. melitensis represented  8%  and B. abortus 4% of reported confirmed cases "
+                "(n= 357).",
+                "locations": [
+                    LocationModel(
+                        height=0.02495,
+                        width=0.71778,
+                        x=0.14286,
+                        y=0.50155,
+                        page_number=2,
+                    )
+                ],
+            },
+            {
+                "category": "h1",
+                "text": "3.5.2 | Brucella in food",
+                "locations": [
+                    LocationModel(
+                        height=0.01544, width=0.19, x=0.14286, y=0.55036, page_number=2
+                    )
+                ],
+            },
+            {
+                "category": "paragraph",
+                "text": "only Belgium and italy reported investigations including more than 25 "
+                "samples of milk and cheese for the presence of Brucella. The majority of "
+                "samples were of raw or low heat-treated milk and cheeses. Belgium did not detect "
+                "any positive samples out of the 70,067 batches of raw cow’s milk tested. italy "
+                "reported investigations where 20% and 9% of the batches of raw cow’s milk and "
+                "raw sheep’s milk were positive, respectively. These findings are relatively high "
+                "and indicate a human health risk related to the consumption of raw milk products "
+                "present in the country (Table BR4). only few positive samples of raw cow’s milk "
+                "have previously been reported by italy (2001, 2003, 2004 and 2006). Brucella was "
+                "also isolated from (single) raw milk samples from italian sheep and italy also "
+                "reported one sample of cheese made from cow’s milk to be positive for Brucella.",
+                "locations": [
+                    LocationModel(
+                        height=0.11641,
+                        width=0.71787,
+                        x=0.14286,
+                        y=0.5762,
+                        page_number=2,
+                    )
+                ],
+            },
+            {
+                "category": "paragraph",
+                "text": "overall, since 2001, only Greece, italy and portugal have reported "
+                "findings of Brucella in raw cow’s milk.",
+                "locations": [
+                    LocationModel(
+                        height=0.02495,
+                        width=0.71787,
+                        x=0.14287,
+                        y=0.70686,
+                        page_number=2,
+                    )
+                ],
+            },
+            {
+                "category": "paragraph",
+                "text": "All data on Brucella in food are presented in Level 3.",
+                "locations": [
+                    LocationModel(
+                        height=0.01188, width=0.362, x=0.14289, y=0.74606, page_number=2
+                    )
+                ],
+            },
+            {
+                "category": "page_footer",
+                "text": "182  The EFSA Journal 2009 – 223  182/312",
+                "locations": [
+                    LocationModel(
+                        height=0.00891,
+                        width=0.25245,
+                        x=0.11346,
+                        y=0.95622,
+                        page_number=2,
+                    )
+                ],
+            },
+        ]
+        output_list_with_locs = convert_output_to_items_list(
+            self.extract_output_figure_extraction, return_locations=True
         )
         self.assertEqual(expected_list_with_locs, output_list_with_locs)
 

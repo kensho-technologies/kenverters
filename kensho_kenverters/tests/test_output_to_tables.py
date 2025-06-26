@@ -3,7 +3,7 @@ import os
 from typing import Any, ClassVar
 from unittest import TestCase
 
-from kensho_kenverters.output_to_tables import (
+from ..output_to_tables import (
     build_table_grids,
     extract_pd_dfs_from_output,
     extract_pd_dfs_with_locs_from_output,

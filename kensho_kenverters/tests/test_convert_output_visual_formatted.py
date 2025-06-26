@@ -3,9 +3,7 @@ import os
 from typing import Any, ClassVar
 from unittest import TestCase
 
-from kensho_kenverters.convert_output_visual_formatted import (
-    convert_output_to_str_formatted,
-)
+from ..convert_output_visual_formatted import convert_output_to_str_formatted
 
 OUTPUT_FILE_PATH = os.path.join(
     os.path.dirname(__file__), "data", "extract_output.json"

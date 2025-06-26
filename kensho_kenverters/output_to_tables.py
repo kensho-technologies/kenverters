@@ -7,13 +7,14 @@ from typing import Any, Sequence
 
 import pandas as pd
 
-from kensho_kenverters.constants import (
+from .constants import (
     EMPTY_STRING,
     TABLE_CONTENT_CATEGORIES,
     AnnotationType,
     ContentCategory,
+    TableType,
 )
-from kensho_kenverters.extract_output_models import (
+from .extract_output_models import (
     AnnotationModel,
     ContentModel,
     LocationModel,
@@ -21,12 +22,12 @@ from kensho_kenverters.extract_output_models import (
     Table,
     TableCategoryType,
 )
-from kensho_kenverters.tables_utils import (
+from .tables_utils import (
     convert_table_to_pd_df,
     duplicate_spanning_annotations,
     get_table_shape,
 )
-from kensho_kenverters.utils import load_output_to_pydantic
+from .utils import load_output_to_pydantic
 
 
 def get_table_uid_to_cells_mapping(
@@ -146,7 +147,7 @@ def build_uids_grid_from_table_cell_annotations(
 
 def build_content_grid_from_figure_extracted_table_cell_annotations(
     annotations: Sequence[AnnotationModel],
-) -> list[list[str]]:
+) -> TableType:
     """Build content grid where each location has a string of content."""
     if any(
         annotation.type != AnnotationType.FIGURE_EXTRACTED_TABLE_STRUCTURE.value

@@ -7,7 +7,7 @@ from typing import Any
 # pylint: disable=no-name-in-module
 from pydantic_core._pydantic_core import ValidationError as PydanticValidationError
 
-from kensho_kenverters.extract_output_models import ExtractOutputModel
+from .extract_output_models import ExtractOutputModel
 
 logger = getLogger(__name__)
 

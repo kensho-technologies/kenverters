@@ -5,8 +5,8 @@ from typing import Sequence
 
 import pandas as pd
 
-from kensho_kenverters.constants import AnnotationType
-from kensho_kenverters.extract_output_models import AnnotationDataModel, AnnotationModel
+from .constants import AnnotationType
+from .extract_output_models import AnnotationDataModel, AnnotationModel
 
 
 def _create_empty_annotation(row: int, col: int) -> AnnotationModel:
