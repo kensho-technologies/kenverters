@@ -261,12 +261,12 @@ def convert_output_to_items_list(
         for annotation in annotations
         if annotation.type == AnnotationType.FIGURE_EXTRACTED_TABLE_STRUCTURE.value
     ]
-    figure_extracted_table_uid_to_cells_mapping = get_table_uid_to_cells_mapping(
+    table_uid_to_cells_mapping = get_table_uid_to_cells_mapping(
         parsed_serialized_document.content_tree
     )
     figure_extracted_table_uid_to_cell_annotations = (
         get_table_uid_to_annotations_mapping(
-            figure_extracted_table_uid_to_cells_mapping,
+            table_uid_to_cells_mapping,
             figure_extracted_table_cell_annotations,
         )
     )
