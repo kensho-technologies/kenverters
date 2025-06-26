@@ -3,8 +3,8 @@
 
 from typing import Any
 
-from kensho_kenverters.constants import CATEGORY_KEY, ContentCategory
-from kensho_kenverters.convert_output import convert_output_to_items_list
+from .constants import CATEGORY_KEY, ContentCategory
+from .convert_output import convert_output_to_items_list
 
 
 def extract_organized_sections(

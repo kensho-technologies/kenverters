@@ -5,13 +5,13 @@ from unittest import TestCase
 
 import pandas as pd
 
-from kensho_kenverters.extract_output_models import (
+from ..extract_output_models import (
     AnnotationDataModel,
     AnnotationModel,
     ExtractOutputModel,
     LocationModel,
 )
-from kensho_kenverters.tables_utils import (
+from ..tables_utils import (
     convert_table_to_pd_df,
     duplicate_spanning_annotations,
     get_table_shape,

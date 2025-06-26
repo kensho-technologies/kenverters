@@ -8,15 +8,15 @@ import math
 from logging import getLogger
 from typing import Any, TypeAlias
 
-from kensho_kenverters.constants import (
+from .constants import (
     EMPTY_STRING,
     LOCATIONS_KEY,
     TEXT_KEY,
     AnnotationType,
     ContentCategory,
 )
-from kensho_kenverters.extract_output_models import ContentModel, LocationModel
-from kensho_kenverters.utils import load_output_to_pydantic
+from .extract_output_models import ContentModel, LocationModel
+from .utils import load_output_to_pydantic
 
 logger = getLogger(__name__)
 
