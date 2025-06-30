@@ -34,6 +34,13 @@ It will also print out the path where Poetry installed the virtual environment.
 
 To convert the output to a list of paragraphs, titles, and tables represented as dictionaries, use `convert_output_to_items_list` in `convert_output.py`. It will return a list of dictionaries representing a text, title, or table. It converts tables to markdown using `table_to_markdown` under the hood.
 
+To use: 
+```python
+from kensho_kenverters.convert_output import convert_output_to_items_list
+```
+
+Function definition:
+
 ```python
 def convert_output_to_items_list(
     serialized_document: dict[str, Any], return_locations: bool = False
@@ -68,6 +75,12 @@ To get all the text output as a single string, use `convert_output_to_str` in `c
 
 To get the text output as a string per page, use `convert_output_to_str_by_page` in `convert_output.py`. This will give you a list of full-page outputs as strings.
 
+To use: 
+```python
+from kensho_kenverters.convert_output import convert_output_to_str_by_page
+```
+
+Function definition:
 
 ```python
 def convert_output_to_str(serialized_document: dict[str, Any]) -> str:
@@ -107,6 +120,13 @@ def convert_output_to_str_by_page(serialized_document: dict[str, Any]) -> list[s
 To convert all text from a document into markdown, use `convert_output_to_markdown` in `convert_output.py`. It will return a string output with # before each title and a markdown representation of each table, using the | delimiter between cells.
 To convert all text from each page into markdown, use `convert_output_to_markdown_by_page` in `convert_output.py`. It will return a list of string outputs representing each page.
 To convert a specific table to markdown format, use `table_to_markdown` in `convert_output.py`.
+
+To use: 
+```python
+from kensho_kenverters.convert_output import convert_output_to_markdown, convert_output_to_markdown_by_page, table_to_markdown
+```
+
+Function definition:
 
 ```python
 def convert_output_to_markdown(serialized_document: dict[str, Any]) -> str:
@@ -154,6 +174,13 @@ To extract all tables from the output, you have the following options in `output
 - `build_table_grids` will return a dictionary mapping a table ID to a list of lists containing the cell contents (2D grid of strings).
 - `extract_pd_dfs_from_output` will return a list of pandas DataFrame representations of each table. It uses `build_table_grids` under the hood and converts the values to pandas DataFrames. The order of the tables is preserved.
 - `extract_pd_dfs_with_locs_from_output` will return a list of NamedTuples consisting of a pandas DataFrame representation of the table and the location(s) of the table on the page. The `df` attribute will give you the table and the `locations` attribute will you give a list of dictionaries consisting of the x0, y0, height, and width relative to the page size as well as the page number. The order of the tables is preserved.
+
+To use: 
+```python
+from kensho_kenverters.output_to_tables import build_table_grids, extract_pd_dfs_from_output, extract_pd_dfs_with_locs_from_output
+```
+
+Function definition:
 
 ```python
 def build_table_grids(
@@ -243,6 +270,13 @@ def extract_pd_dfs_with_locs_from_output(
 
 If you would like to get a list of sections in a document, you can use `extract_organized_sections` in `output_to_sections.py`. It will return a list of lists containing document segments (title, table, or text). Sections are divided by titles, and everything is returned in the predicted reading order. `convert_output_to_items_list` is used under the hood to get the list of document segments before splitting into sections.
 
+To use: 
+```python
+from kensho_kenverters.output_to_sections import extract_organized_sections
+```
+
+Function definition:
+
 ```python
 def extract_organized_sections(serialized_document: dict[str, Any]) -> list[list[dict[str, Any]]]:
     r"""Return a version of the output organized into sections split on titles.
@@ -281,6 +315,13 @@ def extract_organized_sections(serialized_document: dict[str, Any]) -> list[list
 If you would like to get visually-formatted text for each page, you can use `convert_output_to_str_formatted` in `convert_output_visual_formatted.py`. It will return a list of strings, each one containing the text in the page with spaces and line breaks simulating the original white space between the different segments. 
 
 How this will look will depend on your downstream use case or file viewer. Adjusting `page_width` and `page_height` to match the canvas size will improve results. `resize` will allow for attempting to override your given overall width and height if it would cut off any words. In the case where you require a specific size regardless of if all words fit, set `resize` to False. Otherwise, allowing the function to find a suitable size will retain all words and segments.
+
+To use: 
+```python
+from kensho_kenverters.convert_output_visual_formatted import convert_output_to_str_formatted
+```
+
+Function definition:
 
 ```python
 def convert_output_to_str_formatted(
