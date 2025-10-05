@@ -1,5 +1,9 @@
 # Changelog
 
+## v1.3.0
+
+* Add support of new figure types. 
+
 ## v1.2.9
 
 * Fixed bug for creating figure extraction segments in convert_output_to_items_list 
