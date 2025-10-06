@@ -4,6 +4,7 @@
 from enum import Enum
 from typing import TypeAlias
 
+
 CATEGORY_KEY = "category"
 TEXT_KEY = "text"
 TABLE_KEY = "table"
@@ -61,7 +62,6 @@ class ContentCategory(Enum):
     LINE_PLOT = "LINE_PLOT"
     PIE_CHART = "PIE_CHART"
     SCATTER_PLOT = "SCATTER_PLOT"
-
 
 
 ELEMENT_TITLE_CONTENT_CATEGORIES = {
