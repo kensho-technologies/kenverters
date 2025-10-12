@@ -154,3 +154,26 @@ def convert_table_to_pd_df(
     else:
         table_df = pd.DataFrame(table_grid)
     return table_df
+
+
+def get_projected_row_header_row_indexes(
+        table_structure_annotations: Sequence[AnnotationModel]) -> list[list[int]]:
+    """Get the row indexes of projected row header."""
+    # Get the shape of the table
+    n_rows, n_col = get_table_shape(table_structure_annotations)
+
+    # Get the projected row header row indexes
+    projected_row_header_row_indexes: list[int] = []
+
+    for annotation in table_structure_annotations:
+        data = annotation.data
+        row_span, col_span = data.span
+        # If the cell is spread in all the columns, it should be projected row header.
+        if row_span == 1 and col_span == n_col:
+            row_index, col_index = data.index
+            if row_index not in projected_row_header_row_indexes:
+                projected_row_header_row_indexes.append(row_index)
+
+    return projected_row_header_row_indexes
+
+
