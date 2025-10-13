@@ -90,6 +90,6 @@ class ExtractOutputModel(BaseModel):
 class ContentGridModel(BaseModel):
     """Pydantic object for the content grid."""
     content_grid : list[list[str]]
-    table_type: ContentCategory
+    table_type: TableCategoryType
     projected_row_header_row_indexes: list[int] | None = None
     column_header_row_indexes: list[int] | None = None
