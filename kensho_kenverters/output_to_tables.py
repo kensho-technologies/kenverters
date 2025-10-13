@@ -270,7 +270,7 @@ def build_table_grids(
             cell_contents = table_uid_to_cells_mapping[table_uid]
             content_grid = convert_uid_grid_to_content_grid(uids_grid, cell_contents)
             # Get the projected row header row indexes
-            projected_row_header_row_indexes = get_projected_row_header_row_indexes(cell_contents)
+            projected_row_header_row_indexes = get_projected_row_header_row_indexes(cell_annotations)
 
             # Get the column header rows indexes
             column_header_row_indexes = get_column_header_row_indexes(cell_annotations, cell_contents)
