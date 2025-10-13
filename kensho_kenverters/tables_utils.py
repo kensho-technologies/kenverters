@@ -5,8 +5,8 @@ from typing import Sequence
 
 import pandas as pd
 
-from .constants import AnnotationType
-from .extract_output_models import AnnotationDataModel, AnnotationModel
+from .constants import AnnotationType, EMPTY_STRING
+from .extract_output_models import AnnotationDataModel, AnnotationModel, ContentModel
 
 
 def _create_empty_annotation(row: int, col: int) -> AnnotationModel:
@@ -157,10 +157,10 @@ def convert_table_to_pd_df(
 
 
 def get_projected_row_header_row_indexes(
-        table_structure_annotations: Sequence[AnnotationModel]) -> list[list[int]]:
-    """Get the row indexes of projected row header."""
-    # Get the shape of the table
-    n_rows, n_col = get_table_shape(table_structure_annotations)
+        table_structure_annotations: Sequence[AnnotationModel]) -> list[int]:
+    """Get the row indexes of projected row headers."""
+    # Get the number of column of the table
+    _, n_cols = get_table_shape(table_structure_annotations)
 
     # Get the projected row header row indexes
     projected_row_header_row_indexes: list[int] = []
@@ -169,11 +169,53 @@ def get_projected_row_header_row_indexes(
         data = annotation.data
         row_span, col_span = data.span
         # If the cell is spread in all the columns, it should be projected row header.
-        if row_span == 1 and col_span == n_col:
+        if row_span == 1 and col_span == n_cols:
             row_index, col_index = data.index
             if row_index not in projected_row_header_row_indexes:
                 projected_row_header_row_indexes.append(row_index)
 
     return projected_row_header_row_indexes
+
+
+def _verify_column_header_row(content_string_list: list[str]) -> bool:
+    """Verify whether the current row is a row of column header based on the contents in the row."""
+    for content_string in content_string_list:
+        if content_string != EMPTY_STRING and any(char.isalpha() for char in content_string) is False:
+            return False
+    return True
+
+
+def get_column_header_row_indexes(table_structure_annotations: Sequence[AnnotationModel], cell_contents: Sequence[ContentModel]) -> list[int]:
+    """Get the row indexes of rows of column headers."""
+    # Get number of rows of the table
+    n_rows, _ = get_table_shape(table_structure_annotations)
+
+    # Get the mapping from uids to contents
+    uids_to_content = {cell.uid: cell.content or EMPTY_STRING for cell in cell_contents}
+
+    # Get the mapping from row indexes to contents
+    row_indexes_to_contents : dict[str, list[str]] = {row_index:[] for row_index in range(n_rows)}
+    for annotation in table_structure_annotations:
+        data = annotation.data
+        row_span, col_span = data.span
+        row_index, _ = data.index
+        annotation_content_string = " ".join([uids_to_content[content_uid] for content_uid in annotation.content_uids])
+        for row_span_index in range(row_span):
+            row_indexes_to_contents[row_index + row_span_index].append(annotation_content_string)
+
+    # Get the row index of column headers
+    column_header_row_indexes : list[int] = []
+    for row_index in range(n_rows):
+        if row_index == 0:
+            column_header_row_indexes.append(row_index)
+        elif _verify_column_header_row(row_indexes_to_contents[row_index]) == True:
+            column_header_row_indexes.append(row_index)
+        else:
+            break
+
+    return column_header_row_indexes
+
+
+
 
 
