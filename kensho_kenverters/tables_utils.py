@@ -174,7 +174,7 @@ def get_projected_row_header_row_indexes(
             if row_index not in projected_row_header_row_indexes:
                 projected_row_header_row_indexes.append(row_index)
 
-    return projected_row_header_row_indexes
+    return projected_row_header_row_indexes.sort()
 
 
 def _verify_column_header_row(content_string_list: list[str]) -> bool:

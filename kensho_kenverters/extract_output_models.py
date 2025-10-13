@@ -5,6 +5,7 @@ from typing import Literal, NamedTuple, TypeAlias
 
 import pandas as pd
 from pydantic import BaseModel  # pylint: disable=no-name-in-module
+from constants import ContentCategory
 
 # Location types are either dictionaries of bbox coordinates and page numbers
 # or None if locations are not returned in the Extract output.
@@ -84,3 +85,11 @@ class ExtractOutputModel(BaseModel):
     annotations: list[AnnotationModel]
     content_tree: ContentModel
     pdf_pages: list[PDFPageModel] | None = None
+
+
+class ContentGridModel(BaseModel):
+    """Pydantic object for the content grid."""
+    content_grid : list[list[str]]
+    table_type: ContentCategory.TABLE_OF_CONTENTS | ContentCategory.TABLE | ContentCategory.FIGURE_EXTRACTED_TABLE
+    projected_row_header_row_indexes: list[int] | None = None
+    column_header_row_indexes: list[int] | None = None
