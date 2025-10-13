@@ -5,7 +5,7 @@ from typing import Literal, NamedTuple, TypeAlias
 
 import pandas as pd
 from pydantic import BaseModel  # pylint: disable=no-name-in-module
-from constants import ContentCategory
+from .constants import ContentCategory
 
 # Location types are either dictionaries of bbox coordinates and page numbers
 # or None if locations are not returned in the Extract output.
