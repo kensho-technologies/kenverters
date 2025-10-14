@@ -29,6 +29,7 @@ from .tables_utils import (
     get_table_shape,
     get_projected_row_header_row_indexes,
     get_column_header_row_max_index,
+    split_table_dataframe_by_projected_row_headers,
 )
 from .utils import load_output_to_pydantic
 
