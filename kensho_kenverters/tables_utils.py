@@ -5,8 +5,8 @@ from typing import Sequence
 
 import pandas as pd
 
-from .constants import AnnotationType, EMPTY_STRING, TableCategoryType
-from .extract_output_models import AnnotationDataModel, AnnotationModel, ContentModel
+from .constants import AnnotationType, EMPTY_STRING
+from .extract_output_models import AnnotationDataModel, AnnotationModel, ContentModel, TableCategoryType
 from .extract_output_models import Table
 
 def _create_empty_annotation(row: int, col: int) -> AnnotationModel:
