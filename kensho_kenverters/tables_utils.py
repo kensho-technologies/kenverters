@@ -228,7 +228,7 @@ def split_table_dataframe_by_projected_row_headers(table_df: pd.DataFrame,
                                                    table_type: TableCategoryType,
                                                    projected_row_header_row_indexes:list[int] | None,
                                                    column_header_row_max_index:int|None,
-                                                   locations: list[LocationType] | None) -> list[Table]:
+                                                   locations: list[LocationType] | None = None) -> list[Table]:
     """Split table dataframe by projected row headers."""
     if projected_row_header_row_indexes is None or len(projected_row_header_row_indexes) == 0 or column_header_row_max_index is None:
         return [Table(df=table_df,
@@ -263,6 +263,7 @@ def split_table_dataframe_by_projected_row_headers(table_df: pd.DataFrame,
             captions_list.append(table_df.iloc[row_index, 0])
         else:
             extracted_data_row_indexes.append(row_index)
+    return splitting_tables
 
 
 
