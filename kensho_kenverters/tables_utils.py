@@ -238,11 +238,11 @@ def split_table_dataframe_by_projected_row_headers(table_df: pd.DataFrame,
 
     splitting_tables: list[Table] = []
     n_rows = len(table_df)
-    column_header_rows_df = table_df[:column_header_row_max_index]
+    column_header_rows_df = table_df[:column_header_row_max_index+1]
 
     extracted_data_row_indexes: list[int] = []
     captions_list: list[str] = []
-    for row_index in range(column_header_row_max_index, n_rows):
+    for row_index in range(column_header_row_max_index+1, n_rows):
         if row_index in projected_row_header_row_indexes or row_index == n_rows - 1:
             # If the last row and the last row is not projected row header, add the index into extracted data row indexes.
             if row_index not in projected_row_header_row_indexes:
