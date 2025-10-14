@@ -331,6 +331,9 @@ def extract_pd_dfs_from_output(
             include_figure_extracted_table
             and table_content_grid.table_type == ContentCategory.FIGURE_EXTRACTED_TABLE.value
         ):
+            table_df = convert_table_to_pd_df(
+                table_content_grid.content_grid, use_first_row_as_header=use_first_row_as_header
+            )
             if split_by_projected_row_header:
                 splitting_tables = split_table_dataframe_by_projected_row_headers(table_df,
                                                                                   table_content_grid.table_type,
@@ -338,9 +341,6 @@ def extract_pd_dfs_from_output(
                                                                                   table_content_grid.column_header_row_max_index,)
                 table_dfs.extend([subtable.df for subtable in splitting_tables])
             else:
-                table_df = convert_table_to_pd_df(
-                    table_content_grid.content_grid, use_first_row_as_header=use_first_row_as_header
-                )
                 table_dfs.append(table_df)
 
     return table_dfs
