@@ -260,7 +260,7 @@ def split_table_dataframe_by_projected_row_headers(table_df: pd.DataFrame,
                       from_splitting = True,
                     ))
                 # reset the extracted data rows indexes and caption list for the next subtable
-                extracted_data_row_indexes = []
+                subtable_data_row_indexes = []
                 captions_list = []
             # save the caption for the next subtable
             captions_list.append(table_df.iloc[row_index, 0])
