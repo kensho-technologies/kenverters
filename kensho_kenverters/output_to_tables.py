@@ -335,7 +335,7 @@ def extract_pd_dfs_from_output(
                                                                                   table_content_grid.table_type,
                                                                                   table_content_grid.projected_row_header_row_indexes,
                                                                                   table_content_grid.column_header_row_max_index,)
-                tables.extend(splitting_tables)
+                table_dfs.extend([subtable.df for subtable in splitting_tables])
             else:
                 table_df = convert_table_to_pd_df(
                     table_content_grid.content_grid, use_first_row_as_header=use_first_row_as_header

@@ -238,31 +238,35 @@ def split_table_dataframe_by_projected_row_headers(table_df: pd.DataFrame,
 
     splitting_tables: list[Table] = []
     n_rows = len(table_df)
+    # Extract the slice of dataframe corresponding to column headers
     column_header_rows_df = table_df[:column_header_row_max_index+1]
 
-    extracted_data_row_indexes: list[int] = []
+    subtable_data_row_indexes: list[int] = []
     captions_list: list[str] = []
     for row_index in range(column_header_row_max_index+1, n_rows):
         if row_index in projected_row_header_row_indexes or row_index == n_rows - 1:
-            # If the last row and the last row is not projected row header, add the index into extracted data row indexes.
+            # If it is the last row of the table and the last row is not projected row header, add the index into subtable data row indexes.
             if row_index not in projected_row_header_row_indexes:
-                extracted_data_row_indexes.append(row_index)
-
-            if len(extracted_data_row_indexes) > 0:
-                extract_data_df = table_df.iloc[extracted_data_row_indexes]
-                extract_table_df = pd.concat([column_header_rows_df, extract_data_df], ignore_index = True)
-                splitting_tables.append(Table(df=extract_table_df,
+                subtable_data_row_indexes.append(row_index)
+            # If the current extracted data row indexes is not empty, extract the subtable and append
+            # it to the list of splitting tables
+            if len(subtable_data_row_indexes) > 0:
+                subtable_data_df = table_df.iloc[subtable_data_row_indexes]
+                subtable_df = pd.concat([column_header_rows_df, subtable_data_df], ignore_index = True)
+                splitting_tables.append(Table(df=subtable_df,
                       table_type=table_type,
                       locations=locations,
                       captions = captions_list,
                       from_splitting = True,
                     ))
-                # reset the list of indexes of extracted data rows and caption list
+                # reset the extracted data rows indexes and caption list for the next subtable
                 extracted_data_row_indexes = []
                 captions_list = []
+            # save the caption for the next subtable
             captions_list.append(table_df.iloc[row_index, 0])
         else:
-            extracted_data_row_indexes.append(row_index)
+            # If the row is not projected row header, save it to subtable data row index
+            subtable_data_row_indexes.append(row_index)
     return splitting_tables
 
 
