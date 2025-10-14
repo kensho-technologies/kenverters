@@ -1,5 +1,9 @@
 # Changelog
 
+## v1.4.0
+
+* Add splitting long tables by projected row header.
+
 ## v1.3.0
 
 * Add support of new figure types. 

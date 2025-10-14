@@ -22,6 +22,8 @@ class Table(NamedTuple):
     df: pd.DataFrame
     table_type: TableCategoryType
     locations: list[LocationType] | None = None
+    captions: list[str] | None = None
+    from_splitting: bool = False
 
 
 class LocationModel(BaseModel):
@@ -84,3 +86,12 @@ class ExtractOutputModel(BaseModel):
     annotations: list[AnnotationModel]
     content_tree: ContentModel
     pdf_pages: list[PDFPageModel] | None = None
+
+
+class ContentGridModel(BaseModel):
+    """Pydantic object for the content grid."""
+    content_grid : list[list[str]]
+    table_type: TableCategoryType
+    projected_row_header_row_indexes: list[int] | None = None
+    column_header_row_max_index: int | None = None
+

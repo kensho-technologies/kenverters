@@ -18,6 +18,7 @@ from .extract_output_models import (
     AnnotationModel,
     ContentModel,
     LocationModel,
+    ContentGridModel,
     LocationType,
     Table,
     TableCategoryType,
@@ -26,6 +27,9 @@ from .tables_utils import (
     convert_table_to_pd_df,
     duplicate_spanning_annotations,
     get_table_shape,
+    get_projected_row_header_row_indexes,
+    get_column_header_row_max_index,
+    split_table_dataframe_by_projected_row_headers,
 )
 from .utils import load_output_to_pydantic
 
@@ -216,7 +220,7 @@ def convert_uid_grid_to_content_grid(
 def build_table_grids(
     serialized_document: dict[str, Any],
     duplicate_merged_cells_content_flag: bool = True,
-) -> dict[str, tuple[TableCategoryType, list[list[str]]]]:
+) -> dict[str, ContentGridModel]:
     """Convert serialized tables to a table type and a 2D grid of strings.
 
     Args:
@@ -266,14 +270,24 @@ def build_table_grids(
             )
             cell_contents = table_uid_to_cells_mapping[table_uid]
             content_grid = convert_uid_grid_to_content_grid(uids_grid, cell_contents)
-            tables[table_uid] = (table_uid_to_type_mapping[table_uid], content_grid)
+            # Get the projected row header row indexes
+            projected_row_header_row_indexes = get_projected_row_header_row_indexes(cell_annotations)
+
+            # Get the column header rows indexes
+            column_header_row_max_index = get_column_header_row_max_index(cell_annotations, cell_contents, projected_row_header_row_indexes)
+
+            tables[table_uid] = ContentGridModel(content_grid = content_grid,
+                                                 table_type = table_uid_to_type_mapping[table_uid],
+                                                 projected_row_header_row_indexes = projected_row_header_row_indexes,
+                                                 column_header_row_max_index = column_header_row_max_index)
         else:
             content_grid = (
                 build_content_grid_from_figure_extracted_table_cell_annotations(
                     cell_annotations
                 )
             )
-            tables[table_uid] = (table_uid_to_type_mapping[table_uid], content_grid)
+            tables[table_uid] = ContentGridModel(content_grid=content_grid,
+                                                 table_type=table_uid_to_type_mapping[table_uid])
     return tables
 
 
@@ -282,6 +296,7 @@ def extract_pd_dfs_from_output(
     duplicate_merged_cells_content_flag: bool = True,
     use_first_row_as_header: bool = True,
     include_figure_extracted_table: bool = False,
+    split_by_projected_row_header: bool = False,
 ) -> list[pd.DataFrame]:
     """Extract Extract output's tables and convert them to a list of pandas DataFrames.
 
@@ -303,22 +318,30 @@ def extract_pd_dfs_from_output(
         2                         2022  102,004  202,004  302,004  402,004
         3                         2023  103,009  203,009  303,009  403,009]
     """
-    table_types_and_grids = build_table_grids(
+    table_id_to_content_grids = build_table_grids(
         serialized_document, duplicate_merged_cells_content_flag
     )
+
     table_dfs = []
-    for table_type_and_grid in table_types_and_grids.values():
-        if table_type_and_grid[0] in (
+    for table_content_grid in table_id_to_content_grids.values():
+        if table_content_grid.table_type in (
             ContentCategory.TABLE.value,
             ContentCategory.TABLE_OF_CONTENTS.value,
         ) or (
             include_figure_extracted_table
-            and table_type_and_grid[0] == ContentCategory.FIGURE_EXTRACTED_TABLE.value
+            and table_content_grid.table_type == ContentCategory.FIGURE_EXTRACTED_TABLE.value
         ):
             table_df = convert_table_to_pd_df(
-                table_type_and_grid[1], use_first_row_as_header=use_first_row_as_header
+                table_content_grid.content_grid, use_first_row_as_header=use_first_row_as_header
             )
-            table_dfs.append(table_df)
+            if split_by_projected_row_header:
+                splitting_tables = split_table_dataframe_by_projected_row_headers(table_df,
+                                                                                  table_content_grid.table_type,
+                                                                                  table_content_grid.projected_row_header_row_indexes,
+                                                                                  table_content_grid.column_header_row_max_index,)
+                table_dfs.extend([subtable.df for subtable in splitting_tables])
+            else:
+                table_dfs.append(table_df)
 
     return table_dfs
 
@@ -328,6 +351,7 @@ def extract_pd_dfs_with_locs_from_output(
     duplicate_merged_cells_content_flag: bool = True,
     use_first_row_as_header: bool = True,
     include_figure_extracted_table: bool = False,
+    split_by_projected_row_header: bool = False,
 ) -> list[Table]:
     """Extract tables from output and convert them to a list of pd DataFrames and table locations.
 
@@ -355,7 +379,7 @@ def extract_pd_dfs_with_locs_from_output(
         )]
     """
     # Get dfs
-    table_types_and_grids = build_table_grids(
+    table_id_to_content_grids = build_table_grids(
         serialized_document, duplicate_merged_cells_content_flag
     )
 
@@ -367,22 +391,30 @@ def extract_pd_dfs_with_locs_from_output(
 
     # Match dfs and locations
     tables: list[Table] = []
-    for table_uid, table_type_and_grid in table_types_and_grids.items():
-        if table_type_and_grid[0] in (
+    for table_uid, table_content_grid in table_id_to_content_grids.items():
+        if table_content_grid.table_type in (
             ContentCategory.TABLE.value,
             ContentCategory.TABLE_OF_CONTENTS.value,
         ) or (
             include_figure_extracted_table
-            and table_type_and_grid[0] == ContentCategory.FIGURE_EXTRACTED_TABLE.value
+            and table_content_grid.table_type == ContentCategory.FIGURE_EXTRACTED_TABLE.value
         ):
             table_df = convert_table_to_pd_df(
-                table_type_and_grid[1], use_first_row_as_header=use_first_row_as_header
+                table_content_grid.content_grid, use_first_row_as_header=use_first_row_as_header
             )
-            tables.append(
-                Table(
-                    df=table_df,
-                    table_type=table_type_and_grid[0],
-                    locations=table_uid_to_locs_mapping[table_uid],
+            if split_by_projected_row_header:
+                splitting_tables = split_table_dataframe_by_projected_row_headers(table_df,
+                                                                                  table_content_grid.table_type,
+                                                                                  table_content_grid.projected_row_header_row_indexes,
+                                                                                  table_content_grid.column_header_row_max_index,
+                                                                                  table_uid_to_locs_mapping[table_uid],)
+                tables.extend(splitting_tables)
+            else:
+                tables.append(
+                    Table(
+                        df=table_df,
+                        table_type=table_content_grid.table_type,
+                        locations=table_uid_to_locs_mapping[table_uid],
+                    )
                 )
-            )
     return tables
