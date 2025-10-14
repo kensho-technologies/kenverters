@@ -5,7 +5,6 @@ from typing import Literal, NamedTuple, TypeAlias
 
 import pandas as pd
 from pydantic import BaseModel  # pylint: disable=no-name-in-module
-from .constants import ContentCategory
 
 # Location types are either dictionaries of bbox coordinates and page numbers
 # or None if locations are not returned in the Extract output.
@@ -23,6 +22,8 @@ class Table(NamedTuple):
     df: pd.DataFrame
     table_type: TableCategoryType
     locations: list[LocationType] | None = None
+    captions: list[str] | None = None
+    from_splitting: bool = False
 
 
 class LocationModel(BaseModel):
@@ -92,4 +93,5 @@ class ContentGridModel(BaseModel):
     content_grid : list[list[str]]
     table_type: TableCategoryType
     projected_row_header_row_indexes: list[int] | None = None
-    column_header_row_indexes: list[int] | None = None
+    column_header_row_max_index: int | None = None
+

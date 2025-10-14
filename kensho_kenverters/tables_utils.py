@@ -5,9 +5,9 @@ from typing import Sequence
 
 import pandas as pd
 
-from .constants import AnnotationType, EMPTY_STRING
+from .constants import AnnotationType, EMPTY_STRING, TableCategoryType
 from .extract_output_models import AnnotationDataModel, AnnotationModel, ContentModel
-
+from .extract_output_models import Table
 
 def _create_empty_annotation(row: int, col: int) -> AnnotationModel:
     """Create an empty annotation."""
@@ -178,23 +178,25 @@ def get_projected_row_header_row_indexes(
     return projected_row_header_row_indexes
 
 
-def _verify_column_header_row(content_string_list: list[str]) -> bool:
-    """Verify whether the current row is a row of column header based on the contents in the row."""
+def _verify_all_contents_empty_or_contain_alphabet(content_string_list: list[str]) -> bool:
+    """Verify whether the current row is a row with all contents either empty or contain alphabet."""
     for content_string in content_string_list:
         if content_string != EMPTY_STRING and any(char.isalpha() for char in content_string) is False:
             return False
     return True
 
 
-def get_column_header_row_indexes(table_structure_annotations: Sequence[AnnotationModel], cell_contents: Sequence[ContentModel]) -> list[int]:
-    """Get the row indexes of rows of column headers."""
+def get_column_header_row_max_index(table_structure_annotations: Sequence[AnnotationModel],
+                                  cell_contents: Sequence[ContentModel],
+                                  projected_row_header_row_indexes:list[int]) -> int:
+    """Get the maximum index of the rows of column headers."""
     # Get number of rows of the table
     n_rows, _ = get_table_shape(table_structure_annotations)
 
     # Get the mapping from uids to contents
     uids_to_content = {cell.uid: cell.content or EMPTY_STRING for cell in cell_contents}
 
-    # Get the mapping from row indexes to contents
+    # Get the mapping from row indexes to list of contents
     row_indexes_to_contents : dict[str, list[str]] = {row_index:[] for row_index in range(n_rows)}
     for annotation in table_structure_annotations:
         data = annotation.data
@@ -205,16 +207,74 @@ def get_column_header_row_indexes(table_structure_annotations: Sequence[Annotati
             row_indexes_to_contents[row_index + row_span_index].append(annotation_content_string)
 
     # Get the row index of column headers
-    column_header_row_indexes : list[int] = []
+    column_header_row_max_index_candidates : list[int] = []
     for row_index in range(n_rows):
-        if row_index == 0:
-            column_header_row_indexes.append(row_index)
-        elif _verify_column_header_row(row_indexes_to_contents[row_index]) == True:
-            column_header_row_indexes.append(row_index)
+        # Verify whether all contents of the row either empty or containing alphabet
+        if _verify_all_contents_empty_or_contain_alphabet(row_indexes_to_contents[row_index]) == True:
+            # If pass the verification and either the first row or non-projected-header-row, add it in the list of max index candidates.
+            if row_index == 0 or row_index not in projected_row_header_row_indexes:
+                column_header_row_max_index_candidates.append(row_index)
+        # If fail the verification, break the loop
         else:
             break
 
-    return column_header_row_indexes
+    if len(column_header_row_max_index_candidates) > 0:
+        return max(column_header_row_max_index_candidates)
+    else:
+        return None
+
+
+def split_table_dataframe_by_projected_row_headers(table_df: pd.DataFrame,
+                                                   table_type: TableCategoryType,
+                                                   projected_row_header_row_indexes:list[int] | None,
+                                                   column_header_row_max_index:int|None,
+                                                   locations: list[LocationType] | None) -> list[Table]:
+    """Split table dataframe by projected row headers."""
+    if projected_row_header_row_indexes is None or len(projected_row_header_row_indexes) == 0 or column_header_row_max_index is None:
+        return [Table(df=table_df,
+                      table_type=table_type,
+                      locations=locations,
+                    )]
+
+    splitting_tables: list[Table] = []
+    n_rows = len(table_df)
+    column_header_rows_df = table_df[:column_header_row_max_index]
+
+    extracted_data_row_indexes: list[int] = []
+    captions_list: list[str] = []
+    for row_index in range(column_header_row_max_index, n_rows):
+        if row_index in projected_row_header_row_indexes or row_index == n_rows - 1:
+            # If the last row and the last row is not projected row header, add the index into extracted data row indexes.
+            if row_index not in projected_row_header_row_indexes:
+                extracted_data_row_indexes.append(row_index)
+
+            if len(extracted_data_row_indexes) > 0:
+                extract_data_df = table_df.iloc[extracted_data_row_indexes]
+                extract_table_df = pd.concat([column_header_rows_df, extract_data_df], ignore_index = True)
+                splitting_tables.append(Table(df=extract_table_df,
+                      table_type=table_type,
+                      locations=locations,
+                      captions = captions_list,
+                      from_splitting = True,
+                    ))
+                # reset the list of indexes of extracted data rows and caption list
+                extracted_data_row_indexes = []
+                captions_list = []
+            captions_list.append(table_df.iloc[row_index, 0])
+        else:
+            extracted_data_row_indexes.append(row_index)
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
