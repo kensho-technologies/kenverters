@@ -52,7 +52,6 @@ class TestTableExtraction(TestCase):
             {
                 "index": (0, 0),
                 "span": (1, 1),
-                "value": None,
                 "is_column_header": None,
                 "is_projected_row_header": None,
                 "locations": [
@@ -68,7 +67,6 @@ class TestTableExtraction(TestCase):
             {
                 "index": (0, 1),
                 "span": (1, 1),
-                "value": None,
                 "is_column_header": None,
                 "is_projected_row_header": None,
                 "locations": [
@@ -84,7 +82,6 @@ class TestTableExtraction(TestCase):
             {
                 "index": (0, 2),
                 "span": (1, 1),
-                "value": None,
                 "is_column_header": None,
                 "is_projected_row_header": None,
                 "locations": [
@@ -100,7 +97,6 @@ class TestTableExtraction(TestCase):
             {
                 "index": (0, 3),
                 "span": (1, 1),
-                "value": None,
                 "is_column_header": None,
                 "is_projected_row_header": None,
                 "locations": [
@@ -116,7 +112,6 @@ class TestTableExtraction(TestCase):
             {
                 "index": (0, 4),
                 "span": (1, 1),
-                "value": None,
                 "is_column_header": None,
                 "is_projected_row_header": None,
                 "locations": [
@@ -132,7 +127,6 @@ class TestTableExtraction(TestCase):
             {
                 "index": (1, 0),
                 "span": (1, 1),
-                "value": None,
                 "is_column_header": None,
                 "is_projected_row_header": None,
                 "locations": [
@@ -148,7 +142,6 @@ class TestTableExtraction(TestCase):
             {
                 "index": (1, 1),
                 "span": (1, 1),
-                "value": None,
                 "is_column_header": None,
                 "is_projected_row_header": None,
                 "locations": [
@@ -164,7 +157,6 @@ class TestTableExtraction(TestCase):
             {
                 "index": (1, 2),
                 "span": (1, 1),
-                "value": None,
                 "is_column_header": None,
                 "is_projected_row_header": None,
                 "locations": [
@@ -180,7 +172,6 @@ class TestTableExtraction(TestCase):
             {
                 "index": (1, 3),
                 "span": (1, 1),
-                "value": None,
                 "is_column_header": None,
                 "is_projected_row_header": None,
                 "locations": [
@@ -196,7 +187,6 @@ class TestTableExtraction(TestCase):
             {
                 "index": (1, 4),
                 "span": (1, 1),
-                "value": None,
                 "is_column_header": None,
                 "is_projected_row_header": None,
                 "locations": [
@@ -212,7 +202,6 @@ class TestTableExtraction(TestCase):
             {
                 "index": (2, 0),
                 "span": (1, 1),
-                "value": None,
                 "is_column_header": None,
                 "is_projected_row_header": None,
                 "locations": [
@@ -228,7 +217,6 @@ class TestTableExtraction(TestCase):
             {
                 "index": (2, 1),
                 "span": (1, 1),
-                "value": None,
                 "is_column_header": None,
                 "is_projected_row_header": None,
                 "locations": [
@@ -244,7 +232,6 @@ class TestTableExtraction(TestCase):
             {
                 "index": (2, 2),
                 "span": (1, 1),
-                "value": None,
                 "is_column_header": None,
                 "is_projected_row_header": None,
                 "locations": [
@@ -260,7 +247,6 @@ class TestTableExtraction(TestCase):
             {
                 "index": (2, 3),
                 "span": (1, 1),
-                "value": None,
                 "is_column_header": None,
                 "is_projected_row_header": None,
                 "locations": [
@@ -276,7 +262,6 @@ class TestTableExtraction(TestCase):
             {
                 "index": (2, 4),
                 "span": (1, 1),
-                "value": None,
                 "is_column_header": None,
                 "is_projected_row_header": None,
                 "locations": [
@@ -292,7 +277,6 @@ class TestTableExtraction(TestCase):
             {
                 "index": (3, 0),
                 "span": (1, 1),
-                "value": None,
                 "is_column_header": None,
                 "is_projected_row_header": None,
                 "locations": [
@@ -308,7 +292,6 @@ class TestTableExtraction(TestCase):
             {
                 "index": (3, 1),
                 "span": (1, 1),
-                "value": None,
                 "is_column_header": None,
                 "is_projected_row_header": None,
                 "locations": [
@@ -324,7 +307,6 @@ class TestTableExtraction(TestCase):
             {
                 "index": (3, 2),
                 "span": (1, 1),
-                "value": None,
                 "is_column_header": None,
                 "is_projected_row_header": None,
                 "locations": [
@@ -340,7 +322,6 @@ class TestTableExtraction(TestCase):
             {
                 "index": (3, 3),
                 "span": (1, 1),
-                "value": None,
                 "is_column_header": None,
                 "is_projected_row_header": None,
                 "locations": [
@@ -356,7 +337,6 @@ class TestTableExtraction(TestCase):
             {
                 "index": (3, 4),
                 "span": (1, 1),
-                "value": None,
                 "is_column_header": None,
                 "is_projected_row_header": None,
                 "locations": [
@@ -372,7 +352,6 @@ class TestTableExtraction(TestCase):
             {
                 "index": (4, 0),
                 "span": (1, 1),
-                "value": None,
                 "is_column_header": None,
                 "is_projected_row_header": None,
                 "locations": [
@@ -388,7 +367,6 @@ class TestTableExtraction(TestCase):
             {
                 "index": (4, 1),
                 "span": (1, 1),
-                "value": None,
                 "is_column_header": None,
                 "is_projected_row_header": None,
                 "locations": [
@@ -404,7 +382,6 @@ class TestTableExtraction(TestCase):
             {
                 "index": (4, 2),
                 "span": (1, 1),
-                "value": None,
                 "is_column_header": None,
                 "is_projected_row_header": None,
                 "locations": [
@@ -420,7 +397,6 @@ class TestTableExtraction(TestCase):
             {
                 "index": (4, 3),
                 "span": (1, 1),
-                "value": None,
                 "is_column_header": None,
                 "is_projected_row_header": None,
                 "locations": [
@@ -436,7 +412,6 @@ class TestTableExtraction(TestCase):
             {
                 "index": (4, 4),
                 "span": (1, 1),
-                "value": None,
                 "is_column_header": None,
                 "is_projected_row_header": None,
                 "locations": [
@@ -483,7 +458,7 @@ class TestTableExtraction(TestCase):
                     "children": [
                         {
                             "children": [],
-                            "content": "In an increasingly competitive technology landscape, few companies manage to capture attention as swiftly and convincingly as Kensho. As a new and rapidly growing player in the industry, Kensho is already demonstrating strong momentum—both in revenue generation and long-term potential—positioning itself as a company to watch in the coming years.",
+                            "content": "kensho is great.",
                             "locations": [
                                 {
                                     "height": 0.06898,
@@ -514,7 +489,7 @@ class TestTableExtraction(TestCase):
                     "children": [
                         {
                             "children": [],
-                            "content": "Kensho has quickly transitioned from an emerging startup to a serious contender in its market. Early financial performance highlights the company’s ability not only to carve out demand for its products and services, but to convert that demand into meaningful revenue. This early success reflects a combination of smart strategy, ambitious innovation, and a clear understanding of customer needs.",
+                            "content": "Kensho shape the future.",
                             "locations": [
                                 {
                                     "height": 0.08736,
@@ -545,7 +520,7 @@ class TestTableExtraction(TestCase):
                     "children": [
                         {
                             "children": [],
-                            "content": "What truly sets Kensho apart is its focus on forward-thinking solutions. Whether through advanced data systems, intelligent automation, or cutting-edge software capabilities, the company is committed to building technology that solves real problems and empowers organizations to operate smarter and faster.",
+                            "content": "Kensho have cutting-edge research.",
                             "locations": [
                                 {
                                     "height": 0.06899,
@@ -560,7 +535,7 @@ class TestTableExtraction(TestCase):
                         },
                         {
                             "children": [],
-                            "content": "Kensho’s emphasis on research, experimentation, and rapid iteration suggests a culture deeply rooted in innovation—one that gives the company a competitive edge as markets evolve.",
+                            "content": "Kensho represent the futrue of AI.",
                             "locations": [
                                 {
                                     "height": 0.03225,
@@ -591,7 +566,7 @@ class TestTableExtraction(TestCase):
                     "children": [
                         {
                             "children": [],
-                            "content": "Beyond current success, Kensho is shaping an impressive trajectory. Its continued investment in talent, technology, and strategic partnerships indicates that leadership is not only focused on short-term wins but on building a sustainable, impactful enterprise.",
+                            "content": "Kensho leading the future of AI.",
                             "locations": [
                                 {
                                     "height": 0.05062,
@@ -606,7 +581,7 @@ class TestTableExtraction(TestCase):
                         },
                         {
                             "children": [],
-                            "content": "The company’s commitment to long-term growth, combined with its early revenue performance, strongly positions Kensho as a future leader in its field. As industries continue to shift toward more data-driven and automated solutions, Kensho is optimally placed to meet those demands head-on.",
+                            "content": "Kensho’s commitment to long-term growth.",
                             "locations": [
                                 {
                                     "height": 0.06899,

@@ -15,7 +15,6 @@ from .constants import (
     TableType,
 )
 from .extract_output_models import (
-    AnnotationDataModel,
     AnnotationModel,
     CellType,
     ContentModel,
@@ -118,15 +117,23 @@ def _convert_table_annotations_to_cells(
     table_annotations: list[AnnotationModel],
 ) -> list[CellType]:
     """Convert list of table annotations to list of cells."""
-    cells = []
+    cells: list[CellType] = []
     for annotation in table_annotations:
-        cell = AnnotationDataModel.model_dump(annotation.data)
+        cell_index = annotation.data.index
+        cell_span = annotation.data.span
+        cell_is_column_header = annotation.data.is_column_header
+        cell_is_projected_row_header = annotation.data.is_projected_row_header
         if annotation.locations is not None:
-            cell_locations = [
+            cell_locations: list[LocationType] = [
                 LocationModel.model_dump(loc) for loc in annotation.locations
             ]
         else:
-            cell_locations = []
+            cell_locations = [None]
+        cell: CellType = {}
+        cell["index"] = cell_index
+        cell["span"] = cell_span
+        cell["is_column_header"] = cell_is_column_header
+        cell["is_projected_row_header"] = cell_is_projected_row_header
         cell["locations"] = cell_locations
         cells.append(cell)
     return cells
@@ -240,8 +247,9 @@ def build_table_grids(
     dict[str, tuple[TableCategoryType, list[list[str]]]],
     dict[str, list[AnnotationModel]],
 ]:
-    """Convert serialized tables to a table type and a 2D grid of strings. Also output the dictionary of table uid to table structure annotations mapping.
+    """Convert serialized tables to a table type and a 2D grid of strings.
 
+    (For parsing of table structure, we also output the dictionary of table id to table annotations)
     Args:
         serialized_document: a serialized document
         duplicate_merged_cells_content_flag: if True, duplicate cell content for merged cells.
@@ -250,7 +258,7 @@ def build_table_grids(
 
     Returns:
         a mapping of table UIDs to the tuple of table type and table grid structures
-
+        a mapping of table UIDs to the list of AnnotationModel objects.
     Example Output:
         ({
             '1': ("TABLE",[['header1', 'header2'], ['row1_val', 'row2_val']]),
@@ -363,7 +371,7 @@ def extract_pd_dfs_with_locs_and_table_structure_from_output(
     use_first_row_as_header: bool = True,
     include_figure_extracted_table: bool = False,
 ) -> list[Table]:
-    """Extract tables from output and convert them to a list of pd DataFrames, table locations and table structures.
+    """Extract tables and convert them to a list of pd DataFrames, table locations and structures.
 
     Args:
         serialized_document: a serialized document
@@ -386,7 +394,7 @@ def extract_pd_dfs_with_locs_and_table_structure_from_output(
             locations=[
                 {'height': 0.09188, 'width': 0.66072, 'x': 0.16008, 'y': 0.40464, 'page_number': 0}
             ],
-            cells=[{'index': (0, 0), 'span': (1, 1), 'value': None, 'is_column_header': True,
+            cells=[{'index': (0, 0), 'span': (1, 1), 'is_column_header': True,
             'is_projected_row_header': False, 'locations': [{'height': 0.01593, 'width': 0.17424,
             'x': 0.22064, 'y': 0.09433, 'page_number': 0}, ...]
         )]
