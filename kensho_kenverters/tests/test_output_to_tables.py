@@ -3,10 +3,11 @@ import os
 from typing import Any, ClassVar
 from unittest import TestCase
 
+from ..extract_output_models import AnnotationDataModel, AnnotationModel, LocationModel
 from ..output_to_tables import (
     build_table_grids,
     extract_pd_dfs_from_output,
-    extract_pd_dfs_with_locs_from_output,
+    extract_pd_dfs_with_locs_and_table_structure_from_output,
 )
 
 OUTPUT_FILE_PATH = os.path.join(
@@ -24,7 +25,9 @@ class TestTableExtraction(TestCase):
 
     def test_extract_pd_dfs(self) -> None:
         # Test with locations
-        tables = extract_pd_dfs_with_locs_from_output(self.extract_output)
+        tables = extract_pd_dfs_with_locs_and_table_structure_from_output(
+            self.extract_output
+        )
         self.assertEqual(len(tables), 1)
         table = tables[0]
         expected_table_csv = (
@@ -42,7 +45,413 @@ class TestTableExtraction(TestCase):
                 "page_number": 0,
             }
         ]
+
         self.assertEqual(table.locations, expected_table_locations)
+
+        expected_table_structure = [
+            {
+                "index": (0, 0),
+                "span": (1, 1),
+                "value": None,
+                "is_column_header": None,
+                "is_projected_row_header": None,
+                "locations": [
+                    {
+                        "height": 0.01188,
+                        "width": 0.22128,
+                        "x": 0.16008,
+                        "y": 0.40464,
+                        "page_number": 0,
+                    }
+                ],
+            },
+            {
+                "index": (0, 1),
+                "span": (1, 1),
+                "value": None,
+                "is_column_header": None,
+                "is_projected_row_header": None,
+                "locations": [
+                    {
+                        "height": 0.01188,
+                        "width": 0.02241,
+                        "x": 0.46007,
+                        "y": 0.40464,
+                        "page_number": 0,
+                    }
+                ],
+            },
+            {
+                "index": (0, 2),
+                "span": (1, 1),
+                "value": None,
+                "is_column_header": None,
+                "is_projected_row_header": None,
+                "locations": [
+                    {
+                        "height": 0.01188,
+                        "width": 0.02241,
+                        "x": 0.56008,
+                        "y": 0.40464,
+                        "page_number": 0,
+                    }
+                ],
+            },
+            {
+                "index": (0, 3),
+                "span": (1, 1),
+                "value": None,
+                "is_column_header": None,
+                "is_projected_row_header": None,
+                "locations": [
+                    {
+                        "height": 0.01188,
+                        "width": 0.02241,
+                        "x": 0.66008,
+                        "y": 0.40464,
+                        "page_number": 0,
+                    }
+                ],
+            },
+            {
+                "index": (0, 4),
+                "span": (1, 1),
+                "value": None,
+                "is_column_header": None,
+                "is_projected_row_header": None,
+                "locations": [
+                    {
+                        "height": 0.01188,
+                        "width": 0.02241,
+                        "x": 0.76008,
+                        "y": 0.40464,
+                        "page_number": 0,
+                    }
+                ],
+            },
+            {
+                "index": (1, 0),
+                "span": (1, 1),
+                "value": None,
+                "is_column_header": None,
+                "is_projected_row_header": None,
+                "locations": [
+                    {
+                        "height": 0.01188,
+                        "width": 0.03736,
+                        "x": 0.16008,
+                        "y": 0.42464,
+                        "page_number": 0,
+                    }
+                ],
+            },
+            {
+                "index": (1, 1),
+                "span": (1, 1),
+                "value": None,
+                "is_column_header": None,
+                "is_projected_row_header": None,
+                "locations": [
+                    {
+                        "height": 0.01188,
+                        "width": 0.06071,
+                        "x": 0.46007,
+                        "y": 0.42464,
+                        "page_number": 0,
+                    }
+                ],
+            },
+            {
+                "index": (1, 2),
+                "span": (1, 1),
+                "value": None,
+                "is_column_header": None,
+                "is_projected_row_header": None,
+                "locations": [
+                    {
+                        "height": 0.01188,
+                        "width": 0.06071,
+                        "x": 0.56008,
+                        "y": 0.42464,
+                        "page_number": 0,
+                    }
+                ],
+            },
+            {
+                "index": (1, 3),
+                "span": (1, 1),
+                "value": None,
+                "is_column_header": None,
+                "is_projected_row_header": None,
+                "locations": [
+                    {
+                        "height": 0.01188,
+                        "width": 0.06071,
+                        "x": 0.66008,
+                        "y": 0.42464,
+                        "page_number": 0,
+                    }
+                ],
+            },
+            {
+                "index": (1, 4),
+                "span": (1, 1),
+                "value": None,
+                "is_column_header": None,
+                "is_projected_row_header": None,
+                "locations": [
+                    {
+                        "height": 0.01188,
+                        "width": 0.06071,
+                        "x": 0.76008,
+                        "y": 0.42464,
+                        "page_number": 0,
+                    }
+                ],
+            },
+            {
+                "index": (2, 0),
+                "span": (1, 1),
+                "value": None,
+                "is_column_header": None,
+                "is_projected_row_header": None,
+                "locations": [
+                    {
+                        "height": 0.01188,
+                        "width": 0.03736,
+                        "x": 0.16008,
+                        "y": 0.44464,
+                        "page_number": 0,
+                    }
+                ],
+            },
+            {
+                "index": (2, 1),
+                "span": (1, 1),
+                "value": None,
+                "is_column_header": None,
+                "is_projected_row_header": None,
+                "locations": [
+                    {
+                        "height": 0.01188,
+                        "width": 0.06071,
+                        "x": 0.46007,
+                        "y": 0.44464,
+                        "page_number": 0,
+                    }
+                ],
+            },
+            {
+                "index": (2, 2),
+                "span": (1, 1),
+                "value": None,
+                "is_column_header": None,
+                "is_projected_row_header": None,
+                "locations": [
+                    {
+                        "height": 0.01188,
+                        "width": 0.06071,
+                        "x": 0.56008,
+                        "y": 0.44464,
+                        "page_number": 0,
+                    }
+                ],
+            },
+            {
+                "index": (2, 3),
+                "span": (1, 1),
+                "value": None,
+                "is_column_header": None,
+                "is_projected_row_header": None,
+                "locations": [
+                    {
+                        "height": 0.01188,
+                        "width": 0.06071,
+                        "x": 0.66008,
+                        "y": 0.44464,
+                        "page_number": 0,
+                    }
+                ],
+            },
+            {
+                "index": (2, 4),
+                "span": (1, 1),
+                "value": None,
+                "is_column_header": None,
+                "is_projected_row_header": None,
+                "locations": [
+                    {
+                        "height": 0.01188,
+                        "width": 0.06071,
+                        "x": 0.76008,
+                        "y": 0.44464,
+                        "page_number": 0,
+                    }
+                ],
+            },
+            {
+                "index": (3, 0),
+                "span": (1, 1),
+                "value": None,
+                "is_column_header": None,
+                "is_projected_row_header": None,
+                "locations": [
+                    {
+                        "height": 0.01188,
+                        "width": 0.03736,
+                        "x": 0.16008,
+                        "y": 0.46465,
+                        "page_number": 0,
+                    }
+                ],
+            },
+            {
+                "index": (3, 1),
+                "span": (1, 1),
+                "value": None,
+                "is_column_header": None,
+                "is_projected_row_header": None,
+                "locations": [
+                    {
+                        "height": 0.01188,
+                        "width": 0.06071,
+                        "x": 0.46007,
+                        "y": 0.46465,
+                        "page_number": 0,
+                    }
+                ],
+            },
+            {
+                "index": (3, 2),
+                "span": (1, 1),
+                "value": None,
+                "is_column_header": None,
+                "is_projected_row_header": None,
+                "locations": [
+                    {
+                        "height": 0.01188,
+                        "width": 0.06071,
+                        "x": 0.56008,
+                        "y": 0.46465,
+                        "page_number": 0,
+                    }
+                ],
+            },
+            {
+                "index": (3, 3),
+                "span": (1, 1),
+                "value": None,
+                "is_column_header": None,
+                "is_projected_row_header": None,
+                "locations": [
+                    {
+                        "height": 0.01188,
+                        "width": 0.06071,
+                        "x": 0.66008,
+                        "y": 0.46465,
+                        "page_number": 0,
+                    }
+                ],
+            },
+            {
+                "index": (3, 4),
+                "span": (1, 1),
+                "value": None,
+                "is_column_header": None,
+                "is_projected_row_header": None,
+                "locations": [
+                    {
+                        "height": 0.01188,
+                        "width": 0.06071,
+                        "x": 0.76008,
+                        "y": 0.46465,
+                        "page_number": 0,
+                    }
+                ],
+            },
+            {
+                "index": (4, 0),
+                "span": (1, 1),
+                "value": None,
+                "is_column_header": None,
+                "is_projected_row_header": None,
+                "locations": [
+                    {
+                        "height": 0.01188,
+                        "width": 0.03736,
+                        "x": 0.16008,
+                        "y": 0.48464,
+                        "page_number": 0,
+                    }
+                ],
+            },
+            {
+                "index": (4, 1),
+                "span": (1, 1),
+                "value": None,
+                "is_column_header": None,
+                "is_projected_row_header": None,
+                "locations": [
+                    {
+                        "height": 0.01188,
+                        "width": 0.06071,
+                        "x": 0.46007,
+                        "y": 0.48464,
+                        "page_number": 0,
+                    }
+                ],
+            },
+            {
+                "index": (4, 2),
+                "span": (1, 1),
+                "value": None,
+                "is_column_header": None,
+                "is_projected_row_header": None,
+                "locations": [
+                    {
+                        "height": 0.01188,
+                        "width": 0.06071,
+                        "x": 0.56008,
+                        "y": 0.48464,
+                        "page_number": 0,
+                    }
+                ],
+            },
+            {
+                "index": (4, 3),
+                "span": (1, 1),
+                "value": None,
+                "is_column_header": None,
+                "is_projected_row_header": None,
+                "locations": [
+                    {
+                        "height": 0.01188,
+                        "width": 0.06071,
+                        "x": 0.66008,
+                        "y": 0.48464,
+                        "page_number": 0,
+                    }
+                ],
+            },
+            {
+                "index": (4, 4),
+                "span": (1, 1),
+                "value": None,
+                "is_column_header": None,
+                "is_projected_row_header": None,
+                "locations": [
+                    {
+                        "height": 0.01188,
+                        "width": 0.06071,
+                        "x": 0.76008,
+                        "y": 0.48464,
+                        "page_number": 0,
+                    }
+                ],
+            },
+        ]
+
+        self.assertEqual(table.cells, expected_table_structure)
 
         # Test without locations
         tables_no_locs = extract_pd_dfs_from_output(self.extract_output)
@@ -69,936 +478,1560 @@ class TestTableExtraction(TestCase):
     def test_build_table_grids_table_structure(self) -> None:
         # Test with a spanning cell: Make sure it's duplicated
         content = {
-            "uid": "0",
-            "type": "DOCUMENT",
-            "content": None,
             "children": [
                 {
-                    "uid": "1",
-                    "type": "TEXT",
-                    "content": "2019",
-                    "children": [],
-                    "locations": [
-                        {
-                            "height": 0.01425,
-                            "width": 0.05043,
-                            "x": 0.20001,
-                            "y": 0.0137,
-                            "page_number": 0,
-                        }
-                    ],
-                },
-                {
-                    "uid": "2",
-                    "type": "TEXT",
-                    "content": "test noise string at top",
-                    "children": [],
-                    "locations": [
-                        {
-                            "height": 0.01425,
-                            "width": 0.20281,
-                            "x": 0.29527,
-                            "y": 0.0137,
-                            "page_number": 0,
-                        }
-                    ],
-                },
-                {
-                    "uid": "3",
-                    "type": "TITLE",
-                    "content": "Generated Toy File Title",
-                    "children": [],
-                    "locations": [
-                        {
-                            "height": 0.02376,
-                            "width": 0.35368,
-                            "x": 0.32316,
-                            "y": 0.0564,
-                            "page_number": 0,
-                        }
-                    ],
-                },
-                {
-                    "uid": "4",
-                    "type": "TEXT",
-                    "content": (
-                        "Machine learning (ML) is the scientific study of algorithms "
-                        "and statistical models that computer systems use in order to"
-                        " perform a specific task effectively without using explicit "
-                        "instructions, relying on patterns and inference instead. It "
-                        "is seen as a subset of artificial intelligence. Machine lear"
-                        "ning algorithms build a mathematical model based on sample d"
-                        "ata, known as training data, in order to make predictions or"
-                        " decisions without being explicitly programmed to perform th"
-                        "e task. Valerie is awesome. Machine learning algorithms are "
-                        "used in a wide variety of applications, such as email filter"
-                        "ing, and computer vision, where it is infeasible to develop "
-                        "an algorithm of specific instructions for performing the tas"
-                        "k. Machine learning is closely related to computational stat"
-                        "istics, which focuses on making predictions using computers."
-                        " The study of mathematical optimization delivers methods, th"
-                        "eory and application domains to the field of machine learnin"
-                        "g. Data mining is a field of study within machine learning, "
-                        "and focuses on exploratory data analysis through unsupervise"
-                        "d learning. In its application across business problems, mac"
-                        "hine learning is also referred to as predictive analytics."
-                    ),
-                    "children": [],
-                    "locations": [
-                        {
-                            "height": 0.16867,
-                            "width": 0.8,
-                            "x": 0.1,
-                            "y": 0.10141,
-                            "page_number": 0,
-                        }
-                    ],
-                },
-                {
-                    "uid": "5",
-                    "type": "TITLE",
-                    "content": "ESTIMATE for Kensho",
-                    "children": [],
-                    "locations": [
-                        {
-                            "height": 0.01425,
-                            "width": 0.21953,
-                            "x": 0.3,
-                            "y": 0.36869,
-                            "page_number": 0,
-                        }
-                    ],
-                },
-                {
-                    "uid": "6",
-                    "type": "TABLE",
-                    "content": None,
                     "children": [
                         {
+                            "children": [],
+                            "content": "In an increasingly competitive technology landscape, few companies manage to capture attention as swiftly and convincingly as Kensho. As a new and rapidly growing player in the industry, Kensho is already demonstrating strong momentum—both in revenue generation and long-term potential—positioning itself as a company to watch in the coming years.",
+                            "locations": [
+                                {
+                                    "height": 0.06898,
+                                    "page_number": 0,
+                                    "width": 0.75446,
+                                    "x": 0.11765,
+                                    "y": 0.14167,
+                                }
+                            ],
+                            "type": "PARAGRAPH",
+                            "uid": "2",
+                        }
+                    ],
+                    "content": "Kensho: A Rising Innovator Poised for a Strong Future",
+                    "locations": [
+                        {
+                            "height": 0.01389,
+                            "page_number": 0,
+                            "width": 0.47301,
+                            "x": 0.11765,
+                            "y": 0.10814,
+                        }
+                    ],
+                    "type": "H1",
+                    "uid": "1",
+                },
+                {
+                    "children": [
+                        {
+                            "children": [],
+                            "content": "Kensho has quickly transitioned from an emerging startup to a serious contender in its market. Early financial performance highlights the company’s ability not only to carve out demand for its products and services, but to convert that demand into meaningful revenue. This early success reflects a combination of smart strategy, ambitious innovation, and a clear understanding of customer needs.",
+                            "locations": [
+                                {
+                                    "height": 0.08736,
+                                    "page_number": 0,
+                                    "width": 0.76042,
+                                    "x": 0.11765,
+                                    "y": 0.26966,
+                                }
+                            ],
+                            "type": "PARAGRAPH",
+                            "uid": "4",
+                        }
+                    ],
+                    "content": "A Promising Start",
+                    "locations": [
+                        {
+                            "height": 0.01641,
+                            "page_number": 0,
+                            "width": 0.18525,
+                            "x": 0.11765,
+                            "y": 0.23318,
+                        }
+                    ],
+                    "type": "H1",
+                    "uid": "3",
+                },
+                {
+                    "children": [
+                        {
+                            "children": [],
+                            "content": "What truly sets Kensho apart is its focus on forward-thinking solutions. Whether through advanced data systems, intelligent automation, or cutting-edge software capabilities, the company is committed to building technology that solves real problems and empowers organizations to operate smarter and faster.",
+                            "locations": [
+                                {
+                                    "height": 0.06899,
+                                    "page_number": 0,
+                                    "width": 0.70489,
+                                    "x": 0.11765,
+                                    "y": 0.41602,
+                                }
+                            ],
+                            "type": "PARAGRAPH",
+                            "uid": "6",
+                        },
+                        {
+                            "children": [],
+                            "content": "Kensho’s emphasis on research, experimentation, and rapid iteration suggests a culture deeply rooted in innovation—one that gives the company a competitive edge as markets evolve.",
+                            "locations": [
+                                {
+                                    "height": 0.03225,
+                                    "page_number": 0,
+                                    "width": 0.76047,
+                                    "x": 0.11765,
+                                    "y": 0.50465,
+                                }
+                            ],
+                            "type": "PARAGRAPH",
                             "uid": "7",
-                            "type": "TABLE_CELL",
-                            "content": "Kensho Revenue in millions $",
+                        },
+                    ],
+                    "content": "Innovation at the Core",
+                    "locations": [
+                        {
+                            "height": 0.01641,
+                            "page_number": 0,
+                            "width": 0.23007,
+                            "x": 0.11765,
+                            "y": 0.37955,
+                        }
+                    ],
+                    "type": "H1",
+                    "uid": "5",
+                },
+                {
+                    "children": [
+                        {
                             "children": [],
+                            "content": "Beyond current success, Kensho is shaping an impressive trajectory. Its continued investment in talent, technology, and strategic partnerships indicates that leadership is not only focused on short-term wins but on building a sustainable, impactful enterprise.",
                             "locations": [
                                 {
-                                    "height": 0.01188,
-                                    "width": 0.22128,
-                                    "x": 0.16008,
-                                    "y": 0.40464,
+                                    "height": 0.05062,
                                     "page_number": 0,
+                                    "width": 0.76938,
+                                    "x": 0.11765,
+                                    "y": 0.59591,
                                 }
                             ],
-                        },
-                        {
-                            "uid": "8",
-                            "type": "TABLE_CELL",
-                            "content": "Q1",
-                            "children": [],
-                            "locations": [
-                                {
-                                    "height": 0.01188,
-                                    "width": 0.02241,
-                                    "x": 0.46007,
-                                    "y": 0.40464,
-                                    "page_number": 0,
-                                }
-                            ],
-                        },
-                        {
+                            "type": "PARAGRAPH",
                             "uid": "9",
-                            "type": "TABLE_CELL",
-                            "content": "Q2",
-                            "children": [],
-                            "locations": [
-                                {
-                                    "height": 0.01188,
-                                    "width": 0.02241,
-                                    "x": 0.56008,
-                                    "y": 0.40464,
-                                    "page_number": 0,
-                                }
-                            ],
                         },
                         {
+                            "children": [],
+                            "content": "The company’s commitment to long-term growth, combined with its early revenue performance, strongly positions Kensho as a future leader in its field. As industries continue to shift toward more data-driven and automated solutions, Kensho is optimally placed to meet those demands head-on.",
+                            "locations": [
+                                {
+                                    "height": 0.06899,
+                                    "page_number": 0,
+                                    "width": 0.76134,
+                                    "x": 0.11765,
+                                    "y": 0.66616,
+                                }
+                            ],
+                            "type": "PARAGRAPH",
                             "uid": "10",
-                            "type": "TABLE_CELL",
-                            "content": "Q3",
-                            "children": [],
-                            "locations": [
-                                {
-                                    "height": 0.01188,
-                                    "width": 0.02241,
-                                    "x": 0.66008,
-                                    "y": 0.40464,
-                                    "page_number": 0,
-                                }
-                            ],
                         },
                         {
+                            "children": [
+                                {
+                                    "children": [],
+                                    "content": "Kensho Revenue in millions $",
+                                    "locations": [
+                                        {
+                                            "height": 0.01263,
+                                            "page_number": 0,
+                                            "width": 0.23598,
+                                            "x": 0.13183,
+                                            "y": 0.77674,
+                                        }
+                                    ],
+                                    "type": "TABLE_CELL",
+                                    "uid": "12",
+                                },
+                                {
+                                    "children": [],
+                                    "content": "2025",
+                                    "locations": [
+                                        {
+                                            "height": 0.01263,
+                                            "page_number": 0,
+                                            "width": 0.23598,
+                                            "x": 0.13183,
+                                            "y": 0.80008,
+                                        }
+                                    ],
+                                    "type": "TABLE_CELL",
+                                    "uid": "13",
+                                },
+                                {
+                                    "children": [],
+                                    "content": "2026",
+                                    "locations": [
+                                        {
+                                            "height": 0.01263,
+                                            "page_number": 0,
+                                            "width": 0.23598,
+                                            "x": 0.13183,
+                                            "y": 0.8234,
+                                        }
+                                    ],
+                                    "type": "TABLE_CELL",
+                                    "uid": "14",
+                                },
+                                {
+                                    "children": [],
+                                    "content": "2027",
+                                    "locations": [
+                                        {
+                                            "height": 0.01263,
+                                            "page_number": 0,
+                                            "width": 0.23598,
+                                            "x": 0.13183,
+                                            "y": 0.84672,
+                                        }
+                                    ],
+                                    "type": "TABLE_CELL",
+                                    "uid": "15",
+                                },
+                                {
+                                    "children": [],
+                                    "content": "2028",
+                                    "locations": [
+                                        {
+                                            "height": 0.01263,
+                                            "page_number": 0,
+                                            "width": 0.23598,
+                                            "x": 0.13183,
+                                            "y": 0.87005,
+                                        }
+                                    ],
+                                    "type": "TABLE_CELL",
+                                    "uid": "16",
+                                },
+                                {
+                                    "children": [],
+                                    "content": "Q1",
+                                    "locations": [
+                                        {
+                                            "height": 0.01263,
+                                            "page_number": 0,
+                                            "width": 0.06359,
+                                            "x": 0.4092,
+                                            "y": 0.77674,
+                                        }
+                                    ],
+                                    "type": "TABLE_CELL",
+                                    "uid": "17",
+                                },
+                                {
+                                    "children": [],
+                                    "content": "500,000",
+                                    "locations": [
+                                        {
+                                            "height": 0.01263,
+                                            "page_number": 0,
+                                            "width": 0.06359,
+                                            "x": 0.4092,
+                                            "y": 0.80008,
+                                        }
+                                    ],
+                                    "type": "TABLE_CELL",
+                                    "uid": "18",
+                                },
+                                {
+                                    "children": [],
+                                    "content": "600,000",
+                                    "locations": [
+                                        {
+                                            "height": 0.01263,
+                                            "page_number": 0,
+                                            "width": 0.06359,
+                                            "x": 0.4092,
+                                            "y": 0.8234,
+                                        }
+                                    ],
+                                    "type": "TABLE_CELL",
+                                    "uid": "19",
+                                },
+                                {
+                                    "children": [],
+                                    "content": "700,000",
+                                    "locations": [
+                                        {
+                                            "height": 0.01263,
+                                            "page_number": 0,
+                                            "width": 0.06359,
+                                            "x": 0.4092,
+                                            "y": 0.84672,
+                                        }
+                                    ],
+                                    "type": "TABLE_CELL",
+                                    "uid": "20",
+                                },
+                                {
+                                    "children": [],
+                                    "content": "800,000",
+                                    "locations": [
+                                        {
+                                            "height": 0.01263,
+                                            "page_number": 0,
+                                            "width": 0.06359,
+                                            "x": 0.4092,
+                                            "y": 0.87005,
+                                        }
+                                    ],
+                                    "type": "TABLE_CELL",
+                                    "uid": "21",
+                                },
+                                {
+                                    "children": [],
+                                    "content": "Q2",
+                                    "locations": [
+                                        {
+                                            "height": 0.01263,
+                                            "page_number": 0,
+                                            "width": 0.06359,
+                                            "x": 0.53175,
+                                            "y": 0.77674,
+                                        }
+                                    ],
+                                    "type": "TABLE_CELL",
+                                    "uid": "22",
+                                },
+                                {
+                                    "children": [],
+                                    "content": "505,000",
+                                    "locations": [
+                                        {
+                                            "height": 0.01263,
+                                            "page_number": 0,
+                                            "width": 0.06359,
+                                            "x": 0.53175,
+                                            "y": 0.80008,
+                                        }
+                                    ],
+                                    "type": "TABLE_CELL",
+                                    "uid": "23",
+                                },
+                                {
+                                    "children": [],
+                                    "content": "605,000",
+                                    "locations": [
+                                        {
+                                            "height": 0.01263,
+                                            "page_number": 0,
+                                            "width": 0.06359,
+                                            "x": 0.53175,
+                                            "y": 0.8234,
+                                        }
+                                    ],
+                                    "type": "TABLE_CELL",
+                                    "uid": "24",
+                                },
+                                {
+                                    "children": [],
+                                    "content": "705,000",
+                                    "locations": [
+                                        {
+                                            "height": 0.01263,
+                                            "page_number": 0,
+                                            "width": 0.06359,
+                                            "x": 0.53175,
+                                            "y": 0.84672,
+                                        }
+                                    ],
+                                    "type": "TABLE_CELL",
+                                    "uid": "25",
+                                },
+                                {
+                                    "children": [],
+                                    "content": "805,000",
+                                    "locations": [
+                                        {
+                                            "height": 0.01263,
+                                            "page_number": 0,
+                                            "width": 0.06359,
+                                            "x": 0.53175,
+                                            "y": 0.87005,
+                                        }
+                                    ],
+                                    "type": "TABLE_CELL",
+                                    "uid": "26",
+                                },
+                                {
+                                    "children": [],
+                                    "content": "Q3",
+                                    "locations": [
+                                        {
+                                            "height": 0.01263,
+                                            "page_number": 0,
+                                            "width": 0.06359,
+                                            "x": 0.6543,
+                                            "y": 0.77674,
+                                        }
+                                    ],
+                                    "type": "TABLE_CELL",
+                                    "uid": "27",
+                                },
+                                {
+                                    "children": [],
+                                    "content": "510,000",
+                                    "locations": [
+                                        {
+                                            "height": 0.01263,
+                                            "page_number": 0,
+                                            "width": 0.06359,
+                                            "x": 0.6543,
+                                            "y": 0.80008,
+                                        }
+                                    ],
+                                    "type": "TABLE_CELL",
+                                    "uid": "28",
+                                },
+                                {
+                                    "children": [],
+                                    "content": "610,000",
+                                    "locations": [
+                                        {
+                                            "height": 0.01263,
+                                            "page_number": 0,
+                                            "width": 0.06359,
+                                            "x": 0.6543,
+                                            "y": 0.8234,
+                                        }
+                                    ],
+                                    "type": "TABLE_CELL",
+                                    "uid": "29",
+                                },
+                                {
+                                    "children": [],
+                                    "content": "710,000",
+                                    "locations": [
+                                        {
+                                            "height": 0.01263,
+                                            "page_number": 0,
+                                            "width": 0.06359,
+                                            "x": 0.6543,
+                                            "y": 0.84672,
+                                        }
+                                    ],
+                                    "type": "TABLE_CELL",
+                                    "uid": "30",
+                                },
+                                {
+                                    "children": [],
+                                    "content": "810,000",
+                                    "locations": [
+                                        {
+                                            "height": 0.01263,
+                                            "page_number": 0,
+                                            "width": 0.06359,
+                                            "x": 0.6543,
+                                            "y": 0.87005,
+                                        }
+                                    ],
+                                    "type": "TABLE_CELL",
+                                    "uid": "31",
+                                },
+                                {
+                                    "children": [],
+                                    "content": "Q4",
+                                    "locations": [
+                                        {
+                                            "height": 0.01263,
+                                            "page_number": 0,
+                                            "width": 0.06359,
+                                            "x": 0.77685,
+                                            "y": 0.77674,
+                                        }
+                                    ],
+                                    "type": "TABLE_CELL",
+                                    "uid": "32",
+                                },
+                                {
+                                    "children": [],
+                                    "content": "520,000",
+                                    "locations": [
+                                        {
+                                            "height": 0.01263,
+                                            "page_number": 0,
+                                            "width": 0.06359,
+                                            "x": 0.77685,
+                                            "y": 0.80008,
+                                        }
+                                    ],
+                                    "type": "TABLE_CELL",
+                                    "uid": "33",
+                                },
+                                {
+                                    "children": [],
+                                    "content": "620,000",
+                                    "locations": [
+                                        {
+                                            "height": 0.01263,
+                                            "page_number": 0,
+                                            "width": 0.06359,
+                                            "x": 0.77685,
+                                            "y": 0.8234,
+                                        }
+                                    ],
+                                    "type": "TABLE_CELL",
+                                    "uid": "34",
+                                },
+                                {
+                                    "children": [],
+                                    "content": "720,000",
+                                    "locations": [
+                                        {
+                                            "height": 0.01263,
+                                            "page_number": 0,
+                                            "width": 0.06359,
+                                            "x": 0.77685,
+                                            "y": 0.84672,
+                                        }
+                                    ],
+                                    "type": "TABLE_CELL",
+                                    "uid": "35",
+                                },
+                                {
+                                    "children": [],
+                                    "content": "820,000",
+                                    "locations": [
+                                        {
+                                            "height": 0.01263,
+                                            "page_number": 0,
+                                            "width": 0.06359,
+                                            "x": 0.77685,
+                                            "y": 0.87005,
+                                        }
+                                    ],
+                                    "type": "TABLE_CELL",
+                                    "uid": "36",
+                                },
+                            ],
+                            "content": None,
+                            "locations": [
+                                {
+                                    "height": 0.10593,
+                                    "page_number": 0,
+                                    "width": 0.70861,
+                                    "x": 0.13183,
+                                    "y": 0.77674,
+                                }
+                            ],
+                            "type": "TABLE",
                             "uid": "11",
-                            "type": "TABLE_CELL",
-                            "content": "Q4",
-                            "children": [],
-                            "locations": [
-                                {
-                                    "height": 0.01188,
-                                    "width": 0.02241,
-                                    "x": 0.76008,
-                                    "y": 0.40464,
-                                    "page_number": 0,
-                                }
-                            ],
-                        },
-                        {
-                            "uid": "12",
-                            "type": "TABLE_CELL",
-                            "content": "2020",
-                            "children": [],
-                            "locations": [
-                                {
-                                    "height": 0.01188,
-                                    "width": 0.03736,
-                                    "x": 0.16008,
-                                    "y": 0.42464,
-                                    "page_number": 0,
-                                }
-                            ],
-                        },
-                        {
-                            "uid": "13",
-                            "type": "TABLE_CELL",
-                            "content": "100,000",
-                            "children": [],
-                            "locations": [
-                                {
-                                    "height": 0.01188,
-                                    "width": 0.06071,
-                                    "x": 0.46007,
-                                    "y": 0.42464,
-                                    "page_number": 0,
-                                }
-                            ],
-                        },
-                        {
-                            "uid": "14",
-                            "type": "TABLE_CELL",
-                            "content": "200,000",
-                            "children": [],
-                            "locations": [
-                                {
-                                    "height": 0.01188,
-                                    "width": 0.06071,
-                                    "x": 0.56008,
-                                    "y": 0.42464,
-                                    "page_number": 0,
-                                }
-                            ],
-                        },
-                        {
-                            "uid": "15",
-                            "type": "TABLE_CELL",
-                            "content": "300,000",
-                            "children": [],
-                            "locations": [
-                                {
-                                    "height": 0.01188,
-                                    "width": 0.06071,
-                                    "x": 0.66008,
-                                    "y": 0.42464,
-                                    "page_number": 0,
-                                }
-                            ],
-                        },
-                        {
-                            "uid": "16",
-                            "type": "TABLE_CELL",
-                            "content": "400,000",
-                            "children": [],
-                            "locations": [
-                                {
-                                    "height": 0.01188,
-                                    "width": 0.06071,
-                                    "x": 0.76008,
-                                    "y": 0.42464,
-                                    "page_number": 0,
-                                }
-                            ],
-                        },
-                        {
-                            "uid": "17",
-                            "type": "TABLE_CELL",
-                            "content": "2021",
-                            "children": [],
-                            "locations": [
-                                {
-                                    "height": 0.01188,
-                                    "width": 0.03736,
-                                    "x": 0.16008,
-                                    "y": 0.44464,
-                                    "page_number": 0,
-                                }
-                            ],
-                        },
-                        {
-                            "uid": "18",
-                            "type": "TABLE_CELL",
-                            "content": "101,001",
-                            "children": [],
-                            "locations": [
-                                {
-                                    "height": 0.01188,
-                                    "width": 0.06071,
-                                    "x": 0.46007,
-                                    "y": 0.44464,
-                                    "page_number": 0,
-                                }
-                            ],
-                        },
-                        {
-                            "uid": "19",
-                            "type": "TABLE_CELL",
-                            "content": "201,001",
-                            "children": [],
-                            "locations": [
-                                {
-                                    "height": 0.01188,
-                                    "width": 0.06071,
-                                    "x": 0.56008,
-                                    "y": 0.44464,
-                                    "page_number": 0,
-                                }
-                            ],
-                        },
-                        {
-                            "uid": "20",
-                            "type": "TABLE_CELL",
-                            "content": "301,001",
-                            "children": [],
-                            "locations": [
-                                {
-                                    "height": 0.01188,
-                                    "width": 0.06071,
-                                    "x": 0.66008,
-                                    "y": 0.44464,
-                                    "page_number": 0,
-                                }
-                            ],
-                        },
-                        {
-                            "uid": "21",
-                            "type": "TABLE_CELL",
-                            "content": "401,001",
-                            "children": [],
-                            "locations": [
-                                {
-                                    "height": 0.01188,
-                                    "width": 0.06071,
-                                    "x": 0.76008,
-                                    "y": 0.44464,
-                                    "page_number": 0,
-                                }
-                            ],
-                        },
-                        {
-                            "uid": "22",
-                            "type": "TABLE_CELL",
-                            "content": "2022",
-                            "children": [],
-                            "locations": [
-                                {
-                                    "height": 0.01188,
-                                    "width": 0.03736,
-                                    "x": 0.16008,
-                                    "y": 0.46465,
-                                    "page_number": 0,
-                                }
-                            ],
-                        },
-                        {
-                            "uid": "23",
-                            "type": "TABLE_CELL",
-                            "content": "102,004",
-                            "children": [],
-                            "locations": [
-                                {
-                                    "height": 0.01188,
-                                    "width": 0.06071,
-                                    "x": 0.46007,
-                                    "y": 0.46465,
-                                    "page_number": 0,
-                                }
-                            ],
-                        },
-                        {
-                            "uid": "24",
-                            "type": "TABLE_CELL",
-                            "content": "202,004",
-                            "children": [],
-                            "locations": [
-                                {
-                                    "height": 0.01188,
-                                    "width": 0.06071,
-                                    "x": 0.56008,
-                                    "y": 0.46465,
-                                    "page_number": 0,
-                                }
-                            ],
-                        },
-                        {
-                            "uid": "25",
-                            "type": "TABLE_CELL",
-                            "content": "302,004",
-                            "children": [],
-                            "locations": [
-                                {
-                                    "height": 0.01188,
-                                    "width": 0.06071,
-                                    "x": 0.66008,
-                                    "y": 0.46465,
-                                    "page_number": 0,
-                                }
-                            ],
-                        },
-                        {
-                            "uid": "26",
-                            "type": "TABLE_CELL",
-                            "content": "402,004",
-                            "children": [],
-                            "locations": [
-                                {
-                                    "height": 0.01188,
-                                    "width": 0.06071,
-                                    "x": 0.76008,
-                                    "y": 0.46465,
-                                    "page_number": 0,
-                                }
-                            ],
-                        },
-                        {
-                            "uid": "27",
-                            "type": "TABLE_CELL",
-                            "content": "2023",
-                            "children": [],
-                            "locations": [
-                                {
-                                    "height": 0.01188,
-                                    "width": 0.03736,
-                                    "x": 0.16008,
-                                    "y": 0.48464,
-                                    "page_number": 0,
-                                }
-                            ],
-                        },
-                        {
-                            "uid": "28",
-                            "type": "TABLE_CELL",
-                            "content": "103,009",
-                            "children": [],
-                            "locations": [
-                                {
-                                    "height": 0.01188,
-                                    "width": 0.06071,
-                                    "x": 0.46007,
-                                    "y": 0.48464,
-                                    "page_number": 0,
-                                }
-                            ],
-                        },
-                        {
-                            "uid": "29",
-                            "type": "TABLE_CELL",
-                            "content": "203,009",
-                            "children": [],
-                            "locations": [
-                                {
-                                    "height": 0.01188,
-                                    "width": 0.06071,
-                                    "x": 0.56008,
-                                    "y": 0.48464,
-                                    "page_number": 0,
-                                }
-                            ],
-                        },
-                        {
-                            "uid": "30",
-                            "type": "TABLE_CELL",
-                            "content": "303,009",
-                            "children": [],
-                            "locations": [
-                                {
-                                    "height": 0.01188,
-                                    "width": 0.06071,
-                                    "x": 0.66008,
-                                    "y": 0.48464,
-                                    "page_number": 0,
-                                }
-                            ],
                         },
                     ],
+                    "content": "A Vision for the Future",
                     "locations": [
                         {
-                            "height": 0.09188,
-                            "width": 0.66072,
-                            "x": 0.16008,
-                            "y": 0.40464,
+                            "height": 0.01641,
                             "page_number": 0,
+                            "width": 0.2344,
+                            "x": 0.11765,
+                            "y": 0.55943,
                         }
                     ],
-                },
-                {
-                    "uid": "32",
-                    "type": "TEXT",
-                    "content": (
-                        "Machine learning (ML) is the scientific study of algorithms "
-                        "and statistical models that computer systems use in order to"
-                        " perform a specific task effectively without using explicit "
-                        "instructions, relying on patterns and inference instead. It "
-                        "is seen as a subset of artificial intelligence. Machine lear"
-                        "ning algorithms build a mathematical model based on sample d"
-                        "ata, known as training data, in order to make predictions or"
-                        " decisions without being explicitly programmed to perform th"
-                        "e task. Valerie is awesome. Machine learning algorithms are "
-                        "used in a wide variety of applications, such as email filter"
-                        "ing, and computer vision, where it is infeasible to develop "
-                        "an algorithm of specific instructions for performing the tas"
-                        "k. Machine learning is closely related to computational stat"
-                        "istics, which focuses on making predictions using computers."
-                        " The study of mathematical optimization delivers methods, th"
-                        "eory and application domains to the field of machine learnin"
-                        "g. Data mining is a field of study within machine learning, "
-                        "and focuses on exploratory data analysis through unsupervise"
-                        "d learning. In its application across business problems, mac"
-                        "hine learning is also referred to as predictive analytics."
-                    ),
-                    "children": [],
-                    "locations": [
-                        {
-                            "height": 0.16867,
-                            "width": 0.8,
-                            "x": 0.1,
-                            "y": 0.58142,
-                            "page_number": 0,
-                        }
-                    ],
-                },
-                {
-                    "uid": "33",
-                    "type": "TITLE",
-                    "content": "Recommendation: BUY",
-                    "children": [],
-                    "locations": [
-                        {
-                            "height": 0.01425,
-                            "width": 0.21622,
-                            "x": 0.60001,
-                            "y": 0.8387,
-                            "page_number": 0,
-                        }
-                    ],
-                },
-                {
-                    "uid": "34",
-                    "type": "TEXT",
-                    "content": "42",
-                    "children": [],
-                    "locations": [
-                        {
-                            "height": 0.01425,
-                            "width": 0.02802,
-                            "x": 0.1,
-                            "y": 0.9637,
-                            "page_number": 0,
-                        }
-                    ],
-                },
-                {
-                    "uid": "35",
-                    "type": "TEXT",
-                    "content": "test noise string at bottom",
-                    "children": [],
-                    "locations": [
-                        {
-                            "height": 0.01425,
-                            "width": 0.23641,
-                            "x": 0.17286,
-                            "y": 0.9637,
-                            "page_number": 0,
-                        }
-                    ],
-                },
-                {
-                    "uid": "36",
-                    "type": "TEXT",
-                    "content": "999",
-                    "children": [],
-                    "locations": [
-                        {
-                            "height": 0.01425,
-                            "width": 0.03923,
-                            "x": 0.8,
-                            "y": 0.9637,
-                            "page_number": 0,
-                        }
-                    ],
+                    "type": "H1",
+                    "uid": "8",
                 },
             ],
+            "content": None,
             "locations": None,
+            "type": "DOCUMENT",
+            "uid": "0",
         }
+
         annotations = [
             {
-                "content_uids": ["7"],
-                "data": {"index": (0, 0), "span": (1, 1)},
-                "type": "table_structure",
-                "locations": [
-                    {
-                        "height": 0.01188,
-                        "width": 0.22128,
-                        "x": 0.16008,
-                        "y": 0.40464,
-                        "page_number": 0,
-                    }
-                ],
-            },
-            {
-                "content_uids": ["8"],
-                "data": {"index": (0, 1), "span": (1, 1)},
-                "type": "table_structure",
-                "locations": [
-                    {
-                        "height": 0.01188,
-                        "width": 0.02241,
-                        "x": 0.46007,
-                        "y": 0.40464,
-                        "page_number": 0,
-                    }
-                ],
-            },
-            {
-                "content_uids": ["9"],
-                "data": {"index": (0, 2), "span": (1, 1)},
-                "type": "table_structure",
-                "locations": [
-                    {
-                        "height": 0.01188,
-                        "width": 0.02241,
-                        "x": 0.56008,
-                        "y": 0.40464,
-                        "page_number": 0,
-                    }
-                ],
-            },
-            {
-                "content_uids": ["10"],
-                "data": {"index": (0, 3), "span": (1, 1)},
-                "type": "table_structure",
-                "locations": [
-                    {
-                        "height": 0.01188,
-                        "width": 0.02241,
-                        "x": 0.66008,
-                        "y": 0.40464,
-                        "page_number": 0,
-                    }
-                ],
-            },
-            {
-                "content_uids": ["11"],
-                "data": {"index": (0, 4), "span": (1, 1)},
-                "type": "table_structure",
-                "locations": [
-                    {
-                        "height": 0.01188,
-                        "width": 0.02241,
-                        "x": 0.76008,
-                        "y": 0.40464,
-                        "page_number": 0,
-                    }
-                ],
-            },
-            {
                 "content_uids": ["12"],
-                "data": {"index": (1, 0), "span": (1, 1)},
-                "type": "table_structure",
+                "data": {
+                    "index": [0, 0],
+                    "is_column_header": True,
+                    "is_projected_row_header": False,
+                    "span": [1, 1],
+                },
                 "locations": [
                     {
-                        "height": 0.01188,
-                        "width": 0.03736,
-                        "x": 0.16008,
-                        "y": 0.42464,
+                        "height": 0.01263,
                         "page_number": 0,
+                        "width": 0.23598,
+                        "x": 0.13183,
+                        "y": 0.77674,
                     }
                 ],
+                "type": "table_structure",
             },
             {
                 "content_uids": ["13"],
-                "data": {"index": (1, 1), "span": (1, 1)},
-                "type": "table_structure",
+                "data": {
+                    "index": [1, 0],
+                    "is_column_header": False,
+                    "is_projected_row_header": False,
+                    "span": [1, 1],
+                },
                 "locations": [
                     {
-                        "height": 0.01188,
-                        "width": 0.06071,
-                        "x": 0.46007,
-                        "y": 0.42464,
+                        "height": 0.01263,
                         "page_number": 0,
+                        "width": 0.23598,
+                        "x": 0.13183,
+                        "y": 0.80008,
                     }
                 ],
+                "type": "table_structure",
             },
             {
                 "content_uids": ["14"],
-                "data": {"index": (1, 2), "span": (1, 1)},
-                "type": "table_structure",
+                "data": {
+                    "index": [2, 0],
+                    "is_column_header": False,
+                    "is_projected_row_header": False,
+                    "span": [1, 1],
+                },
                 "locations": [
                     {
-                        "height": 0.01188,
-                        "width": 0.06071,
-                        "x": 0.56008,
-                        "y": 0.42464,
+                        "height": 0.01263,
                         "page_number": 0,
+                        "width": 0.23598,
+                        "x": 0.13183,
+                        "y": 0.8234,
                     }
                 ],
+                "type": "table_structure",
             },
             {
                 "content_uids": ["15"],
-                "data": {"index": (1, 3), "span": (1, 1)},
-                "type": "table_structure",
+                "data": {
+                    "index": [3, 0],
+                    "is_column_header": False,
+                    "is_projected_row_header": False,
+                    "span": [1, 1],
+                },
                 "locations": [
                     {
-                        "height": 0.01188,
-                        "width": 0.06071,
-                        "x": 0.66008,
-                        "y": 0.42464,
+                        "height": 0.01263,
                         "page_number": 0,
+                        "width": 0.23598,
+                        "x": 0.13183,
+                        "y": 0.84672,
                     }
                 ],
+                "type": "table_structure",
             },
             {
                 "content_uids": ["16"],
-                "data": {"index": (1, 4), "span": (1, 1)},
-                "type": "table_structure",
+                "data": {
+                    "index": [4, 0],
+                    "is_column_header": False,
+                    "is_projected_row_header": False,
+                    "span": [1, 1],
+                },
                 "locations": [
                     {
-                        "height": 0.01188,
-                        "width": 0.06071,
-                        "x": 0.76008,
-                        "y": 0.42464,
+                        "height": 0.01263,
                         "page_number": 0,
+                        "width": 0.23598,
+                        "x": 0.13183,
+                        "y": 0.87005,
                     }
                 ],
+                "type": "table_structure",
             },
             {
                 "content_uids": ["17"],
-                "data": {"index": (2, 0), "span": (1, 1)},
-                "type": "table_structure",
+                "data": {
+                    "index": [0, 1],
+                    "is_column_header": True,
+                    "is_projected_row_header": False,
+                    "span": [1, 1],
+                },
                 "locations": [
                     {
-                        "height": 0.01188,
-                        "width": 0.03736,
-                        "x": 0.16008,
-                        "y": 0.44464,
+                        "height": 0.01263,
                         "page_number": 0,
+                        "width": 0.06359,
+                        "x": 0.4092,
+                        "y": 0.77674,
                     }
                 ],
+                "type": "table_structure",
             },
             {
                 "content_uids": ["18"],
-                "data": {"index": (2, 1), "span": (1, 1)},
-                "type": "table_structure",
+                "data": {
+                    "index": [1, 1],
+                    "is_column_header": False,
+                    "is_projected_row_header": False,
+                    "span": [1, 1],
+                },
                 "locations": [
                     {
-                        "height": 0.01188,
-                        "width": 0.06071,
-                        "x": 0.46007,
-                        "y": 0.44464,
+                        "height": 0.01263,
                         "page_number": 0,
+                        "width": 0.06359,
+                        "x": 0.4092,
+                        "y": 0.80008,
                     }
                 ],
+                "type": "table_structure",
             },
             {
                 "content_uids": ["19"],
-                "data": {"index": (2, 2), "span": (1, 1)},
-                "type": "table_structure",
+                "data": {
+                    "index": [2, 1],
+                    "is_column_header": False,
+                    "is_projected_row_header": False,
+                    "span": [1, 1],
+                },
                 "locations": [
                     {
-                        "height": 0.01188,
-                        "width": 0.06071,
-                        "x": 0.56008,
-                        "y": 0.44464,
+                        "height": 0.01263,
                         "page_number": 0,
+                        "width": 0.06359,
+                        "x": 0.4092,
+                        "y": 0.8234,
                     }
                 ],
+                "type": "table_structure",
             },
             {
                 "content_uids": ["20"],
-                "data": {"index": (2, 3), "span": (1, 1)},
-                "type": "table_structure",
+                "data": {
+                    "index": [3, 1],
+                    "is_column_header": False,
+                    "is_projected_row_header": False,
+                    "span": [1, 1],
+                },
                 "locations": [
                     {
-                        "height": 0.01188,
-                        "width": 0.06071,
-                        "x": 0.66008,
-                        "y": 0.44464,
+                        "height": 0.01263,
                         "page_number": 0,
+                        "width": 0.06359,
+                        "x": 0.4092,
+                        "y": 0.84672,
                     }
                 ],
+                "type": "table_structure",
             },
             {
                 "content_uids": ["21"],
-                "data": {"index": (2, 4), "span": (1, 1)},
-                "type": "table_structure",
+                "data": {
+                    "index": [4, 1],
+                    "is_column_header": False,
+                    "is_projected_row_header": False,
+                    "span": [1, 1],
+                },
                 "locations": [
                     {
-                        "height": 0.01188,
-                        "width": 0.06071,
-                        "x": 0.76008,
-                        "y": 0.44464,
+                        "height": 0.01263,
                         "page_number": 0,
+                        "width": 0.06359,
+                        "x": 0.4092,
+                        "y": 0.87005,
                     }
                 ],
+                "type": "table_structure",
             },
             {
                 "content_uids": ["22"],
-                "data": {"index": (3, 0), "span": (1, 1)},
-                "type": "table_structure",
+                "data": {
+                    "index": [0, 2],
+                    "is_column_header": True,
+                    "is_projected_row_header": False,
+                    "span": [1, 1],
+                },
                 "locations": [
                     {
-                        "height": 0.01188,
-                        "width": 0.03736,
-                        "x": 0.16008,
-                        "y": 0.46465,
+                        "height": 0.01263,
                         "page_number": 0,
+                        "width": 0.06359,
+                        "x": 0.53175,
+                        "y": 0.77674,
                     }
                 ],
+                "type": "table_structure",
             },
             {
                 "content_uids": ["23"],
-                "data": {"index": (3, 1), "span": (1, 1)},
-                "type": "table_structure",
+                "data": {
+                    "index": [1, 2],
+                    "is_column_header": False,
+                    "is_projected_row_header": False,
+                    "span": [1, 1],
+                },
                 "locations": [
                     {
-                        "height": 0.01188,
-                        "width": 0.06071,
-                        "x": 0.46007,
-                        "y": 0.46465,
+                        "height": 0.01263,
                         "page_number": 0,
+                        "width": 0.06359,
+                        "x": 0.53175,
+                        "y": 0.80008,
                     }
                 ],
+                "type": "table_structure",
             },
             {
                 "content_uids": ["24"],
-                "data": {"index": (3, 2), "span": (1, 1)},
-                "type": "table_structure",
+                "data": {
+                    "index": [2, 2],
+                    "is_column_header": False,
+                    "is_projected_row_header": False,
+                    "span": [1, 1],
+                },
                 "locations": [
                     {
-                        "height": 0.01188,
-                        "width": 0.06071,
-                        "x": 0.56008,
-                        "y": 0.46465,
+                        "height": 0.01263,
                         "page_number": 0,
+                        "width": 0.06359,
+                        "x": 0.53175,
+                        "y": 0.8234,
                     }
                 ],
+                "type": "table_structure",
             },
             {
                 "content_uids": ["25"],
-                "data": {"index": (3, 3), "span": (1, 1)},
-                "type": "table_structure",
+                "data": {
+                    "index": [3, 2],
+                    "is_column_header": False,
+                    "is_projected_row_header": False,
+                    "span": [1, 1],
+                },
                 "locations": [
                     {
-                        "height": 0.01188,
-                        "width": 0.06071,
-                        "x": 0.66008,
-                        "y": 0.46465,
+                        "height": 0.01263,
                         "page_number": 0,
+                        "width": 0.06359,
+                        "x": 0.53175,
+                        "y": 0.84672,
                     }
                 ],
+                "type": "table_structure",
             },
             {
                 "content_uids": ["26"],
-                "data": {"index": (3, 4), "span": (1, 1)},
-                "type": "table_structure",
+                "data": {
+                    "index": [4, 2],
+                    "is_column_header": False,
+                    "is_projected_row_header": False,
+                    "span": [1, 1],
+                },
                 "locations": [
                     {
-                        "height": 0.01188,
-                        "width": 0.06071,
-                        "x": 0.76008,
-                        "y": 0.46465,
+                        "height": 0.01263,
                         "page_number": 0,
+                        "width": 0.06359,
+                        "x": 0.53175,
+                        "y": 0.87005,
                     }
                 ],
+                "type": "table_structure",
             },
             {
                 "content_uids": ["27"],
-                "data": {"index": (4, 0), "span": (1, 1)},
-                "type": "table_structure",
+                "data": {
+                    "index": [0, 3],
+                    "is_column_header": True,
+                    "is_projected_row_header": False,
+                    "span": [1, 1],
+                },
                 "locations": [
                     {
-                        "height": 0.01188,
-                        "width": 0.03736,
-                        "x": 0.16008,
-                        "y": 0.48464,
+                        "height": 0.01263,
                         "page_number": 0,
+                        "width": 0.06359,
+                        "x": 0.6543,
+                        "y": 0.77674,
                     }
                 ],
+                "type": "table_structure",
             },
             {
                 "content_uids": ["28"],
-                "data": {"index": (4, 1), "span": (1, 1)},
-                "type": "table_structure",
+                "data": {
+                    "index": [1, 3],
+                    "is_column_header": False,
+                    "is_projected_row_header": False,
+                    "span": [1, 1],
+                },
                 "locations": [
                     {
-                        "height": 0.01188,
-                        "width": 0.06071,
-                        "x": 0.46007,
-                        "y": 0.48464,
+                        "height": 0.01263,
                         "page_number": 0,
+                        "width": 0.06359,
+                        "x": 0.6543,
+                        "y": 0.80008,
                     }
                 ],
+                "type": "table_structure",
             },
             {
                 "content_uids": ["29"],
-                "data": {"index": (4, 2), "span": (1, 1)},
-                "type": "table_structure",
+                "data": {
+                    "index": [2, 3],
+                    "is_column_header": False,
+                    "is_projected_row_header": False,
+                    "span": [1, 1],
+                },
                 "locations": [
                     {
-                        "height": 0.01188,
-                        "width": 0.06071,
-                        "x": 0.56008,
-                        "y": 0.48464,
+                        "height": 0.01263,
                         "page_number": 0,
+                        "width": 0.06359,
+                        "x": 0.6543,
+                        "y": 0.8234,
                     }
                 ],
+                "type": "table_structure",
             },
             {
                 "content_uids": ["30"],
-                "data": {"index": (4, 3), "span": (1, 2)},
-                "type": "table_structure",
+                "data": {
+                    "index": [3, 3],
+                    "is_column_header": False,
+                    "is_projected_row_header": False,
+                    "span": [1, 1],
+                },
                 "locations": [
                     {
-                        "height": 0.01188,
-                        "width": 0.06071,
-                        "x": 0.66008,
-                        "y": 0.48464,
+                        "height": 0.01263,
                         "page_number": 0,
+                        "width": 0.06359,
+                        "x": 0.6543,
+                        "y": 0.84672,
                     }
                 ],
+                "type": "table_structure",
+            },
+            {
+                "content_uids": ["31"],
+                "data": {
+                    "index": [4, 3],
+                    "is_column_header": False,
+                    "is_projected_row_header": False,
+                    "span": [1, 1],
+                },
+                "locations": [
+                    {
+                        "height": 0.01263,
+                        "page_number": 0,
+                        "width": 0.06359,
+                        "x": 0.6543,
+                        "y": 0.87005,
+                    }
+                ],
+                "type": "table_structure",
+            },
+            {
+                "content_uids": ["32"],
+                "data": {
+                    "index": [0, 4],
+                    "is_column_header": True,
+                    "is_projected_row_header": False,
+                    "span": [1, 1],
+                },
+                "locations": [
+                    {
+                        "height": 0.01263,
+                        "page_number": 0,
+                        "width": 0.06359,
+                        "x": 0.77685,
+                        "y": 0.77674,
+                    }
+                ],
+                "type": "table_structure",
+            },
+            {
+                "content_uids": ["33"],
+                "data": {
+                    "index": [1, 4],
+                    "is_column_header": False,
+                    "is_projected_row_header": False,
+                    "span": [1, 1],
+                },
+                "locations": [
+                    {
+                        "height": 0.01263,
+                        "page_number": 0,
+                        "width": 0.06359,
+                        "x": 0.77685,
+                        "y": 0.80008,
+                    }
+                ],
+                "type": "table_structure",
+            },
+            {
+                "content_uids": ["34"],
+                "data": {
+                    "index": [2, 4],
+                    "is_column_header": False,
+                    "is_projected_row_header": False,
+                    "span": [1, 1],
+                },
+                "locations": [
+                    {
+                        "height": 0.01263,
+                        "page_number": 0,
+                        "width": 0.06359,
+                        "x": 0.77685,
+                        "y": 0.8234,
+                    }
+                ],
+                "type": "table_structure",
+            },
+            {
+                "content_uids": ["35"],
+                "data": {
+                    "index": [3, 4],
+                    "is_column_header": False,
+                    "is_projected_row_header": False,
+                    "span": [1, 1],
+                },
+                "locations": [
+                    {
+                        "height": 0.01263,
+                        "page_number": 0,
+                        "width": 0.06359,
+                        "x": 0.77685,
+                        "y": 0.84672,
+                    }
+                ],
+                "type": "table_structure",
+            },
+            {
+                "content_uids": ["36"],
+                "data": {
+                    "index": [4, 4],
+                    "is_column_header": False,
+                    "is_projected_row_header": False,
+                    "span": [1, 1],
+                },
+                "locations": [
+                    {
+                        "height": 0.01263,
+                        "page_number": 0,
+                        "width": 0.06359,
+                        "x": 0.77685,
+                        "y": 0.87005,
+                    }
+                ],
+                "type": "table_structure",
             },
         ]
 
         expected_tables = {
-            "6": (
+            "11": (
                 "TABLE",
                 [
                     ["Kensho Revenue in millions $", "Q1", "Q2", "Q3", "Q4"],
-                    ["2020", "100,000", "200,000", "300,000", "400,000"],
-                    ["2021", "101,001", "201,001", "301,001", "401,001"],
-                    ["2022", "102,004", "202,004", "302,004", "402,004"],
-                    ["2023", "103,009", "203,009", "303,009", "303,009"],
+                    ["2025", "500,000", "505,000", "510,000", "520,000"],
+                    ["2026", "600,000", "605,000", "610,000", "620,000"],
+                    ["2027", "700,000", "705,000", "710,000", "720,000"],
+                    ["2028", "800,000", "805,000", "810,000", "820,000"],
                 ],
             )
         }
-        tables = build_table_grids(
+
+        expected_cell_annotations = {
+            "11": [
+                AnnotationModel(
+                    content_uids=["12"],
+                    data=AnnotationDataModel(
+                        index=(0, 0),
+                        span=(1, 1),
+                        value=None,
+                        is_column_header=True,
+                        is_projected_row_header=False,
+                    ),
+                    type="table_structure",
+                    locations=[
+                        LocationModel(
+                            height=0.01263,
+                            width=0.23598,
+                            x=0.13183,
+                            y=0.77674,
+                            page_number=0,
+                        )
+                    ],
+                ),
+                AnnotationModel(
+                    content_uids=["13"],
+                    data=AnnotationDataModel(
+                        index=(1, 0),
+                        span=(1, 1),
+                        value=None,
+                        is_column_header=False,
+                        is_projected_row_header=False,
+                    ),
+                    type="table_structure",
+                    locations=[
+                        LocationModel(
+                            height=0.01263,
+                            width=0.23598,
+                            x=0.13183,
+                            y=0.80008,
+                            page_number=0,
+                        )
+                    ],
+                ),
+                AnnotationModel(
+                    content_uids=["14"],
+                    data=AnnotationDataModel(
+                        index=(2, 0),
+                        span=(1, 1),
+                        value=None,
+                        is_column_header=False,
+                        is_projected_row_header=False,
+                    ),
+                    type="table_structure",
+                    locations=[
+                        LocationModel(
+                            height=0.01263,
+                            width=0.23598,
+                            x=0.13183,
+                            y=0.8234,
+                            page_number=0,
+                        )
+                    ],
+                ),
+                AnnotationModel(
+                    content_uids=["15"],
+                    data=AnnotationDataModel(
+                        index=(3, 0),
+                        span=(1, 1),
+                        value=None,
+                        is_column_header=False,
+                        is_projected_row_header=False,
+                    ),
+                    type="table_structure",
+                    locations=[
+                        LocationModel(
+                            height=0.01263,
+                            width=0.23598,
+                            x=0.13183,
+                            y=0.84672,
+                            page_number=0,
+                        )
+                    ],
+                ),
+                AnnotationModel(
+                    content_uids=["16"],
+                    data=AnnotationDataModel(
+                        index=(4, 0),
+                        span=(1, 1),
+                        value=None,
+                        is_column_header=False,
+                        is_projected_row_header=False,
+                    ),
+                    type="table_structure",
+                    locations=[
+                        LocationModel(
+                            height=0.01263,
+                            width=0.23598,
+                            x=0.13183,
+                            y=0.87005,
+                            page_number=0,
+                        )
+                    ],
+                ),
+                AnnotationModel(
+                    content_uids=["17"],
+                    data=AnnotationDataModel(
+                        index=(0, 1),
+                        span=(1, 1),
+                        value=None,
+                        is_column_header=True,
+                        is_projected_row_header=False,
+                    ),
+                    type="table_structure",
+                    locations=[
+                        LocationModel(
+                            height=0.01263,
+                            width=0.06359,
+                            x=0.4092,
+                            y=0.77674,
+                            page_number=0,
+                        )
+                    ],
+                ),
+                AnnotationModel(
+                    content_uids=["18"],
+                    data=AnnotationDataModel(
+                        index=(1, 1),
+                        span=(1, 1),
+                        value=None,
+                        is_column_header=False,
+                        is_projected_row_header=False,
+                    ),
+                    type="table_structure",
+                    locations=[
+                        LocationModel(
+                            height=0.01263,
+                            width=0.06359,
+                            x=0.4092,
+                            y=0.80008,
+                            page_number=0,
+                        )
+                    ],
+                ),
+                AnnotationModel(
+                    content_uids=["19"],
+                    data=AnnotationDataModel(
+                        index=(2, 1),
+                        span=(1, 1),
+                        value=None,
+                        is_column_header=False,
+                        is_projected_row_header=False,
+                    ),
+                    type="table_structure",
+                    locations=[
+                        LocationModel(
+                            height=0.01263,
+                            width=0.06359,
+                            x=0.4092,
+                            y=0.8234,
+                            page_number=0,
+                        )
+                    ],
+                ),
+                AnnotationModel(
+                    content_uids=["20"],
+                    data=AnnotationDataModel(
+                        index=(3, 1),
+                        span=(1, 1),
+                        value=None,
+                        is_column_header=False,
+                        is_projected_row_header=False,
+                    ),
+                    type="table_structure",
+                    locations=[
+                        LocationModel(
+                            height=0.01263,
+                            width=0.06359,
+                            x=0.4092,
+                            y=0.84672,
+                            page_number=0,
+                        )
+                    ],
+                ),
+                AnnotationModel(
+                    content_uids=["21"],
+                    data=AnnotationDataModel(
+                        index=(4, 1),
+                        span=(1, 1),
+                        value=None,
+                        is_column_header=False,
+                        is_projected_row_header=False,
+                    ),
+                    type="table_structure",
+                    locations=[
+                        LocationModel(
+                            height=0.01263,
+                            width=0.06359,
+                            x=0.4092,
+                            y=0.87005,
+                            page_number=0,
+                        )
+                    ],
+                ),
+                AnnotationModel(
+                    content_uids=["22"],
+                    data=AnnotationDataModel(
+                        index=(0, 2),
+                        span=(1, 1),
+                        value=None,
+                        is_column_header=True,
+                        is_projected_row_header=False,
+                    ),
+                    type="table_structure",
+                    locations=[
+                        LocationModel(
+                            height=0.01263,
+                            width=0.06359,
+                            x=0.53175,
+                            y=0.77674,
+                            page_number=0,
+                        )
+                    ],
+                ),
+                AnnotationModel(
+                    content_uids=["23"],
+                    data=AnnotationDataModel(
+                        index=(1, 2),
+                        span=(1, 1),
+                        value=None,
+                        is_column_header=False,
+                        is_projected_row_header=False,
+                    ),
+                    type="table_structure",
+                    locations=[
+                        LocationModel(
+                            height=0.01263,
+                            width=0.06359,
+                            x=0.53175,
+                            y=0.80008,
+                            page_number=0,
+                        )
+                    ],
+                ),
+                AnnotationModel(
+                    content_uids=["24"],
+                    data=AnnotationDataModel(
+                        index=(2, 2),
+                        span=(1, 1),
+                        value=None,
+                        is_column_header=False,
+                        is_projected_row_header=False,
+                    ),
+                    type="table_structure",
+                    locations=[
+                        LocationModel(
+                            height=0.01263,
+                            width=0.06359,
+                            x=0.53175,
+                            y=0.8234,
+                            page_number=0,
+                        )
+                    ],
+                ),
+                AnnotationModel(
+                    content_uids=["25"],
+                    data=AnnotationDataModel(
+                        index=(3, 2),
+                        span=(1, 1),
+                        value=None,
+                        is_column_header=False,
+                        is_projected_row_header=False,
+                    ),
+                    type="table_structure",
+                    locations=[
+                        LocationModel(
+                            height=0.01263,
+                            width=0.06359,
+                            x=0.53175,
+                            y=0.84672,
+                            page_number=0,
+                        )
+                    ],
+                ),
+                AnnotationModel(
+                    content_uids=["26"],
+                    data=AnnotationDataModel(
+                        index=(4, 2),
+                        span=(1, 1),
+                        value=None,
+                        is_column_header=False,
+                        is_projected_row_header=False,
+                    ),
+                    type="table_structure",
+                    locations=[
+                        LocationModel(
+                            height=0.01263,
+                            width=0.06359,
+                            x=0.53175,
+                            y=0.87005,
+                            page_number=0,
+                        )
+                    ],
+                ),
+                AnnotationModel(
+                    content_uids=["27"],
+                    data=AnnotationDataModel(
+                        index=(0, 3),
+                        span=(1, 1),
+                        value=None,
+                        is_column_header=True,
+                        is_projected_row_header=False,
+                    ),
+                    type="table_structure",
+                    locations=[
+                        LocationModel(
+                            height=0.01263,
+                            width=0.06359,
+                            x=0.6543,
+                            y=0.77674,
+                            page_number=0,
+                        )
+                    ],
+                ),
+                AnnotationModel(
+                    content_uids=["28"],
+                    data=AnnotationDataModel(
+                        index=(1, 3),
+                        span=(1, 1),
+                        value=None,
+                        is_column_header=False,
+                        is_projected_row_header=False,
+                    ),
+                    type="table_structure",
+                    locations=[
+                        LocationModel(
+                            height=0.01263,
+                            width=0.06359,
+                            x=0.6543,
+                            y=0.80008,
+                            page_number=0,
+                        )
+                    ],
+                ),
+                AnnotationModel(
+                    content_uids=["29"],
+                    data=AnnotationDataModel(
+                        index=(2, 3),
+                        span=(1, 1),
+                        value=None,
+                        is_column_header=False,
+                        is_projected_row_header=False,
+                    ),
+                    type="table_structure",
+                    locations=[
+                        LocationModel(
+                            height=0.01263,
+                            width=0.06359,
+                            x=0.6543,
+                            y=0.8234,
+                            page_number=0,
+                        )
+                    ],
+                ),
+                AnnotationModel(
+                    content_uids=["30"],
+                    data=AnnotationDataModel(
+                        index=(3, 3),
+                        span=(1, 1),
+                        value=None,
+                        is_column_header=False,
+                        is_projected_row_header=False,
+                    ),
+                    type="table_structure",
+                    locations=[
+                        LocationModel(
+                            height=0.01263,
+                            width=0.06359,
+                            x=0.6543,
+                            y=0.84672,
+                            page_number=0,
+                        )
+                    ],
+                ),
+                AnnotationModel(
+                    content_uids=["31"],
+                    data=AnnotationDataModel(
+                        index=(4, 3),
+                        span=(1, 1),
+                        value=None,
+                        is_column_header=False,
+                        is_projected_row_header=False,
+                    ),
+                    type="table_structure",
+                    locations=[
+                        LocationModel(
+                            height=0.01263,
+                            width=0.06359,
+                            x=0.6543,
+                            y=0.87005,
+                            page_number=0,
+                        )
+                    ],
+                ),
+                AnnotationModel(
+                    content_uids=["32"],
+                    data=AnnotationDataModel(
+                        index=(0, 4),
+                        span=(1, 1),
+                        value=None,
+                        is_column_header=True,
+                        is_projected_row_header=False,
+                    ),
+                    type="table_structure",
+                    locations=[
+                        LocationModel(
+                            height=0.01263,
+                            width=0.06359,
+                            x=0.77685,
+                            y=0.77674,
+                            page_number=0,
+                        )
+                    ],
+                ),
+                AnnotationModel(
+                    content_uids=["33"],
+                    data=AnnotationDataModel(
+                        index=(1, 4),
+                        span=(1, 1),
+                        value=None,
+                        is_column_header=False,
+                        is_projected_row_header=False,
+                    ),
+                    type="table_structure",
+                    locations=[
+                        LocationModel(
+                            height=0.01263,
+                            width=0.06359,
+                            x=0.77685,
+                            y=0.80008,
+                            page_number=0,
+                        )
+                    ],
+                ),
+                AnnotationModel(
+                    content_uids=["34"],
+                    data=AnnotationDataModel(
+                        index=(2, 4),
+                        span=(1, 1),
+                        value=None,
+                        is_column_header=False,
+                        is_projected_row_header=False,
+                    ),
+                    type="table_structure",
+                    locations=[
+                        LocationModel(
+                            height=0.01263,
+                            width=0.06359,
+                            x=0.77685,
+                            y=0.8234,
+                            page_number=0,
+                        )
+                    ],
+                ),
+                AnnotationModel(
+                    content_uids=["35"],
+                    data=AnnotationDataModel(
+                        index=(3, 4),
+                        span=(1, 1),
+                        value=None,
+                        is_column_header=False,
+                        is_projected_row_header=False,
+                    ),
+                    type="table_structure",
+                    locations=[
+                        LocationModel(
+                            height=0.01263,
+                            width=0.06359,
+                            x=0.77685,
+                            y=0.84672,
+                            page_number=0,
+                        )
+                    ],
+                ),
+                AnnotationModel(
+                    content_uids=["36"],
+                    data=AnnotationDataModel(
+                        index=(4, 4),
+                        span=(1, 1),
+                        value=None,
+                        is_column_header=False,
+                        is_projected_row_header=False,
+                    ),
+                    type="table_structure",
+                    locations=[
+                        LocationModel(
+                            height=0.01263,
+                            width=0.06359,
+                            x=0.77685,
+                            y=0.87005,
+                            page_number=0,
+                        )
+                    ],
+                ),
+            ]
+        }
+
+        tables, table_cell_annotations = build_table_grids(
             {"content_tree": content, "annotations": annotations}, True
         )
         self.assertEqual(expected_tables, tables)
+        self.assertEqual(expected_cell_annotations, table_cell_annotations)
 
     def test_build_table_grids_figure_extracted_table_structure(self) -> None:
         # Test with a spanning cell: Make sure it's duplicated
@@ -2650,7 +3683,916 @@ class TestTableExtraction(TestCase):
             ),
         }
 
-        tables = build_table_grids(
+        expected_table_id_to_cell_annotations = {
+            "6": [
+                AnnotationModel(
+                    content_uids=["7"],
+                    data=AnnotationDataModel(
+                        index=(0, 0),
+                        span=(1, 1),
+                        value="SDFII",
+                        is_column_header=None,
+                        is_projected_row_header=None,
+                    ),
+                    type="figure_extracted_table_structure",
+                    locations=[
+                        LocationModel(
+                            height=0.1181,
+                            width=0.33085,
+                            x=0.11975,
+                            y=0.34856,
+                            page_number=0,
+                        )
+                    ],
+                ),
+                AnnotationModel(
+                    content_uids=["8"],
+                    data=AnnotationDataModel(
+                        index=(0, 1),
+                        span=(1, 1),
+                        value="YIUIO",
+                        is_column_header=None,
+                        is_projected_row_header=None,
+                    ),
+                    type="figure_extracted_table_structure",
+                    locations=[
+                        LocationModel(
+                            height=0.1181,
+                            width=0.33085,
+                            x=0.11975,
+                            y=0.34856,
+                            page_number=0,
+                        )
+                    ],
+                ),
+                AnnotationModel(
+                    content_uids=["9"],
+                    data=AnnotationDataModel(
+                        index=(0, 2),
+                        span=(1, 1),
+                        value="789",
+                        is_column_header=None,
+                        is_projected_row_header=None,
+                    ),
+                    type="figure_extracted_table_structure",
+                    locations=[
+                        LocationModel(
+                            height=0.1181,
+                            width=0.33085,
+                            x=0.11975,
+                            y=0.34856,
+                            page_number=0,
+                        )
+                    ],
+                ),
+                AnnotationModel(
+                    content_uids=["10"],
+                    data=AnnotationDataModel(
+                        index=(1, 0),
+                        span=(1, 1),
+                        value="234",
+                        is_column_header=None,
+                        is_projected_row_header=None,
+                    ),
+                    type="figure_extracted_table_structure",
+                    locations=[
+                        LocationModel(
+                            height=0.1181,
+                            width=0.33085,
+                            x=0.11975,
+                            y=0.34856,
+                            page_number=0,
+                        )
+                    ],
+                ),
+                AnnotationModel(
+                    content_uids=["11"],
+                    data=AnnotationDataModel(
+                        index=(1, 1),
+                        span=(1, 1),
+                        value="123",
+                        is_column_header=None,
+                        is_projected_row_header=None,
+                    ),
+                    type="figure_extracted_table_structure",
+                    locations=[
+                        LocationModel(
+                            height=0.1181,
+                            width=0.33085,
+                            x=0.11975,
+                            y=0.34856,
+                            page_number=0,
+                        )
+                    ],
+                ),
+                AnnotationModel(
+                    content_uids=["12"],
+                    data=AnnotationDataModel(
+                        index=(1, 2),
+                        span=(1, 1),
+                        value="123",
+                        is_column_header=None,
+                        is_projected_row_header=None,
+                    ),
+                    type="figure_extracted_table_structure",
+                    locations=[
+                        LocationModel(
+                            height=0.1181,
+                            width=0.33085,
+                            x=0.11975,
+                            y=0.34856,
+                            page_number=0,
+                        )
+                    ],
+                ),
+                AnnotationModel(
+                    content_uids=["13"],
+                    data=AnnotationDataModel(
+                        index=(2, 0),
+                        span=(1, 1),
+                        value="12",
+                        is_column_header=None,
+                        is_projected_row_header=None,
+                    ),
+                    type="figure_extracted_table_structure",
+                    locations=[
+                        LocationModel(
+                            height=0.1181,
+                            width=0.33085,
+                            x=0.11975,
+                            y=0.34856,
+                            page_number=0,
+                        )
+                    ],
+                ),
+                AnnotationModel(
+                    content_uids=["14"],
+                    data=AnnotationDataModel(
+                        index=(2, 1),
+                        span=(1, 1),
+                        value="789",
+                        is_column_header=None,
+                        is_projected_row_header=None,
+                    ),
+                    type="figure_extracted_table_structure",
+                    locations=[
+                        LocationModel(
+                            height=0.1181,
+                            width=0.33085,
+                            x=0.11975,
+                            y=0.34856,
+                            page_number=0,
+                        )
+                    ],
+                ),
+                AnnotationModel(
+                    content_uids=["15"],
+                    data=AnnotationDataModel(
+                        index=(2, 2),
+                        span=(1, 1),
+                        value="123",
+                        is_column_header=None,
+                        is_projected_row_header=None,
+                    ),
+                    type="figure_extracted_table_structure",
+                    locations=[
+                        LocationModel(
+                            height=0.1181,
+                            width=0.33085,
+                            x=0.11975,
+                            y=0.34856,
+                            page_number=0,
+                        )
+                    ],
+                ),
+                AnnotationModel(
+                    content_uids=["16"],
+                    data=AnnotationDataModel(
+                        index=(3, 0),
+                        span=(1, 1),
+                        value="789",
+                        is_column_header=None,
+                        is_projected_row_header=None,
+                    ),
+                    type="figure_extracted_table_structure",
+                    locations=[
+                        LocationModel(
+                            height=0.1181,
+                            width=0.33085,
+                            x=0.11975,
+                            y=0.34856,
+                            page_number=0,
+                        )
+                    ],
+                ),
+                AnnotationModel(
+                    content_uids=["17"],
+                    data=AnnotationDataModel(
+                        index=(3, 1),
+                        span=(1, 1),
+                        value="123",
+                        is_column_header=None,
+                        is_projected_row_header=None,
+                    ),
+                    type="figure_extracted_table_structure",
+                    locations=[
+                        LocationModel(
+                            height=0.1181,
+                            width=0.33085,
+                            x=0.11975,
+                            y=0.34856,
+                            page_number=0,
+                        )
+                    ],
+                ),
+                AnnotationModel(
+                    content_uids=["18"],
+                    data=AnnotationDataModel(
+                        index=(3, 2),
+                        span=(1, 1),
+                        value="789",
+                        is_column_header=None,
+                        is_projected_row_header=None,
+                    ),
+                    type="figure_extracted_table_structure",
+                    locations=[
+                        LocationModel(
+                            height=0.1181,
+                            width=0.33085,
+                            x=0.11975,
+                            y=0.34856,
+                            page_number=0,
+                        )
+                    ],
+                ),
+                AnnotationModel(
+                    content_uids=["19"],
+                    data=AnnotationDataModel(
+                        index=(4, 0),
+                        span=(1, 1),
+                        value="789",
+                        is_column_header=None,
+                        is_projected_row_header=None,
+                    ),
+                    type="figure_extracted_table_structure",
+                    locations=[
+                        LocationModel(
+                            height=0.1181,
+                            width=0.33085,
+                            x=0.11975,
+                            y=0.34856,
+                            page_number=0,
+                        )
+                    ],
+                ),
+                AnnotationModel(
+                    content_uids=["20"],
+                    data=AnnotationDataModel(
+                        index=(4, 1),
+                        span=(1, 1),
+                        value="456",
+                        is_column_header=None,
+                        is_projected_row_header=None,
+                    ),
+                    type="figure_extracted_table_structure",
+                    locations=[
+                        LocationModel(
+                            height=0.1181,
+                            width=0.33085,
+                            x=0.11975,
+                            y=0.34856,
+                            page_number=0,
+                        )
+                    ],
+                ),
+                AnnotationModel(
+                    content_uids=["21"],
+                    data=AnnotationDataModel(
+                        index=(4, 2),
+                        span=(1, 1),
+                        value="123",
+                        is_column_header=None,
+                        is_projected_row_header=None,
+                    ),
+                    type="figure_extracted_table_structure",
+                    locations=[
+                        LocationModel(
+                            height=0.1181,
+                            width=0.33085,
+                            x=0.11975,
+                            y=0.34856,
+                            page_number=0,
+                        )
+                    ],
+                ),
+                AnnotationModel(
+                    content_uids=["22"],
+                    data=AnnotationDataModel(
+                        index=(5, 0),
+                        span=(1, 1),
+                        value="123",
+                        is_column_header=None,
+                        is_projected_row_header=None,
+                    ),
+                    type="figure_extracted_table_structure",
+                    locations=[
+                        LocationModel(
+                            height=0.1181,
+                            width=0.33085,
+                            x=0.11975,
+                            y=0.34856,
+                            page_number=0,
+                        )
+                    ],
+                ),
+                AnnotationModel(
+                    content_uids=["23"],
+                    data=AnnotationDataModel(
+                        index=(5, 1),
+                        span=(1, 1),
+                        value="123",
+                        is_column_header=None,
+                        is_projected_row_header=None,
+                    ),
+                    type="figure_extracted_table_structure",
+                    locations=[
+                        LocationModel(
+                            height=0.1181,
+                            width=0.33085,
+                            x=0.11975,
+                            y=0.34856,
+                            page_number=0,
+                        )
+                    ],
+                ),
+                AnnotationModel(
+                    content_uids=["24"],
+                    data=AnnotationDataModel(
+                        index=(5, 2),
+                        span=(1, 1),
+                        value="234",
+                        is_column_header=None,
+                        is_projected_row_header=None,
+                    ),
+                    type="figure_extracted_table_structure",
+                    locations=[
+                        LocationModel(
+                            height=0.1181,
+                            width=0.33085,
+                            x=0.11975,
+                            y=0.34856,
+                            page_number=0,
+                        )
+                    ],
+                ),
+                AnnotationModel(
+                    content_uids=["25"],
+                    data=AnnotationDataModel(
+                        index=(6, 0),
+                        span=(1, 1),
+                        value="345",
+                        is_column_header=None,
+                        is_projected_row_header=None,
+                    ),
+                    type="figure_extracted_table_structure",
+                    locations=[
+                        LocationModel(
+                            height=0.1181,
+                            width=0.33085,
+                            x=0.11975,
+                            y=0.34856,
+                            page_number=0,
+                        )
+                    ],
+                ),
+                AnnotationModel(
+                    content_uids=["26"],
+                    data=AnnotationDataModel(
+                        index=(6, 1),
+                        span=(1, 1),
+                        value="456",
+                        is_column_header=None,
+                        is_projected_row_header=None,
+                    ),
+                    type="figure_extracted_table_structure",
+                    locations=[
+                        LocationModel(
+                            height=0.1181,
+                            width=0.33085,
+                            x=0.11975,
+                            y=0.34856,
+                            page_number=0,
+                        )
+                    ],
+                ),
+                AnnotationModel(
+                    content_uids=["27"],
+                    data=AnnotationDataModel(
+                        index=(6, 2),
+                        span=(1, 1),
+                        value="789",
+                        is_column_header=None,
+                        is_projected_row_header=None,
+                    ),
+                    type="figure_extracted_table_structure",
+                    locations=[
+                        LocationModel(
+                            height=0.1181,
+                            width=0.33085,
+                            x=0.11975,
+                            y=0.34856,
+                            page_number=0,
+                        )
+                    ],
+                ),
+            ],
+            "35": [
+                AnnotationModel(
+                    content_uids=["36"],
+                    data=AnnotationDataModel(
+                        index=(0, 0),
+                        span=(1, 1),
+                        value="EFG",
+                        is_column_header=None,
+                        is_projected_row_header=None,
+                    ),
+                    type="figure_extracted_table_structure",
+                    locations=[
+                        LocationModel(
+                            height=0.12461,
+                            width=0.34248,
+                            x=0.50986,
+                            y=0.34171,
+                            page_number=0,
+                        )
+                    ],
+                ),
+                AnnotationModel(
+                    content_uids=["37"],
+                    data=AnnotationDataModel(
+                        index=(0, 1),
+                        span=(1, 1),
+                        value="ELP",
+                        is_column_header=None,
+                        is_projected_row_header=None,
+                    ),
+                    type="figure_extracted_table_structure",
+                    locations=[
+                        LocationModel(
+                            height=0.12461,
+                            width=0.34248,
+                            x=0.50986,
+                            y=0.34171,
+                            page_number=0,
+                        )
+                    ],
+                ),
+                AnnotationModel(
+                    content_uids=["38"],
+                    data=AnnotationDataModel(
+                        index=(0, 2),
+                        span=(1, 1),
+                        value="345",
+                        is_column_header=None,
+                        is_projected_row_header=None,
+                    ),
+                    type="figure_extracted_table_structure",
+                    locations=[
+                        LocationModel(
+                            height=0.12461,
+                            width=0.34248,
+                            x=0.50986,
+                            y=0.34171,
+                            page_number=0,
+                        )
+                    ],
+                ),
+                AnnotationModel(
+                    content_uids=["39"],
+                    data=AnnotationDataModel(
+                        index=(1, 0),
+                        span=(1, 1),
+                        value="12",
+                        is_column_header=None,
+                        is_projected_row_header=None,
+                    ),
+                    type="figure_extracted_table_structure",
+                    locations=[
+                        LocationModel(
+                            height=0.12461,
+                            width=0.34248,
+                            x=0.50986,
+                            y=0.34171,
+                            page_number=0,
+                        )
+                    ],
+                ),
+                AnnotationModel(
+                    content_uids=["40"],
+                    data=AnnotationDataModel(
+                        index=(1, 1),
+                        span=(1, 1),
+                        value="123",
+                        is_column_header=None,
+                        is_projected_row_header=None,
+                    ),
+                    type="figure_extracted_table_structure",
+                    locations=[
+                        LocationModel(
+                            height=0.12461,
+                            width=0.34248,
+                            x=0.50986,
+                            y=0.34171,
+                            page_number=0,
+                        )
+                    ],
+                ),
+                AnnotationModel(
+                    content_uids=["41"],
+                    data=AnnotationDataModel(
+                        index=(1, 2),
+                        span=(1, 1),
+                        value="345",
+                        is_column_header=None,
+                        is_projected_row_header=None,
+                    ),
+                    type="figure_extracted_table_structure",
+                    locations=[
+                        LocationModel(
+                            height=0.12461,
+                            width=0.34248,
+                            x=0.50986,
+                            y=0.34171,
+                            page_number=0,
+                        )
+                    ],
+                ),
+                AnnotationModel(
+                    content_uids=["42"],
+                    data=AnnotationDataModel(
+                        index=(2, 0),
+                        span=(1, 1),
+                        value="321",
+                        is_column_header=None,
+                        is_projected_row_header=None,
+                    ),
+                    type="figure_extracted_table_structure",
+                    locations=[
+                        LocationModel(
+                            height=0.12461,
+                            width=0.34248,
+                            x=0.50986,
+                            y=0.34171,
+                            page_number=0,
+                        )
+                    ],
+                ),
+                AnnotationModel(
+                    content_uids=["43"],
+                    data=AnnotationDataModel(
+                        index=(2, 1),
+                        span=(1, 1),
+                        value="123",
+                        is_column_header=None,
+                        is_projected_row_header=None,
+                    ),
+                    type="figure_extracted_table_structure",
+                    locations=[
+                        LocationModel(
+                            height=0.12461,
+                            width=0.34248,
+                            x=0.50986,
+                            y=0.34171,
+                            page_number=0,
+                        )
+                    ],
+                ),
+                AnnotationModel(
+                    content_uids=["44"],
+                    data=AnnotationDataModel(
+                        index=(2, 2),
+                        span=(1, 1),
+                        value="123",
+                        is_column_header=None,
+                        is_projected_row_header=None,
+                    ),
+                    type="figure_extracted_table_structure",
+                    locations=[
+                        LocationModel(
+                            height=0.12461,
+                            width=0.34248,
+                            x=0.50986,
+                            y=0.34171,
+                            page_number=0,
+                        )
+                    ],
+                ),
+                AnnotationModel(
+                    content_uids=["45"],
+                    data=AnnotationDataModel(
+                        index=(3, 0),
+                        span=(1, 1),
+                        value="345",
+                        is_column_header=None,
+                        is_projected_row_header=None,
+                    ),
+                    type="figure_extracted_table_structure",
+                    locations=[
+                        LocationModel(
+                            height=0.12461,
+                            width=0.34248,
+                            x=0.50986,
+                            y=0.34171,
+                            page_number=0,
+                        )
+                    ],
+                ),
+                AnnotationModel(
+                    content_uids=["46"],
+                    data=AnnotationDataModel(
+                        index=(3, 1),
+                        span=(1, 1),
+                        value="234",
+                        is_column_header=None,
+                        is_projected_row_header=None,
+                    ),
+                    type="figure_extracted_table_structure",
+                    locations=[
+                        LocationModel(
+                            height=0.12461,
+                            width=0.34248,
+                            x=0.50986,
+                            y=0.34171,
+                            page_number=0,
+                        )
+                    ],
+                ),
+                AnnotationModel(
+                    content_uids=["47"],
+                    data=AnnotationDataModel(
+                        index=(3, 2),
+                        span=(1, 1),
+                        value="123",
+                        is_column_header=None,
+                        is_projected_row_header=None,
+                    ),
+                    type="figure_extracted_table_structure",
+                    locations=[
+                        LocationModel(
+                            height=0.12461,
+                            width=0.34248,
+                            x=0.50986,
+                            y=0.34171,
+                            page_number=0,
+                        )
+                    ],
+                ),
+                AnnotationModel(
+                    content_uids=["48"],
+                    data=AnnotationDataModel(
+                        index=(4, 0),
+                        span=(1, 1),
+                        value="12",
+                        is_column_header=None,
+                        is_projected_row_header=None,
+                    ),
+                    type="figure_extracted_table_structure",
+                    locations=[
+                        LocationModel(
+                            height=0.12461,
+                            width=0.34248,
+                            x=0.50986,
+                            y=0.34171,
+                            page_number=0,
+                        )
+                    ],
+                ),
+                AnnotationModel(
+                    content_uids=["49"],
+                    data=AnnotationDataModel(
+                        index=(4, 1),
+                        span=(1, 1),
+                        value="789",
+                        is_column_header=None,
+                        is_projected_row_header=None,
+                    ),
+                    type="figure_extracted_table_structure",
+                    locations=[
+                        LocationModel(
+                            height=0.12461,
+                            width=0.34248,
+                            x=0.50986,
+                            y=0.34171,
+                            page_number=0,
+                        )
+                    ],
+                ),
+                AnnotationModel(
+                    content_uids=["50"],
+                    data=AnnotationDataModel(
+                        index=(4, 2),
+                        span=(1, 1),
+                        value="12",
+                        is_column_header=None,
+                        is_projected_row_header=None,
+                    ),
+                    type="figure_extracted_table_structure",
+                    locations=[
+                        LocationModel(
+                            height=0.12461,
+                            width=0.34248,
+                            x=0.50986,
+                            y=0.34171,
+                            page_number=0,
+                        )
+                    ],
+                ),
+                AnnotationModel(
+                    content_uids=["51"],
+                    data=AnnotationDataModel(
+                        index=(5, 0),
+                        span=(1, 1),
+                        value="123",
+                        is_column_header=None,
+                        is_projected_row_header=None,
+                    ),
+                    type="figure_extracted_table_structure",
+                    locations=[
+                        LocationModel(
+                            height=0.12461,
+                            width=0.34248,
+                            x=0.50986,
+                            y=0.34171,
+                            page_number=0,
+                        )
+                    ],
+                ),
+                AnnotationModel(
+                    content_uids=["52"],
+                    data=AnnotationDataModel(
+                        index=(5, 1),
+                        span=(1, 1),
+                        value="789",
+                        is_column_header=None,
+                        is_projected_row_header=None,
+                    ),
+                    type="figure_extracted_table_structure",
+                    locations=[
+                        LocationModel(
+                            height=0.12461,
+                            width=0.34248,
+                            x=0.50986,
+                            y=0.34171,
+                            page_number=0,
+                        )
+                    ],
+                ),
+                AnnotationModel(
+                    content_uids=["53"],
+                    data=AnnotationDataModel(
+                        index=(5, 2),
+                        span=(1, 1),
+                        value="910",
+                        is_column_header=None,
+                        is_projected_row_header=None,
+                    ),
+                    type="figure_extracted_table_structure",
+                    locations=[
+                        LocationModel(
+                            height=0.12461,
+                            width=0.34248,
+                            x=0.50986,
+                            y=0.34171,
+                            page_number=0,
+                        )
+                    ],
+                ),
+                AnnotationModel(
+                    content_uids=["54"],
+                    data=AnnotationDataModel(
+                        index=(6, 0),
+                        span=(1, 1),
+                        value="12",
+                        is_column_header=None,
+                        is_projected_row_header=None,
+                    ),
+                    type="figure_extracted_table_structure",
+                    locations=[
+                        LocationModel(
+                            height=0.12461,
+                            width=0.34248,
+                            x=0.50986,
+                            y=0.34171,
+                            page_number=0,
+                        )
+                    ],
+                ),
+                AnnotationModel(
+                    content_uids=["55"],
+                    data=AnnotationDataModel(
+                        index=(6, 1),
+                        span=(1, 1),
+                        value="456",
+                        is_column_header=None,
+                        is_projected_row_header=None,
+                    ),
+                    type="figure_extracted_table_structure",
+                    locations=[
+                        LocationModel(
+                            height=0.12461,
+                            width=0.34248,
+                            x=0.50986,
+                            y=0.34171,
+                            page_number=0,
+                        )
+                    ],
+                ),
+                AnnotationModel(
+                    content_uids=["56"],
+                    data=AnnotationDataModel(
+                        index=(6, 2),
+                        span=(1, 1),
+                        value="321",
+                        is_column_header=None,
+                        is_projected_row_header=None,
+                    ),
+                    type="figure_extracted_table_structure",
+                    locations=[
+                        LocationModel(
+                            height=0.12461,
+                            width=0.34248,
+                            x=0.50986,
+                            y=0.34171,
+                            page_number=0,
+                        )
+                    ],
+                ),
+                AnnotationModel(
+                    content_uids=["57"],
+                    data=AnnotationDataModel(
+                        index=(7, 0),
+                        span=(1, 1),
+                        value="910",
+                        is_column_header=None,
+                        is_projected_row_header=None,
+                    ),
+                    type="figure_extracted_table_structure",
+                    locations=[
+                        LocationModel(
+                            height=0.12461,
+                            width=0.34248,
+                            x=0.50986,
+                            y=0.34171,
+                            page_number=0,
+                        )
+                    ],
+                ),
+                AnnotationModel(
+                    content_uids=["58"],
+                    data=AnnotationDataModel(
+                        index=(7, 1),
+                        span=(1, 1),
+                        value="345",
+                        is_column_header=None,
+                        is_projected_row_header=None,
+                    ),
+                    type="figure_extracted_table_structure",
+                    locations=[
+                        LocationModel(
+                            height=0.12461,
+                            width=0.34248,
+                            x=0.50986,
+                            y=0.34171,
+                            page_number=0,
+                        )
+                    ],
+                ),
+                AnnotationModel(
+                    content_uids=["59"],
+                    data=AnnotationDataModel(
+                        index=(7, 2),
+                        span=(1, 1),
+                        value="234",
+                        is_column_header=None,
+                        is_projected_row_header=None,
+                    ),
+                    type="figure_extracted_table_structure",
+                    locations=[
+                        LocationModel(
+                            height=0.12461,
+                            width=0.34248,
+                            x=0.50986,
+                            y=0.34171,
+                            page_number=0,
+                        )
+                    ],
+                ),
+            ],
+        }
+        tables, table_id_to_cell_annotations = build_table_grids(
             {"content_tree": content, "annotations": annotations}, True
         )
         self.assertEqual(expected_tables, tables)
+        self.assertEqual(
+            expected_table_id_to_cell_annotations, table_id_to_cell_annotations
+        )

@@ -3,7 +3,7 @@
 
 import typing
 from collections import defaultdict
-from typing import Any, Sequence
+from typing import Any, Sequence, Tuple
 
 import pandas as pd
 
@@ -15,7 +15,9 @@ from .constants import (
     TableType,
 )
 from .extract_output_models import (
+    AnnotationDataModel,
     AnnotationModel,
+    CellType,
     ContentModel,
     LocationModel,
     LocationType,
@@ -110,6 +112,24 @@ def get_table_uid_to_annotations_mapping(
             uid_to_annotation[uid] for uid in cell_uids if uid in uid_to_annotation
         ]
     return table_to_annotations
+
+
+def _convert_table_annotations_to_cells(
+    table_annotations: list[AnnotationModel],
+) -> list[CellType]:
+    """Convert list of table annotations to list of cells."""
+    cells = []
+    for annotation in table_annotations:
+        cell = AnnotationDataModel.model_dump(annotation.data)
+        if annotation.locations is not None:
+            cell_locations = [
+                LocationModel.model_dump(loc) for loc in annotation.locations
+            ]
+        else:
+            cell_locations = []
+        cell["locations"] = cell_locations
+        cells.append(cell)
+    return cells
 
 
 def build_uids_grid_from_table_cell_annotations(
@@ -216,8 +236,11 @@ def convert_uid_grid_to_content_grid(
 def build_table_grids(
     serialized_document: dict[str, Any],
     duplicate_merged_cells_content_flag: bool = True,
-) -> dict[str, tuple[TableCategoryType, list[list[str]]]]:
-    """Convert serialized tables to a table type and a 2D grid of strings.
+) -> Tuple[
+    dict[str, tuple[TableCategoryType, list[list[str]]]],
+    dict[str, list[AnnotationModel]],
+]:
+    """Convert serialized tables to a table type and a 2D grid of strings. Also output the dictionary of table uid to table structure annotations mapping.
 
     Args:
         serialized_document: a serialized document
@@ -229,10 +252,21 @@ def build_table_grids(
         a mapping of table UIDs to the tuple of table type and table grid structures
 
     Example Output:
-        {
+        ({
             '1': ("TABLE",[['header1', 'header2'], ['row1_val', 'row2_val']]),
             '2': ("FIGURE_EXTRACTED_TABLE",[['another_header1'], ['another_row1_val']])
-        }
+        },
+         {
+         '1':[AnnotationModel(content_uids=['2'], data=AnnotationDataModel(index=(0, 0),
+         span=(1, 1), value=None, is_column_header=True, is_projected_row_header=False),
+         type='table_structure', locations=[LocationModel(height=0.015, width=0.17, x=0.22, y=0.09,
+         page_number=0)]), ...],
+         '2':[AnnotationModel(content_uids=['26'], data=AnnotationDataModel(index=(4, 4),
+          span=(1, 1), value=None, is_column_header=False, is_projected_row_header=False),
+          type='table_structure', locations=[LocationModel(height=0.015, width=0.04, x=0.72, y=0.19,
+          page_number=0), ...]
+          }
+        )
     """
     parsed_serialized_document = load_output_to_pydantic(serialized_document)
     annotations = parsed_serialized_document.annotations
@@ -274,7 +308,7 @@ def build_table_grids(
                 )
             )
             tables[table_uid] = (table_uid_to_type_mapping[table_uid], content_grid)
-    return tables
+    return tables, table_uid_to_cell_annotations
 
 
 def extract_pd_dfs_from_output(
@@ -303,7 +337,7 @@ def extract_pd_dfs_from_output(
         2                         2022  102,004  202,004  302,004  402,004
         3                         2023  103,009  203,009  303,009  403,009]
     """
-    table_types_and_grids = build_table_grids(
+    table_types_and_grids, _ = build_table_grids(
         serialized_document, duplicate_merged_cells_content_flag
     )
     table_dfs = []
@@ -323,13 +357,13 @@ def extract_pd_dfs_from_output(
     return table_dfs
 
 
-def extract_pd_dfs_with_locs_from_output(
+def extract_pd_dfs_with_locs_and_table_structure_from_output(
     serialized_document: dict[str, Any],
     duplicate_merged_cells_content_flag: bool = True,
     use_first_row_as_header: bool = True,
     include_figure_extracted_table: bool = False,
 ) -> list[Table]:
-    """Extract tables from output and convert them to a list of pd DataFrames and table locations.
+    """Extract tables from output and convert them to a list of pd DataFrames, table locations and table structures.
 
     Args:
         serialized_document: a serialized document
@@ -351,11 +385,14 @@ def extract_pd_dfs_with_locs_from_output(
                 3                         2023  103,009  203,009  303,009  403,009,
             locations=[
                 {'height': 0.09188, 'width': 0.66072, 'x': 0.16008, 'y': 0.40464, 'page_number': 0}
-            ]
+            ],
+            cells=[{'index': (0, 0), 'span': (1, 1), 'value': None, 'is_column_header': True,
+            'is_projected_row_header': False, 'locations': [{'height': 0.01593, 'width': 0.17424,
+            'x': 0.22064, 'y': 0.09433, 'page_number': 0}, ...]
         )]
     """
     # Get dfs
-    table_types_and_grids = build_table_grids(
+    table_types_and_grids, table_id_to_cell_annotations = build_table_grids(
         serialized_document, duplicate_merged_cells_content_flag
     )
 
@@ -378,11 +415,14 @@ def extract_pd_dfs_with_locs_from_output(
             table_df = convert_table_to_pd_df(
                 table_type_and_grid[1], use_first_row_as_header=use_first_row_as_header
             )
+            table_cell_annotations = table_id_to_cell_annotations[table_uid]
+            table_cells = _convert_table_annotations_to_cells(table_cell_annotations)
             tables.append(
                 Table(
                     df=table_df,
                     table_type=table_type_and_grid[0],
                     locations=table_uid_to_locs_mapping[table_uid],
+                    cells=table_cells,
                 )
             )
     return tables
