@@ -1,7 +1,7 @@
 # Copyright 2024-present Kensho Technologies, LLC.
 """Pydantic models for the output JSON."""
 
-from typing import Literal, NamedTuple, Tuple, TypeAlias, Union
+from typing import Literal, NamedTuple, Tuple, TypeAlias
 
 import pandas as pd
 from pydantic import BaseModel  # pylint: disable=no-name-in-module
@@ -9,7 +9,16 @@ from pydantic import BaseModel  # pylint: disable=no-name-in-module
 # Location types are either dictionaries of bbox coordinates and page numbers
 # or None if locations are not returned in the Extract output.
 LocationType: TypeAlias = dict[str, float | int] | None
-CellType: TypeAlias = dict[str, Union[Tuple[int, int], list[LocationType], bool, None]]
+
+
+class CellType(BaseModel):
+    index: Tuple[int, int]
+    span: Tuple[int, int]
+    locations: list[LocationType] | None
+    is_column_header: bool | None
+    is_projected_row_header: bool | None
+
+
 TableCategoryType: TypeAlias = Literal[
     "TABLE",
     "TABLE_OF_CONTENTS",
@@ -88,3 +97,11 @@ class ExtractOutputModel(BaseModel):
     annotations: list[AnnotationModel]
     content_tree: ContentModel
     pdf_pages: list[PDFPageModel] | None = None
+
+
+class TableGridAndStructure(NamedTuple):
+    """Objects consisting of table category type, string grid and structure annotations."""
+
+    table_category_type: TableCategoryType
+    table_string_grid: list[list[str]]
+    table_structure_annotations: list[AnnotationModel]

@@ -3,7 +3,13 @@ import os
 from typing import Any, ClassVar
 from unittest import TestCase
 
-from ..extract_output_models import AnnotationDataModel, AnnotationModel, LocationModel
+from ..extract_output_models import (
+    AnnotationDataModel,
+    AnnotationModel,
+    CellType,
+    LocationModel,
+    TableGridAndStructure,
+)
 from ..output_to_tables import (
     build_table_grids,
     extract_pd_dfs_from_output,
@@ -49,12 +55,10 @@ class TestTableExtraction(TestCase):
         self.assertEqual(table.locations, expected_table_locations)
 
         expected_table_structure = [
-            {
-                "index": (0, 0),
-                "span": (1, 1),
-                "is_column_header": None,
-                "is_projected_row_header": None,
-                "locations": [
+            CellType(
+                index=(0, 0),
+                span=(1, 1),
+                locations=[
                     {
                         "height": 0.01188,
                         "width": 0.22128,
@@ -63,13 +67,13 @@ class TestTableExtraction(TestCase):
                         "page_number": 0,
                     }
                 ],
-            },
-            {
-                "index": (0, 1),
-                "span": (1, 1),
-                "is_column_header": None,
-                "is_projected_row_header": None,
-                "locations": [
+                is_column_header=None,
+                is_projected_row_header=None,
+            ),
+            CellType(
+                index=(0, 1),
+                span=(1, 1),
+                locations=[
                     {
                         "height": 0.01188,
                         "width": 0.02241,
@@ -78,13 +82,13 @@ class TestTableExtraction(TestCase):
                         "page_number": 0,
                     }
                 ],
-            },
-            {
-                "index": (0, 2),
-                "span": (1, 1),
-                "is_column_header": None,
-                "is_projected_row_header": None,
-                "locations": [
+                is_column_header=None,
+                is_projected_row_header=None,
+            ),
+            CellType(
+                index=(0, 2),
+                span=(1, 1),
+                locations=[
                     {
                         "height": 0.01188,
                         "width": 0.02241,
@@ -93,13 +97,13 @@ class TestTableExtraction(TestCase):
                         "page_number": 0,
                     }
                 ],
-            },
-            {
-                "index": (0, 3),
-                "span": (1, 1),
-                "is_column_header": None,
-                "is_projected_row_header": None,
-                "locations": [
+                is_column_header=None,
+                is_projected_row_header=None,
+            ),
+            CellType(
+                index=(0, 3),
+                span=(1, 1),
+                locations=[
                     {
                         "height": 0.01188,
                         "width": 0.02241,
@@ -108,13 +112,13 @@ class TestTableExtraction(TestCase):
                         "page_number": 0,
                     }
                 ],
-            },
-            {
-                "index": (0, 4),
-                "span": (1, 1),
-                "is_column_header": None,
-                "is_projected_row_header": None,
-                "locations": [
+                is_column_header=None,
+                is_projected_row_header=None,
+            ),
+            CellType(
+                index=(0, 4),
+                span=(1, 1),
+                locations=[
                     {
                         "height": 0.01188,
                         "width": 0.02241,
@@ -123,13 +127,13 @@ class TestTableExtraction(TestCase):
                         "page_number": 0,
                     }
                 ],
-            },
-            {
-                "index": (1, 0),
-                "span": (1, 1),
-                "is_column_header": None,
-                "is_projected_row_header": None,
-                "locations": [
+                is_column_header=None,
+                is_projected_row_header=None,
+            ),
+            CellType(
+                index=(1, 0),
+                span=(1, 1),
+                locations=[
                     {
                         "height": 0.01188,
                         "width": 0.03736,
@@ -138,13 +142,13 @@ class TestTableExtraction(TestCase):
                         "page_number": 0,
                     }
                 ],
-            },
-            {
-                "index": (1, 1),
-                "span": (1, 1),
-                "is_column_header": None,
-                "is_projected_row_header": None,
-                "locations": [
+                is_column_header=None,
+                is_projected_row_header=None,
+            ),
+            CellType(
+                index=(1, 1),
+                span=(1, 1),
+                locations=[
                     {
                         "height": 0.01188,
                         "width": 0.06071,
@@ -153,13 +157,13 @@ class TestTableExtraction(TestCase):
                         "page_number": 0,
                     }
                 ],
-            },
-            {
-                "index": (1, 2),
-                "span": (1, 1),
-                "is_column_header": None,
-                "is_projected_row_header": None,
-                "locations": [
+                is_column_header=None,
+                is_projected_row_header=None,
+            ),
+            CellType(
+                index=(1, 2),
+                span=(1, 1),
+                locations=[
                     {
                         "height": 0.01188,
                         "width": 0.06071,
@@ -168,13 +172,13 @@ class TestTableExtraction(TestCase):
                         "page_number": 0,
                     }
                 ],
-            },
-            {
-                "index": (1, 3),
-                "span": (1, 1),
-                "is_column_header": None,
-                "is_projected_row_header": None,
-                "locations": [
+                is_column_header=None,
+                is_projected_row_header=None,
+            ),
+            CellType(
+                index=(1, 3),
+                span=(1, 1),
+                locations=[
                     {
                         "height": 0.01188,
                         "width": 0.06071,
@@ -183,13 +187,13 @@ class TestTableExtraction(TestCase):
                         "page_number": 0,
                     }
                 ],
-            },
-            {
-                "index": (1, 4),
-                "span": (1, 1),
-                "is_column_header": None,
-                "is_projected_row_header": None,
-                "locations": [
+                is_column_header=None,
+                is_projected_row_header=None,
+            ),
+            CellType(
+                index=(1, 4),
+                span=(1, 1),
+                locations=[
                     {
                         "height": 0.01188,
                         "width": 0.06071,
@@ -198,13 +202,13 @@ class TestTableExtraction(TestCase):
                         "page_number": 0,
                     }
                 ],
-            },
-            {
-                "index": (2, 0),
-                "span": (1, 1),
-                "is_column_header": None,
-                "is_projected_row_header": None,
-                "locations": [
+                is_column_header=None,
+                is_projected_row_header=None,
+            ),
+            CellType(
+                index=(2, 0),
+                span=(1, 1),
+                locations=[
                     {
                         "height": 0.01188,
                         "width": 0.03736,
@@ -213,13 +217,13 @@ class TestTableExtraction(TestCase):
                         "page_number": 0,
                     }
                 ],
-            },
-            {
-                "index": (2, 1),
-                "span": (1, 1),
-                "is_column_header": None,
-                "is_projected_row_header": None,
-                "locations": [
+                is_column_header=None,
+                is_projected_row_header=None,
+            ),
+            CellType(
+                index=(2, 1),
+                span=(1, 1),
+                locations=[
                     {
                         "height": 0.01188,
                         "width": 0.06071,
@@ -228,13 +232,13 @@ class TestTableExtraction(TestCase):
                         "page_number": 0,
                     }
                 ],
-            },
-            {
-                "index": (2, 2),
-                "span": (1, 1),
-                "is_column_header": None,
-                "is_projected_row_header": None,
-                "locations": [
+                is_column_header=None,
+                is_projected_row_header=None,
+            ),
+            CellType(
+                index=(2, 2),
+                span=(1, 1),
+                locations=[
                     {
                         "height": 0.01188,
                         "width": 0.06071,
@@ -243,13 +247,13 @@ class TestTableExtraction(TestCase):
                         "page_number": 0,
                     }
                 ],
-            },
-            {
-                "index": (2, 3),
-                "span": (1, 1),
-                "is_column_header": None,
-                "is_projected_row_header": None,
-                "locations": [
+                is_column_header=None,
+                is_projected_row_header=None,
+            ),
+            CellType(
+                index=(2, 3),
+                span=(1, 1),
+                locations=[
                     {
                         "height": 0.01188,
                         "width": 0.06071,
@@ -258,13 +262,13 @@ class TestTableExtraction(TestCase):
                         "page_number": 0,
                     }
                 ],
-            },
-            {
-                "index": (2, 4),
-                "span": (1, 1),
-                "is_column_header": None,
-                "is_projected_row_header": None,
-                "locations": [
+                is_column_header=None,
+                is_projected_row_header=None,
+            ),
+            CellType(
+                index=(2, 4),
+                span=(1, 1),
+                locations=[
                     {
                         "height": 0.01188,
                         "width": 0.06071,
@@ -273,13 +277,13 @@ class TestTableExtraction(TestCase):
                         "page_number": 0,
                     }
                 ],
-            },
-            {
-                "index": (3, 0),
-                "span": (1, 1),
-                "is_column_header": None,
-                "is_projected_row_header": None,
-                "locations": [
+                is_column_header=None,
+                is_projected_row_header=None,
+            ),
+            CellType(
+                index=(3, 0),
+                span=(1, 1),
+                locations=[
                     {
                         "height": 0.01188,
                         "width": 0.03736,
@@ -288,13 +292,13 @@ class TestTableExtraction(TestCase):
                         "page_number": 0,
                     }
                 ],
-            },
-            {
-                "index": (3, 1),
-                "span": (1, 1),
-                "is_column_header": None,
-                "is_projected_row_header": None,
-                "locations": [
+                is_column_header=None,
+                is_projected_row_header=None,
+            ),
+            CellType(
+                index=(3, 1),
+                span=(1, 1),
+                locations=[
                     {
                         "height": 0.01188,
                         "width": 0.06071,
@@ -303,13 +307,13 @@ class TestTableExtraction(TestCase):
                         "page_number": 0,
                     }
                 ],
-            },
-            {
-                "index": (3, 2),
-                "span": (1, 1),
-                "is_column_header": None,
-                "is_projected_row_header": None,
-                "locations": [
+                is_column_header=None,
+                is_projected_row_header=None,
+            ),
+            CellType(
+                index=(3, 2),
+                span=(1, 1),
+                locations=[
                     {
                         "height": 0.01188,
                         "width": 0.06071,
@@ -318,13 +322,13 @@ class TestTableExtraction(TestCase):
                         "page_number": 0,
                     }
                 ],
-            },
-            {
-                "index": (3, 3),
-                "span": (1, 1),
-                "is_column_header": None,
-                "is_projected_row_header": None,
-                "locations": [
+                is_column_header=None,
+                is_projected_row_header=None,
+            ),
+            CellType(
+                index=(3, 3),
+                span=(1, 1),
+                locations=[
                     {
                         "height": 0.01188,
                         "width": 0.06071,
@@ -333,13 +337,13 @@ class TestTableExtraction(TestCase):
                         "page_number": 0,
                     }
                 ],
-            },
-            {
-                "index": (3, 4),
-                "span": (1, 1),
-                "is_column_header": None,
-                "is_projected_row_header": None,
-                "locations": [
+                is_column_header=None,
+                is_projected_row_header=None,
+            ),
+            CellType(
+                index=(3, 4),
+                span=(1, 1),
+                locations=[
                     {
                         "height": 0.01188,
                         "width": 0.06071,
@@ -348,13 +352,13 @@ class TestTableExtraction(TestCase):
                         "page_number": 0,
                     }
                 ],
-            },
-            {
-                "index": (4, 0),
-                "span": (1, 1),
-                "is_column_header": None,
-                "is_projected_row_header": None,
-                "locations": [
+                is_column_header=None,
+                is_projected_row_header=None,
+            ),
+            CellType(
+                index=(4, 0),
+                span=(1, 1),
+                locations=[
                     {
                         "height": 0.01188,
                         "width": 0.03736,
@@ -363,13 +367,13 @@ class TestTableExtraction(TestCase):
                         "page_number": 0,
                     }
                 ],
-            },
-            {
-                "index": (4, 1),
-                "span": (1, 1),
-                "is_column_header": None,
-                "is_projected_row_header": None,
-                "locations": [
+                is_column_header=None,
+                is_projected_row_header=None,
+            ),
+            CellType(
+                index=(4, 1),
+                span=(1, 1),
+                locations=[
                     {
                         "height": 0.01188,
                         "width": 0.06071,
@@ -378,13 +382,13 @@ class TestTableExtraction(TestCase):
                         "page_number": 0,
                     }
                 ],
-            },
-            {
-                "index": (4, 2),
-                "span": (1, 1),
-                "is_column_header": None,
-                "is_projected_row_header": None,
-                "locations": [
+                is_column_header=None,
+                is_projected_row_header=None,
+            ),
+            CellType(
+                index=(4, 2),
+                span=(1, 1),
+                locations=[
                     {
                         "height": 0.01188,
                         "width": 0.06071,
@@ -393,13 +397,13 @@ class TestTableExtraction(TestCase):
                         "page_number": 0,
                     }
                 ],
-            },
-            {
-                "index": (4, 3),
-                "span": (1, 1),
-                "is_column_header": None,
-                "is_projected_row_header": None,
-                "locations": [
+                is_column_header=None,
+                is_projected_row_header=None,
+            ),
+            CellType(
+                index=(4, 3),
+                span=(1, 1),
+                locations=[
                     {
                         "height": 0.01188,
                         "width": 0.06071,
@@ -408,13 +412,13 @@ class TestTableExtraction(TestCase):
                         "page_number": 0,
                     }
                 ],
-            },
-            {
-                "index": (4, 4),
-                "span": (1, 1),
-                "is_column_header": None,
-                "is_projected_row_header": None,
-                "locations": [
+                is_column_header=None,
+                is_projected_row_header=None,
+            ),
+            CellType(
+                index=(4, 4),
+                span=(1, 1),
+                locations=[
                     {
                         "height": 0.01188,
                         "width": 0.06071,
@@ -423,9 +427,10 @@ class TestTableExtraction(TestCase):
                         "page_number": 0,
                     }
                 ],
-            },
+                is_column_header=None,
+                is_projected_row_header=None,
+            ),
         ]
-
         self.assertEqual(table.cells, expected_table_structure)
 
         # Test without locations
@@ -1484,529 +1489,525 @@ class TestTableExtraction(TestCase):
             },
         ]
 
-        expected_tables = {
-            "11": (
-                "TABLE",
-                [
+        expected_tables_grid_and_structure = {
+            "11": TableGridAndStructure(
+                table_category_type="TABLE",
+                table_string_grid=[
                     ["Kensho Revenue in millions $", "Q1", "Q2", "Q3", "Q4"],
                     ["2025", "500,000", "505,000", "510,000", "520,000"],
                     ["2026", "600,000", "605,000", "610,000", "620,000"],
                     ["2027", "700,000", "705,000", "710,000", "720,000"],
                     ["2028", "800,000", "805,000", "810,000", "820,000"],
                 ],
+                table_structure_annotations=[
+                    AnnotationModel(
+                        content_uids=["12"],
+                        data=AnnotationDataModel(
+                            index=(0, 0),
+                            span=(1, 1),
+                            value=None,
+                            is_column_header=True,
+                            is_projected_row_header=False,
+                        ),
+                        type="table_structure",
+                        locations=[
+                            LocationModel(
+                                height=0.01263,
+                                width=0.23598,
+                                x=0.13183,
+                                y=0.77674,
+                                page_number=0,
+                            )
+                        ],
+                    ),
+                    AnnotationModel(
+                        content_uids=["13"],
+                        data=AnnotationDataModel(
+                            index=(1, 0),
+                            span=(1, 1),
+                            value=None,
+                            is_column_header=False,
+                            is_projected_row_header=False,
+                        ),
+                        type="table_structure",
+                        locations=[
+                            LocationModel(
+                                height=0.01263,
+                                width=0.23598,
+                                x=0.13183,
+                                y=0.80008,
+                                page_number=0,
+                            )
+                        ],
+                    ),
+                    AnnotationModel(
+                        content_uids=["14"],
+                        data=AnnotationDataModel(
+                            index=(2, 0),
+                            span=(1, 1),
+                            value=None,
+                            is_column_header=False,
+                            is_projected_row_header=False,
+                        ),
+                        type="table_structure",
+                        locations=[
+                            LocationModel(
+                                height=0.01263,
+                                width=0.23598,
+                                x=0.13183,
+                                y=0.8234,
+                                page_number=0,
+                            )
+                        ],
+                    ),
+                    AnnotationModel(
+                        content_uids=["15"],
+                        data=AnnotationDataModel(
+                            index=(3, 0),
+                            span=(1, 1),
+                            value=None,
+                            is_column_header=False,
+                            is_projected_row_header=False,
+                        ),
+                        type="table_structure",
+                        locations=[
+                            LocationModel(
+                                height=0.01263,
+                                width=0.23598,
+                                x=0.13183,
+                                y=0.84672,
+                                page_number=0,
+                            )
+                        ],
+                    ),
+                    AnnotationModel(
+                        content_uids=["16"],
+                        data=AnnotationDataModel(
+                            index=(4, 0),
+                            span=(1, 1),
+                            value=None,
+                            is_column_header=False,
+                            is_projected_row_header=False,
+                        ),
+                        type="table_structure",
+                        locations=[
+                            LocationModel(
+                                height=0.01263,
+                                width=0.23598,
+                                x=0.13183,
+                                y=0.87005,
+                                page_number=0,
+                            )
+                        ],
+                    ),
+                    AnnotationModel(
+                        content_uids=["17"],
+                        data=AnnotationDataModel(
+                            index=(0, 1),
+                            span=(1, 1),
+                            value=None,
+                            is_column_header=True,
+                            is_projected_row_header=False,
+                        ),
+                        type="table_structure",
+                        locations=[
+                            LocationModel(
+                                height=0.01263,
+                                width=0.06359,
+                                x=0.4092,
+                                y=0.77674,
+                                page_number=0,
+                            )
+                        ],
+                    ),
+                    AnnotationModel(
+                        content_uids=["18"],
+                        data=AnnotationDataModel(
+                            index=(1, 1),
+                            span=(1, 1),
+                            value=None,
+                            is_column_header=False,
+                            is_projected_row_header=False,
+                        ),
+                        type="table_structure",
+                        locations=[
+                            LocationModel(
+                                height=0.01263,
+                                width=0.06359,
+                                x=0.4092,
+                                y=0.80008,
+                                page_number=0,
+                            )
+                        ],
+                    ),
+                    AnnotationModel(
+                        content_uids=["19"],
+                        data=AnnotationDataModel(
+                            index=(2, 1),
+                            span=(1, 1),
+                            value=None,
+                            is_column_header=False,
+                            is_projected_row_header=False,
+                        ),
+                        type="table_structure",
+                        locations=[
+                            LocationModel(
+                                height=0.01263,
+                                width=0.06359,
+                                x=0.4092,
+                                y=0.8234,
+                                page_number=0,
+                            )
+                        ],
+                    ),
+                    AnnotationModel(
+                        content_uids=["20"],
+                        data=AnnotationDataModel(
+                            index=(3, 1),
+                            span=(1, 1),
+                            value=None,
+                            is_column_header=False,
+                            is_projected_row_header=False,
+                        ),
+                        type="table_structure",
+                        locations=[
+                            LocationModel(
+                                height=0.01263,
+                                width=0.06359,
+                                x=0.4092,
+                                y=0.84672,
+                                page_number=0,
+                            )
+                        ],
+                    ),
+                    AnnotationModel(
+                        content_uids=["21"],
+                        data=AnnotationDataModel(
+                            index=(4, 1),
+                            span=(1, 1),
+                            value=None,
+                            is_column_header=False,
+                            is_projected_row_header=False,
+                        ),
+                        type="table_structure",
+                        locations=[
+                            LocationModel(
+                                height=0.01263,
+                                width=0.06359,
+                                x=0.4092,
+                                y=0.87005,
+                                page_number=0,
+                            )
+                        ],
+                    ),
+                    AnnotationModel(
+                        content_uids=["22"],
+                        data=AnnotationDataModel(
+                            index=(0, 2),
+                            span=(1, 1),
+                            value=None,
+                            is_column_header=True,
+                            is_projected_row_header=False,
+                        ),
+                        type="table_structure",
+                        locations=[
+                            LocationModel(
+                                height=0.01263,
+                                width=0.06359,
+                                x=0.53175,
+                                y=0.77674,
+                                page_number=0,
+                            )
+                        ],
+                    ),
+                    AnnotationModel(
+                        content_uids=["23"],
+                        data=AnnotationDataModel(
+                            index=(1, 2),
+                            span=(1, 1),
+                            value=None,
+                            is_column_header=False,
+                            is_projected_row_header=False,
+                        ),
+                        type="table_structure",
+                        locations=[
+                            LocationModel(
+                                height=0.01263,
+                                width=0.06359,
+                                x=0.53175,
+                                y=0.80008,
+                                page_number=0,
+                            )
+                        ],
+                    ),
+                    AnnotationModel(
+                        content_uids=["24"],
+                        data=AnnotationDataModel(
+                            index=(2, 2),
+                            span=(1, 1),
+                            value=None,
+                            is_column_header=False,
+                            is_projected_row_header=False,
+                        ),
+                        type="table_structure",
+                        locations=[
+                            LocationModel(
+                                height=0.01263,
+                                width=0.06359,
+                                x=0.53175,
+                                y=0.8234,
+                                page_number=0,
+                            )
+                        ],
+                    ),
+                    AnnotationModel(
+                        content_uids=["25"],
+                        data=AnnotationDataModel(
+                            index=(3, 2),
+                            span=(1, 1),
+                            value=None,
+                            is_column_header=False,
+                            is_projected_row_header=False,
+                        ),
+                        type="table_structure",
+                        locations=[
+                            LocationModel(
+                                height=0.01263,
+                                width=0.06359,
+                                x=0.53175,
+                                y=0.84672,
+                                page_number=0,
+                            )
+                        ],
+                    ),
+                    AnnotationModel(
+                        content_uids=["26"],
+                        data=AnnotationDataModel(
+                            index=(4, 2),
+                            span=(1, 1),
+                            value=None,
+                            is_column_header=False,
+                            is_projected_row_header=False,
+                        ),
+                        type="table_structure",
+                        locations=[
+                            LocationModel(
+                                height=0.01263,
+                                width=0.06359,
+                                x=0.53175,
+                                y=0.87005,
+                                page_number=0,
+                            )
+                        ],
+                    ),
+                    AnnotationModel(
+                        content_uids=["27"],
+                        data=AnnotationDataModel(
+                            index=(0, 3),
+                            span=(1, 1),
+                            value=None,
+                            is_column_header=True,
+                            is_projected_row_header=False,
+                        ),
+                        type="table_structure",
+                        locations=[
+                            LocationModel(
+                                height=0.01263,
+                                width=0.06359,
+                                x=0.6543,
+                                y=0.77674,
+                                page_number=0,
+                            )
+                        ],
+                    ),
+                    AnnotationModel(
+                        content_uids=["28"],
+                        data=AnnotationDataModel(
+                            index=(1, 3),
+                            span=(1, 1),
+                            value=None,
+                            is_column_header=False,
+                            is_projected_row_header=False,
+                        ),
+                        type="table_structure",
+                        locations=[
+                            LocationModel(
+                                height=0.01263,
+                                width=0.06359,
+                                x=0.6543,
+                                y=0.80008,
+                                page_number=0,
+                            )
+                        ],
+                    ),
+                    AnnotationModel(
+                        content_uids=["29"],
+                        data=AnnotationDataModel(
+                            index=(2, 3),
+                            span=(1, 1),
+                            value=None,
+                            is_column_header=False,
+                            is_projected_row_header=False,
+                        ),
+                        type="table_structure",
+                        locations=[
+                            LocationModel(
+                                height=0.01263,
+                                width=0.06359,
+                                x=0.6543,
+                                y=0.8234,
+                                page_number=0,
+                            )
+                        ],
+                    ),
+                    AnnotationModel(
+                        content_uids=["30"],
+                        data=AnnotationDataModel(
+                            index=(3, 3),
+                            span=(1, 1),
+                            value=None,
+                            is_column_header=False,
+                            is_projected_row_header=False,
+                        ),
+                        type="table_structure",
+                        locations=[
+                            LocationModel(
+                                height=0.01263,
+                                width=0.06359,
+                                x=0.6543,
+                                y=0.84672,
+                                page_number=0,
+                            )
+                        ],
+                    ),
+                    AnnotationModel(
+                        content_uids=["31"],
+                        data=AnnotationDataModel(
+                            index=(4, 3),
+                            span=(1, 1),
+                            value=None,
+                            is_column_header=False,
+                            is_projected_row_header=False,
+                        ),
+                        type="table_structure",
+                        locations=[
+                            LocationModel(
+                                height=0.01263,
+                                width=0.06359,
+                                x=0.6543,
+                                y=0.87005,
+                                page_number=0,
+                            )
+                        ],
+                    ),
+                    AnnotationModel(
+                        content_uids=["32"],
+                        data=AnnotationDataModel(
+                            index=(0, 4),
+                            span=(1, 1),
+                            value=None,
+                            is_column_header=True,
+                            is_projected_row_header=False,
+                        ),
+                        type="table_structure",
+                        locations=[
+                            LocationModel(
+                                height=0.01263,
+                                width=0.06359,
+                                x=0.77685,
+                                y=0.77674,
+                                page_number=0,
+                            )
+                        ],
+                    ),
+                    AnnotationModel(
+                        content_uids=["33"],
+                        data=AnnotationDataModel(
+                            index=(1, 4),
+                            span=(1, 1),
+                            value=None,
+                            is_column_header=False,
+                            is_projected_row_header=False,
+                        ),
+                        type="table_structure",
+                        locations=[
+                            LocationModel(
+                                height=0.01263,
+                                width=0.06359,
+                                x=0.77685,
+                                y=0.80008,
+                                page_number=0,
+                            )
+                        ],
+                    ),
+                    AnnotationModel(
+                        content_uids=["34"],
+                        data=AnnotationDataModel(
+                            index=(2, 4),
+                            span=(1, 1),
+                            value=None,
+                            is_column_header=False,
+                            is_projected_row_header=False,
+                        ),
+                        type="table_structure",
+                        locations=[
+                            LocationModel(
+                                height=0.01263,
+                                width=0.06359,
+                                x=0.77685,
+                                y=0.8234,
+                                page_number=0,
+                            )
+                        ],
+                    ),
+                    AnnotationModel(
+                        content_uids=["35"],
+                        data=AnnotationDataModel(
+                            index=(3, 4),
+                            span=(1, 1),
+                            value=None,
+                            is_column_header=False,
+                            is_projected_row_header=False,
+                        ),
+                        type="table_structure",
+                        locations=[
+                            LocationModel(
+                                height=0.01263,
+                                width=0.06359,
+                                x=0.77685,
+                                y=0.84672,
+                                page_number=0,
+                            )
+                        ],
+                    ),
+                    AnnotationModel(
+                        content_uids=["36"],
+                        data=AnnotationDataModel(
+                            index=(4, 4),
+                            span=(1, 1),
+                            value=None,
+                            is_column_header=False,
+                            is_projected_row_header=False,
+                        ),
+                        type="table_structure",
+                        locations=[
+                            LocationModel(
+                                height=0.01263,
+                                width=0.06359,
+                                x=0.77685,
+                                y=0.87005,
+                                page_number=0,
+                            )
+                        ],
+                    ),
+                ],
             )
         }
 
-        expected_cell_annotations = {
-            "11": [
-                AnnotationModel(
-                    content_uids=["12"],
-                    data=AnnotationDataModel(
-                        index=(0, 0),
-                        span=(1, 1),
-                        value=None,
-                        is_column_header=True,
-                        is_projected_row_header=False,
-                    ),
-                    type="table_structure",
-                    locations=[
-                        LocationModel(
-                            height=0.01263,
-                            width=0.23598,
-                            x=0.13183,
-                            y=0.77674,
-                            page_number=0,
-                        )
-                    ],
-                ),
-                AnnotationModel(
-                    content_uids=["13"],
-                    data=AnnotationDataModel(
-                        index=(1, 0),
-                        span=(1, 1),
-                        value=None,
-                        is_column_header=False,
-                        is_projected_row_header=False,
-                    ),
-                    type="table_structure",
-                    locations=[
-                        LocationModel(
-                            height=0.01263,
-                            width=0.23598,
-                            x=0.13183,
-                            y=0.80008,
-                            page_number=0,
-                        )
-                    ],
-                ),
-                AnnotationModel(
-                    content_uids=["14"],
-                    data=AnnotationDataModel(
-                        index=(2, 0),
-                        span=(1, 1),
-                        value=None,
-                        is_column_header=False,
-                        is_projected_row_header=False,
-                    ),
-                    type="table_structure",
-                    locations=[
-                        LocationModel(
-                            height=0.01263,
-                            width=0.23598,
-                            x=0.13183,
-                            y=0.8234,
-                            page_number=0,
-                        )
-                    ],
-                ),
-                AnnotationModel(
-                    content_uids=["15"],
-                    data=AnnotationDataModel(
-                        index=(3, 0),
-                        span=(1, 1),
-                        value=None,
-                        is_column_header=False,
-                        is_projected_row_header=False,
-                    ),
-                    type="table_structure",
-                    locations=[
-                        LocationModel(
-                            height=0.01263,
-                            width=0.23598,
-                            x=0.13183,
-                            y=0.84672,
-                            page_number=0,
-                        )
-                    ],
-                ),
-                AnnotationModel(
-                    content_uids=["16"],
-                    data=AnnotationDataModel(
-                        index=(4, 0),
-                        span=(1, 1),
-                        value=None,
-                        is_column_header=False,
-                        is_projected_row_header=False,
-                    ),
-                    type="table_structure",
-                    locations=[
-                        LocationModel(
-                            height=0.01263,
-                            width=0.23598,
-                            x=0.13183,
-                            y=0.87005,
-                            page_number=0,
-                        )
-                    ],
-                ),
-                AnnotationModel(
-                    content_uids=["17"],
-                    data=AnnotationDataModel(
-                        index=(0, 1),
-                        span=(1, 1),
-                        value=None,
-                        is_column_header=True,
-                        is_projected_row_header=False,
-                    ),
-                    type="table_structure",
-                    locations=[
-                        LocationModel(
-                            height=0.01263,
-                            width=0.06359,
-                            x=0.4092,
-                            y=0.77674,
-                            page_number=0,
-                        )
-                    ],
-                ),
-                AnnotationModel(
-                    content_uids=["18"],
-                    data=AnnotationDataModel(
-                        index=(1, 1),
-                        span=(1, 1),
-                        value=None,
-                        is_column_header=False,
-                        is_projected_row_header=False,
-                    ),
-                    type="table_structure",
-                    locations=[
-                        LocationModel(
-                            height=0.01263,
-                            width=0.06359,
-                            x=0.4092,
-                            y=0.80008,
-                            page_number=0,
-                        )
-                    ],
-                ),
-                AnnotationModel(
-                    content_uids=["19"],
-                    data=AnnotationDataModel(
-                        index=(2, 1),
-                        span=(1, 1),
-                        value=None,
-                        is_column_header=False,
-                        is_projected_row_header=False,
-                    ),
-                    type="table_structure",
-                    locations=[
-                        LocationModel(
-                            height=0.01263,
-                            width=0.06359,
-                            x=0.4092,
-                            y=0.8234,
-                            page_number=0,
-                        )
-                    ],
-                ),
-                AnnotationModel(
-                    content_uids=["20"],
-                    data=AnnotationDataModel(
-                        index=(3, 1),
-                        span=(1, 1),
-                        value=None,
-                        is_column_header=False,
-                        is_projected_row_header=False,
-                    ),
-                    type="table_structure",
-                    locations=[
-                        LocationModel(
-                            height=0.01263,
-                            width=0.06359,
-                            x=0.4092,
-                            y=0.84672,
-                            page_number=0,
-                        )
-                    ],
-                ),
-                AnnotationModel(
-                    content_uids=["21"],
-                    data=AnnotationDataModel(
-                        index=(4, 1),
-                        span=(1, 1),
-                        value=None,
-                        is_column_header=False,
-                        is_projected_row_header=False,
-                    ),
-                    type="table_structure",
-                    locations=[
-                        LocationModel(
-                            height=0.01263,
-                            width=0.06359,
-                            x=0.4092,
-                            y=0.87005,
-                            page_number=0,
-                        )
-                    ],
-                ),
-                AnnotationModel(
-                    content_uids=["22"],
-                    data=AnnotationDataModel(
-                        index=(0, 2),
-                        span=(1, 1),
-                        value=None,
-                        is_column_header=True,
-                        is_projected_row_header=False,
-                    ),
-                    type="table_structure",
-                    locations=[
-                        LocationModel(
-                            height=0.01263,
-                            width=0.06359,
-                            x=0.53175,
-                            y=0.77674,
-                            page_number=0,
-                        )
-                    ],
-                ),
-                AnnotationModel(
-                    content_uids=["23"],
-                    data=AnnotationDataModel(
-                        index=(1, 2),
-                        span=(1, 1),
-                        value=None,
-                        is_column_header=False,
-                        is_projected_row_header=False,
-                    ),
-                    type="table_structure",
-                    locations=[
-                        LocationModel(
-                            height=0.01263,
-                            width=0.06359,
-                            x=0.53175,
-                            y=0.80008,
-                            page_number=0,
-                        )
-                    ],
-                ),
-                AnnotationModel(
-                    content_uids=["24"],
-                    data=AnnotationDataModel(
-                        index=(2, 2),
-                        span=(1, 1),
-                        value=None,
-                        is_column_header=False,
-                        is_projected_row_header=False,
-                    ),
-                    type="table_structure",
-                    locations=[
-                        LocationModel(
-                            height=0.01263,
-                            width=0.06359,
-                            x=0.53175,
-                            y=0.8234,
-                            page_number=0,
-                        )
-                    ],
-                ),
-                AnnotationModel(
-                    content_uids=["25"],
-                    data=AnnotationDataModel(
-                        index=(3, 2),
-                        span=(1, 1),
-                        value=None,
-                        is_column_header=False,
-                        is_projected_row_header=False,
-                    ),
-                    type="table_structure",
-                    locations=[
-                        LocationModel(
-                            height=0.01263,
-                            width=0.06359,
-                            x=0.53175,
-                            y=0.84672,
-                            page_number=0,
-                        )
-                    ],
-                ),
-                AnnotationModel(
-                    content_uids=["26"],
-                    data=AnnotationDataModel(
-                        index=(4, 2),
-                        span=(1, 1),
-                        value=None,
-                        is_column_header=False,
-                        is_projected_row_header=False,
-                    ),
-                    type="table_structure",
-                    locations=[
-                        LocationModel(
-                            height=0.01263,
-                            width=0.06359,
-                            x=0.53175,
-                            y=0.87005,
-                            page_number=0,
-                        )
-                    ],
-                ),
-                AnnotationModel(
-                    content_uids=["27"],
-                    data=AnnotationDataModel(
-                        index=(0, 3),
-                        span=(1, 1),
-                        value=None,
-                        is_column_header=True,
-                        is_projected_row_header=False,
-                    ),
-                    type="table_structure",
-                    locations=[
-                        LocationModel(
-                            height=0.01263,
-                            width=0.06359,
-                            x=0.6543,
-                            y=0.77674,
-                            page_number=0,
-                        )
-                    ],
-                ),
-                AnnotationModel(
-                    content_uids=["28"],
-                    data=AnnotationDataModel(
-                        index=(1, 3),
-                        span=(1, 1),
-                        value=None,
-                        is_column_header=False,
-                        is_projected_row_header=False,
-                    ),
-                    type="table_structure",
-                    locations=[
-                        LocationModel(
-                            height=0.01263,
-                            width=0.06359,
-                            x=0.6543,
-                            y=0.80008,
-                            page_number=0,
-                        )
-                    ],
-                ),
-                AnnotationModel(
-                    content_uids=["29"],
-                    data=AnnotationDataModel(
-                        index=(2, 3),
-                        span=(1, 1),
-                        value=None,
-                        is_column_header=False,
-                        is_projected_row_header=False,
-                    ),
-                    type="table_structure",
-                    locations=[
-                        LocationModel(
-                            height=0.01263,
-                            width=0.06359,
-                            x=0.6543,
-                            y=0.8234,
-                            page_number=0,
-                        )
-                    ],
-                ),
-                AnnotationModel(
-                    content_uids=["30"],
-                    data=AnnotationDataModel(
-                        index=(3, 3),
-                        span=(1, 1),
-                        value=None,
-                        is_column_header=False,
-                        is_projected_row_header=False,
-                    ),
-                    type="table_structure",
-                    locations=[
-                        LocationModel(
-                            height=0.01263,
-                            width=0.06359,
-                            x=0.6543,
-                            y=0.84672,
-                            page_number=0,
-                        )
-                    ],
-                ),
-                AnnotationModel(
-                    content_uids=["31"],
-                    data=AnnotationDataModel(
-                        index=(4, 3),
-                        span=(1, 1),
-                        value=None,
-                        is_column_header=False,
-                        is_projected_row_header=False,
-                    ),
-                    type="table_structure",
-                    locations=[
-                        LocationModel(
-                            height=0.01263,
-                            width=0.06359,
-                            x=0.6543,
-                            y=0.87005,
-                            page_number=0,
-                        )
-                    ],
-                ),
-                AnnotationModel(
-                    content_uids=["32"],
-                    data=AnnotationDataModel(
-                        index=(0, 4),
-                        span=(1, 1),
-                        value=None,
-                        is_column_header=True,
-                        is_projected_row_header=False,
-                    ),
-                    type="table_structure",
-                    locations=[
-                        LocationModel(
-                            height=0.01263,
-                            width=0.06359,
-                            x=0.77685,
-                            y=0.77674,
-                            page_number=0,
-                        )
-                    ],
-                ),
-                AnnotationModel(
-                    content_uids=["33"],
-                    data=AnnotationDataModel(
-                        index=(1, 4),
-                        span=(1, 1),
-                        value=None,
-                        is_column_header=False,
-                        is_projected_row_header=False,
-                    ),
-                    type="table_structure",
-                    locations=[
-                        LocationModel(
-                            height=0.01263,
-                            width=0.06359,
-                            x=0.77685,
-                            y=0.80008,
-                            page_number=0,
-                        )
-                    ],
-                ),
-                AnnotationModel(
-                    content_uids=["34"],
-                    data=AnnotationDataModel(
-                        index=(2, 4),
-                        span=(1, 1),
-                        value=None,
-                        is_column_header=False,
-                        is_projected_row_header=False,
-                    ),
-                    type="table_structure",
-                    locations=[
-                        LocationModel(
-                            height=0.01263,
-                            width=0.06359,
-                            x=0.77685,
-                            y=0.8234,
-                            page_number=0,
-                        )
-                    ],
-                ),
-                AnnotationModel(
-                    content_uids=["35"],
-                    data=AnnotationDataModel(
-                        index=(3, 4),
-                        span=(1, 1),
-                        value=None,
-                        is_column_header=False,
-                        is_projected_row_header=False,
-                    ),
-                    type="table_structure",
-                    locations=[
-                        LocationModel(
-                            height=0.01263,
-                            width=0.06359,
-                            x=0.77685,
-                            y=0.84672,
-                            page_number=0,
-                        )
-                    ],
-                ),
-                AnnotationModel(
-                    content_uids=["36"],
-                    data=AnnotationDataModel(
-                        index=(4, 4),
-                        span=(1, 1),
-                        value=None,
-                        is_column_header=False,
-                        is_projected_row_header=False,
-                    ),
-                    type="table_structure",
-                    locations=[
-                        LocationModel(
-                            height=0.01263,
-                            width=0.06359,
-                            x=0.77685,
-                            y=0.87005,
-                            page_number=0,
-                        )
-                    ],
-                ),
-            ]
-        }
-
-        tables, table_cell_annotations = build_table_grids(
+        tables_grid_and_structure = build_table_grids(
             {"content_tree": content, "annotations": annotations}, True
         )
-        self.assertEqual(expected_tables, tables)
-        self.assertEqual(expected_cell_annotations, table_cell_annotations)
+        self.assertEqual(expected_tables_grid_and_structure, tables_grid_and_structure)
 
     def test_build_table_grids_figure_extracted_table_structure(self) -> None:
         # Test with a spanning cell: Make sure it's duplicated
@@ -3630,10 +3631,10 @@ class TestTableExtraction(TestCase):
             },
         ]
 
-        expected_tables = {
-            "6": (
-                "FIGURE_EXTRACTED_TABLE",
-                [
+        expected_tables_grid_and_structure = {
+            "6": TableGridAndStructure(
+                table_category_type="FIGURE_EXTRACTED_TABLE",
+                table_string_grid=[
                     ["SDFII", "YIUIO", "789"],
                     ["234", "123", "123"],
                     ["12", "789", "123"],
@@ -3642,10 +3643,432 @@ class TestTableExtraction(TestCase):
                     ["123", "123", "234"],
                     ["345", "456", "789"],
                 ],
+                table_structure_annotations=[
+                    AnnotationModel(
+                        content_uids=["7"],
+                        data=AnnotationDataModel(
+                            index=(0, 0),
+                            span=(1, 1),
+                            value="SDFII",
+                            is_column_header=None,
+                            is_projected_row_header=None,
+                        ),
+                        type="figure_extracted_table_structure",
+                        locations=[
+                            LocationModel(
+                                height=0.1181,
+                                width=0.33085,
+                                x=0.11975,
+                                y=0.34856,
+                                page_number=0,
+                            )
+                        ],
+                    ),
+                    AnnotationModel(
+                        content_uids=["8"],
+                        data=AnnotationDataModel(
+                            index=(0, 1),
+                            span=(1, 1),
+                            value="YIUIO",
+                            is_column_header=None,
+                            is_projected_row_header=None,
+                        ),
+                        type="figure_extracted_table_structure",
+                        locations=[
+                            LocationModel(
+                                height=0.1181,
+                                width=0.33085,
+                                x=0.11975,
+                                y=0.34856,
+                                page_number=0,
+                            )
+                        ],
+                    ),
+                    AnnotationModel(
+                        content_uids=["9"],
+                        data=AnnotationDataModel(
+                            index=(0, 2),
+                            span=(1, 1),
+                            value="789",
+                            is_column_header=None,
+                            is_projected_row_header=None,
+                        ),
+                        type="figure_extracted_table_structure",
+                        locations=[
+                            LocationModel(
+                                height=0.1181,
+                                width=0.33085,
+                                x=0.11975,
+                                y=0.34856,
+                                page_number=0,
+                            )
+                        ],
+                    ),
+                    AnnotationModel(
+                        content_uids=["10"],
+                        data=AnnotationDataModel(
+                            index=(1, 0),
+                            span=(1, 1),
+                            value="234",
+                            is_column_header=None,
+                            is_projected_row_header=None,
+                        ),
+                        type="figure_extracted_table_structure",
+                        locations=[
+                            LocationModel(
+                                height=0.1181,
+                                width=0.33085,
+                                x=0.11975,
+                                y=0.34856,
+                                page_number=0,
+                            )
+                        ],
+                    ),
+                    AnnotationModel(
+                        content_uids=["11"],
+                        data=AnnotationDataModel(
+                            index=(1, 1),
+                            span=(1, 1),
+                            value="123",
+                            is_column_header=None,
+                            is_projected_row_header=None,
+                        ),
+                        type="figure_extracted_table_structure",
+                        locations=[
+                            LocationModel(
+                                height=0.1181,
+                                width=0.33085,
+                                x=0.11975,
+                                y=0.34856,
+                                page_number=0,
+                            )
+                        ],
+                    ),
+                    AnnotationModel(
+                        content_uids=["12"],
+                        data=AnnotationDataModel(
+                            index=(1, 2),
+                            span=(1, 1),
+                            value="123",
+                            is_column_header=None,
+                            is_projected_row_header=None,
+                        ),
+                        type="figure_extracted_table_structure",
+                        locations=[
+                            LocationModel(
+                                height=0.1181,
+                                width=0.33085,
+                                x=0.11975,
+                                y=0.34856,
+                                page_number=0,
+                            )
+                        ],
+                    ),
+                    AnnotationModel(
+                        content_uids=["13"],
+                        data=AnnotationDataModel(
+                            index=(2, 0),
+                            span=(1, 1),
+                            value="12",
+                            is_column_header=None,
+                            is_projected_row_header=None,
+                        ),
+                        type="figure_extracted_table_structure",
+                        locations=[
+                            LocationModel(
+                                height=0.1181,
+                                width=0.33085,
+                                x=0.11975,
+                                y=0.34856,
+                                page_number=0,
+                            )
+                        ],
+                    ),
+                    AnnotationModel(
+                        content_uids=["14"],
+                        data=AnnotationDataModel(
+                            index=(2, 1),
+                            span=(1, 1),
+                            value="789",
+                            is_column_header=None,
+                            is_projected_row_header=None,
+                        ),
+                        type="figure_extracted_table_structure",
+                        locations=[
+                            LocationModel(
+                                height=0.1181,
+                                width=0.33085,
+                                x=0.11975,
+                                y=0.34856,
+                                page_number=0,
+                            )
+                        ],
+                    ),
+                    AnnotationModel(
+                        content_uids=["15"],
+                        data=AnnotationDataModel(
+                            index=(2, 2),
+                            span=(1, 1),
+                            value="123",
+                            is_column_header=None,
+                            is_projected_row_header=None,
+                        ),
+                        type="figure_extracted_table_structure",
+                        locations=[
+                            LocationModel(
+                                height=0.1181,
+                                width=0.33085,
+                                x=0.11975,
+                                y=0.34856,
+                                page_number=0,
+                            )
+                        ],
+                    ),
+                    AnnotationModel(
+                        content_uids=["16"],
+                        data=AnnotationDataModel(
+                            index=(3, 0),
+                            span=(1, 1),
+                            value="789",
+                            is_column_header=None,
+                            is_projected_row_header=None,
+                        ),
+                        type="figure_extracted_table_structure",
+                        locations=[
+                            LocationModel(
+                                height=0.1181,
+                                width=0.33085,
+                                x=0.11975,
+                                y=0.34856,
+                                page_number=0,
+                            )
+                        ],
+                    ),
+                    AnnotationModel(
+                        content_uids=["17"],
+                        data=AnnotationDataModel(
+                            index=(3, 1),
+                            span=(1, 1),
+                            value="123",
+                            is_column_header=None,
+                            is_projected_row_header=None,
+                        ),
+                        type="figure_extracted_table_structure",
+                        locations=[
+                            LocationModel(
+                                height=0.1181,
+                                width=0.33085,
+                                x=0.11975,
+                                y=0.34856,
+                                page_number=0,
+                            )
+                        ],
+                    ),
+                    AnnotationModel(
+                        content_uids=["18"],
+                        data=AnnotationDataModel(
+                            index=(3, 2),
+                            span=(1, 1),
+                            value="789",
+                            is_column_header=None,
+                            is_projected_row_header=None,
+                        ),
+                        type="figure_extracted_table_structure",
+                        locations=[
+                            LocationModel(
+                                height=0.1181,
+                                width=0.33085,
+                                x=0.11975,
+                                y=0.34856,
+                                page_number=0,
+                            )
+                        ],
+                    ),
+                    AnnotationModel(
+                        content_uids=["19"],
+                        data=AnnotationDataModel(
+                            index=(4, 0),
+                            span=(1, 1),
+                            value="789",
+                            is_column_header=None,
+                            is_projected_row_header=None,
+                        ),
+                        type="figure_extracted_table_structure",
+                        locations=[
+                            LocationModel(
+                                height=0.1181,
+                                width=0.33085,
+                                x=0.11975,
+                                y=0.34856,
+                                page_number=0,
+                            )
+                        ],
+                    ),
+                    AnnotationModel(
+                        content_uids=["20"],
+                        data=AnnotationDataModel(
+                            index=(4, 1),
+                            span=(1, 1),
+                            value="456",
+                            is_column_header=None,
+                            is_projected_row_header=None,
+                        ),
+                        type="figure_extracted_table_structure",
+                        locations=[
+                            LocationModel(
+                                height=0.1181,
+                                width=0.33085,
+                                x=0.11975,
+                                y=0.34856,
+                                page_number=0,
+                            )
+                        ],
+                    ),
+                    AnnotationModel(
+                        content_uids=["21"],
+                        data=AnnotationDataModel(
+                            index=(4, 2),
+                            span=(1, 1),
+                            value="123",
+                            is_column_header=None,
+                            is_projected_row_header=None,
+                        ),
+                        type="figure_extracted_table_structure",
+                        locations=[
+                            LocationModel(
+                                height=0.1181,
+                                width=0.33085,
+                                x=0.11975,
+                                y=0.34856,
+                                page_number=0,
+                            )
+                        ],
+                    ),
+                    AnnotationModel(
+                        content_uids=["22"],
+                        data=AnnotationDataModel(
+                            index=(5, 0),
+                            span=(1, 1),
+                            value="123",
+                            is_column_header=None,
+                            is_projected_row_header=None,
+                        ),
+                        type="figure_extracted_table_structure",
+                        locations=[
+                            LocationModel(
+                                height=0.1181,
+                                width=0.33085,
+                                x=0.11975,
+                                y=0.34856,
+                                page_number=0,
+                            )
+                        ],
+                    ),
+                    AnnotationModel(
+                        content_uids=["23"],
+                        data=AnnotationDataModel(
+                            index=(5, 1),
+                            span=(1, 1),
+                            value="123",
+                            is_column_header=None,
+                            is_projected_row_header=None,
+                        ),
+                        type="figure_extracted_table_structure",
+                        locations=[
+                            LocationModel(
+                                height=0.1181,
+                                width=0.33085,
+                                x=0.11975,
+                                y=0.34856,
+                                page_number=0,
+                            )
+                        ],
+                    ),
+                    AnnotationModel(
+                        content_uids=["24"],
+                        data=AnnotationDataModel(
+                            index=(5, 2),
+                            span=(1, 1),
+                            value="234",
+                            is_column_header=None,
+                            is_projected_row_header=None,
+                        ),
+                        type="figure_extracted_table_structure",
+                        locations=[
+                            LocationModel(
+                                height=0.1181,
+                                width=0.33085,
+                                x=0.11975,
+                                y=0.34856,
+                                page_number=0,
+                            )
+                        ],
+                    ),
+                    AnnotationModel(
+                        content_uids=["25"],
+                        data=AnnotationDataModel(
+                            index=(6, 0),
+                            span=(1, 1),
+                            value="345",
+                            is_column_header=None,
+                            is_projected_row_header=None,
+                        ),
+                        type="figure_extracted_table_structure",
+                        locations=[
+                            LocationModel(
+                                height=0.1181,
+                                width=0.33085,
+                                x=0.11975,
+                                y=0.34856,
+                                page_number=0,
+                            )
+                        ],
+                    ),
+                    AnnotationModel(
+                        content_uids=["26"],
+                        data=AnnotationDataModel(
+                            index=(6, 1),
+                            span=(1, 1),
+                            value="456",
+                            is_column_header=None,
+                            is_projected_row_header=None,
+                        ),
+                        type="figure_extracted_table_structure",
+                        locations=[
+                            LocationModel(
+                                height=0.1181,
+                                width=0.33085,
+                                x=0.11975,
+                                y=0.34856,
+                                page_number=0,
+                            )
+                        ],
+                    ),
+                    AnnotationModel(
+                        content_uids=["27"],
+                        data=AnnotationDataModel(
+                            index=(6, 2),
+                            span=(1, 1),
+                            value="789",
+                            is_column_header=None,
+                            is_projected_row_header=None,
+                        ),
+                        type="figure_extracted_table_structure",
+                        locations=[
+                            LocationModel(
+                                height=0.1181,
+                                width=0.33085,
+                                x=0.11975,
+                                y=0.34856,
+                                page_number=0,
+                            )
+                        ],
+                    ),
+                ],
             ),
-            "35": (
-                "FIGURE_EXTRACTED_TABLE",
-                [
+            "35": TableGridAndStructure(
+                table_category_type="FIGURE_EXTRACTED_TABLE",
+                table_string_grid=[
                     ["EFG", "ELP", "345"],
                     ["12", "123", "345"],
                     ["321", "123", "123"],
@@ -3655,919 +4078,492 @@ class TestTableExtraction(TestCase):
                     ["12", "456", "321"],
                     ["910", "345", "234"],
                 ],
+                table_structure_annotations=[
+                    AnnotationModel(
+                        content_uids=["36"],
+                        data=AnnotationDataModel(
+                            index=(0, 0),
+                            span=(1, 1),
+                            value="EFG",
+                            is_column_header=None,
+                            is_projected_row_header=None,
+                        ),
+                        type="figure_extracted_table_structure",
+                        locations=[
+                            LocationModel(
+                                height=0.12461,
+                                width=0.34248,
+                                x=0.50986,
+                                y=0.34171,
+                                page_number=0,
+                            )
+                        ],
+                    ),
+                    AnnotationModel(
+                        content_uids=["37"],
+                        data=AnnotationDataModel(
+                            index=(0, 1),
+                            span=(1, 1),
+                            value="ELP",
+                            is_column_header=None,
+                            is_projected_row_header=None,
+                        ),
+                        type="figure_extracted_table_structure",
+                        locations=[
+                            LocationModel(
+                                height=0.12461,
+                                width=0.34248,
+                                x=0.50986,
+                                y=0.34171,
+                                page_number=0,
+                            )
+                        ],
+                    ),
+                    AnnotationModel(
+                        content_uids=["38"],
+                        data=AnnotationDataModel(
+                            index=(0, 2),
+                            span=(1, 1),
+                            value="345",
+                            is_column_header=None,
+                            is_projected_row_header=None,
+                        ),
+                        type="figure_extracted_table_structure",
+                        locations=[
+                            LocationModel(
+                                height=0.12461,
+                                width=0.34248,
+                                x=0.50986,
+                                y=0.34171,
+                                page_number=0,
+                            )
+                        ],
+                    ),
+                    AnnotationModel(
+                        content_uids=["39"],
+                        data=AnnotationDataModel(
+                            index=(1, 0),
+                            span=(1, 1),
+                            value="12",
+                            is_column_header=None,
+                            is_projected_row_header=None,
+                        ),
+                        type="figure_extracted_table_structure",
+                        locations=[
+                            LocationModel(
+                                height=0.12461,
+                                width=0.34248,
+                                x=0.50986,
+                                y=0.34171,
+                                page_number=0,
+                            )
+                        ],
+                    ),
+                    AnnotationModel(
+                        content_uids=["40"],
+                        data=AnnotationDataModel(
+                            index=(1, 1),
+                            span=(1, 1),
+                            value="123",
+                            is_column_header=None,
+                            is_projected_row_header=None,
+                        ),
+                        type="figure_extracted_table_structure",
+                        locations=[
+                            LocationModel(
+                                height=0.12461,
+                                width=0.34248,
+                                x=0.50986,
+                                y=0.34171,
+                                page_number=0,
+                            )
+                        ],
+                    ),
+                    AnnotationModel(
+                        content_uids=["41"],
+                        data=AnnotationDataModel(
+                            index=(1, 2),
+                            span=(1, 1),
+                            value="345",
+                            is_column_header=None,
+                            is_projected_row_header=None,
+                        ),
+                        type="figure_extracted_table_structure",
+                        locations=[
+                            LocationModel(
+                                height=0.12461,
+                                width=0.34248,
+                                x=0.50986,
+                                y=0.34171,
+                                page_number=0,
+                            )
+                        ],
+                    ),
+                    AnnotationModel(
+                        content_uids=["42"],
+                        data=AnnotationDataModel(
+                            index=(2, 0),
+                            span=(1, 1),
+                            value="321",
+                            is_column_header=None,
+                            is_projected_row_header=None,
+                        ),
+                        type="figure_extracted_table_structure",
+                        locations=[
+                            LocationModel(
+                                height=0.12461,
+                                width=0.34248,
+                                x=0.50986,
+                                y=0.34171,
+                                page_number=0,
+                            )
+                        ],
+                    ),
+                    AnnotationModel(
+                        content_uids=["43"],
+                        data=AnnotationDataModel(
+                            index=(2, 1),
+                            span=(1, 1),
+                            value="123",
+                            is_column_header=None,
+                            is_projected_row_header=None,
+                        ),
+                        type="figure_extracted_table_structure",
+                        locations=[
+                            LocationModel(
+                                height=0.12461,
+                                width=0.34248,
+                                x=0.50986,
+                                y=0.34171,
+                                page_number=0,
+                            )
+                        ],
+                    ),
+                    AnnotationModel(
+                        content_uids=["44"],
+                        data=AnnotationDataModel(
+                            index=(2, 2),
+                            span=(1, 1),
+                            value="123",
+                            is_column_header=None,
+                            is_projected_row_header=None,
+                        ),
+                        type="figure_extracted_table_structure",
+                        locations=[
+                            LocationModel(
+                                height=0.12461,
+                                width=0.34248,
+                                x=0.50986,
+                                y=0.34171,
+                                page_number=0,
+                            )
+                        ],
+                    ),
+                    AnnotationModel(
+                        content_uids=["45"],
+                        data=AnnotationDataModel(
+                            index=(3, 0),
+                            span=(1, 1),
+                            value="345",
+                            is_column_header=None,
+                            is_projected_row_header=None,
+                        ),
+                        type="figure_extracted_table_structure",
+                        locations=[
+                            LocationModel(
+                                height=0.12461,
+                                width=0.34248,
+                                x=0.50986,
+                                y=0.34171,
+                                page_number=0,
+                            )
+                        ],
+                    ),
+                    AnnotationModel(
+                        content_uids=["46"],
+                        data=AnnotationDataModel(
+                            index=(3, 1),
+                            span=(1, 1),
+                            value="234",
+                            is_column_header=None,
+                            is_projected_row_header=None,
+                        ),
+                        type="figure_extracted_table_structure",
+                        locations=[
+                            LocationModel(
+                                height=0.12461,
+                                width=0.34248,
+                                x=0.50986,
+                                y=0.34171,
+                                page_number=0,
+                            )
+                        ],
+                    ),
+                    AnnotationModel(
+                        content_uids=["47"],
+                        data=AnnotationDataModel(
+                            index=(3, 2),
+                            span=(1, 1),
+                            value="123",
+                            is_column_header=None,
+                            is_projected_row_header=None,
+                        ),
+                        type="figure_extracted_table_structure",
+                        locations=[
+                            LocationModel(
+                                height=0.12461,
+                                width=0.34248,
+                                x=0.50986,
+                                y=0.34171,
+                                page_number=0,
+                            )
+                        ],
+                    ),
+                    AnnotationModel(
+                        content_uids=["48"],
+                        data=AnnotationDataModel(
+                            index=(4, 0),
+                            span=(1, 1),
+                            value="12",
+                            is_column_header=None,
+                            is_projected_row_header=None,
+                        ),
+                        type="figure_extracted_table_structure",
+                        locations=[
+                            LocationModel(
+                                height=0.12461,
+                                width=0.34248,
+                                x=0.50986,
+                                y=0.34171,
+                                page_number=0,
+                            )
+                        ],
+                    ),
+                    AnnotationModel(
+                        content_uids=["49"],
+                        data=AnnotationDataModel(
+                            index=(4, 1),
+                            span=(1, 1),
+                            value="789",
+                            is_column_header=None,
+                            is_projected_row_header=None,
+                        ),
+                        type="figure_extracted_table_structure",
+                        locations=[
+                            LocationModel(
+                                height=0.12461,
+                                width=0.34248,
+                                x=0.50986,
+                                y=0.34171,
+                                page_number=0,
+                            )
+                        ],
+                    ),
+                    AnnotationModel(
+                        content_uids=["50"],
+                        data=AnnotationDataModel(
+                            index=(4, 2),
+                            span=(1, 1),
+                            value="12",
+                            is_column_header=None,
+                            is_projected_row_header=None,
+                        ),
+                        type="figure_extracted_table_structure",
+                        locations=[
+                            LocationModel(
+                                height=0.12461,
+                                width=0.34248,
+                                x=0.50986,
+                                y=0.34171,
+                                page_number=0,
+                            )
+                        ],
+                    ),
+                    AnnotationModel(
+                        content_uids=["51"],
+                        data=AnnotationDataModel(
+                            index=(5, 0),
+                            span=(1, 1),
+                            value="123",
+                            is_column_header=None,
+                            is_projected_row_header=None,
+                        ),
+                        type="figure_extracted_table_structure",
+                        locations=[
+                            LocationModel(
+                                height=0.12461,
+                                width=0.34248,
+                                x=0.50986,
+                                y=0.34171,
+                                page_number=0,
+                            )
+                        ],
+                    ),
+                    AnnotationModel(
+                        content_uids=["52"],
+                        data=AnnotationDataModel(
+                            index=(5, 1),
+                            span=(1, 1),
+                            value="789",
+                            is_column_header=None,
+                            is_projected_row_header=None,
+                        ),
+                        type="figure_extracted_table_structure",
+                        locations=[
+                            LocationModel(
+                                height=0.12461,
+                                width=0.34248,
+                                x=0.50986,
+                                y=0.34171,
+                                page_number=0,
+                            )
+                        ],
+                    ),
+                    AnnotationModel(
+                        content_uids=["53"],
+                        data=AnnotationDataModel(
+                            index=(5, 2),
+                            span=(1, 1),
+                            value="910",
+                            is_column_header=None,
+                            is_projected_row_header=None,
+                        ),
+                        type="figure_extracted_table_structure",
+                        locations=[
+                            LocationModel(
+                                height=0.12461,
+                                width=0.34248,
+                                x=0.50986,
+                                y=0.34171,
+                                page_number=0,
+                            )
+                        ],
+                    ),
+                    AnnotationModel(
+                        content_uids=["54"],
+                        data=AnnotationDataModel(
+                            index=(6, 0),
+                            span=(1, 1),
+                            value="12",
+                            is_column_header=None,
+                            is_projected_row_header=None,
+                        ),
+                        type="figure_extracted_table_structure",
+                        locations=[
+                            LocationModel(
+                                height=0.12461,
+                                width=0.34248,
+                                x=0.50986,
+                                y=0.34171,
+                                page_number=0,
+                            )
+                        ],
+                    ),
+                    AnnotationModel(
+                        content_uids=["55"],
+                        data=AnnotationDataModel(
+                            index=(6, 1),
+                            span=(1, 1),
+                            value="456",
+                            is_column_header=None,
+                            is_projected_row_header=None,
+                        ),
+                        type="figure_extracted_table_structure",
+                        locations=[
+                            LocationModel(
+                                height=0.12461,
+                                width=0.34248,
+                                x=0.50986,
+                                y=0.34171,
+                                page_number=0,
+                            )
+                        ],
+                    ),
+                    AnnotationModel(
+                        content_uids=["56"],
+                        data=AnnotationDataModel(
+                            index=(6, 2),
+                            span=(1, 1),
+                            value="321",
+                            is_column_header=None,
+                            is_projected_row_header=None,
+                        ),
+                        type="figure_extracted_table_structure",
+                        locations=[
+                            LocationModel(
+                                height=0.12461,
+                                width=0.34248,
+                                x=0.50986,
+                                y=0.34171,
+                                page_number=0,
+                            )
+                        ],
+                    ),
+                    AnnotationModel(
+                        content_uids=["57"],
+                        data=AnnotationDataModel(
+                            index=(7, 0),
+                            span=(1, 1),
+                            value="910",
+                            is_column_header=None,
+                            is_projected_row_header=None,
+                        ),
+                        type="figure_extracted_table_structure",
+                        locations=[
+                            LocationModel(
+                                height=0.12461,
+                                width=0.34248,
+                                x=0.50986,
+                                y=0.34171,
+                                page_number=0,
+                            )
+                        ],
+                    ),
+                    AnnotationModel(
+                        content_uids=["58"],
+                        data=AnnotationDataModel(
+                            index=(7, 1),
+                            span=(1, 1),
+                            value="345",
+                            is_column_header=None,
+                            is_projected_row_header=None,
+                        ),
+                        type="figure_extracted_table_structure",
+                        locations=[
+                            LocationModel(
+                                height=0.12461,
+                                width=0.34248,
+                                x=0.50986,
+                                y=0.34171,
+                                page_number=0,
+                            )
+                        ],
+                    ),
+                    AnnotationModel(
+                        content_uids=["59"],
+                        data=AnnotationDataModel(
+                            index=(7, 2),
+                            span=(1, 1),
+                            value="234",
+                            is_column_header=None,
+                            is_projected_row_header=None,
+                        ),
+                        type="figure_extracted_table_structure",
+                        locations=[
+                            LocationModel(
+                                height=0.12461,
+                                width=0.34248,
+                                x=0.50986,
+                                y=0.34171,
+                                page_number=0,
+                            )
+                        ],
+                    ),
+                ],
             ),
         }
 
-        expected_table_id_to_cell_annotations = {
-            "6": [
-                AnnotationModel(
-                    content_uids=["7"],
-                    data=AnnotationDataModel(
-                        index=(0, 0),
-                        span=(1, 1),
-                        value="SDFII",
-                        is_column_header=None,
-                        is_projected_row_header=None,
-                    ),
-                    type="figure_extracted_table_structure",
-                    locations=[
-                        LocationModel(
-                            height=0.1181,
-                            width=0.33085,
-                            x=0.11975,
-                            y=0.34856,
-                            page_number=0,
-                        )
-                    ],
-                ),
-                AnnotationModel(
-                    content_uids=["8"],
-                    data=AnnotationDataModel(
-                        index=(0, 1),
-                        span=(1, 1),
-                        value="YIUIO",
-                        is_column_header=None,
-                        is_projected_row_header=None,
-                    ),
-                    type="figure_extracted_table_structure",
-                    locations=[
-                        LocationModel(
-                            height=0.1181,
-                            width=0.33085,
-                            x=0.11975,
-                            y=0.34856,
-                            page_number=0,
-                        )
-                    ],
-                ),
-                AnnotationModel(
-                    content_uids=["9"],
-                    data=AnnotationDataModel(
-                        index=(0, 2),
-                        span=(1, 1),
-                        value="789",
-                        is_column_header=None,
-                        is_projected_row_header=None,
-                    ),
-                    type="figure_extracted_table_structure",
-                    locations=[
-                        LocationModel(
-                            height=0.1181,
-                            width=0.33085,
-                            x=0.11975,
-                            y=0.34856,
-                            page_number=0,
-                        )
-                    ],
-                ),
-                AnnotationModel(
-                    content_uids=["10"],
-                    data=AnnotationDataModel(
-                        index=(1, 0),
-                        span=(1, 1),
-                        value="234",
-                        is_column_header=None,
-                        is_projected_row_header=None,
-                    ),
-                    type="figure_extracted_table_structure",
-                    locations=[
-                        LocationModel(
-                            height=0.1181,
-                            width=0.33085,
-                            x=0.11975,
-                            y=0.34856,
-                            page_number=0,
-                        )
-                    ],
-                ),
-                AnnotationModel(
-                    content_uids=["11"],
-                    data=AnnotationDataModel(
-                        index=(1, 1),
-                        span=(1, 1),
-                        value="123",
-                        is_column_header=None,
-                        is_projected_row_header=None,
-                    ),
-                    type="figure_extracted_table_structure",
-                    locations=[
-                        LocationModel(
-                            height=0.1181,
-                            width=0.33085,
-                            x=0.11975,
-                            y=0.34856,
-                            page_number=0,
-                        )
-                    ],
-                ),
-                AnnotationModel(
-                    content_uids=["12"],
-                    data=AnnotationDataModel(
-                        index=(1, 2),
-                        span=(1, 1),
-                        value="123",
-                        is_column_header=None,
-                        is_projected_row_header=None,
-                    ),
-                    type="figure_extracted_table_structure",
-                    locations=[
-                        LocationModel(
-                            height=0.1181,
-                            width=0.33085,
-                            x=0.11975,
-                            y=0.34856,
-                            page_number=0,
-                        )
-                    ],
-                ),
-                AnnotationModel(
-                    content_uids=["13"],
-                    data=AnnotationDataModel(
-                        index=(2, 0),
-                        span=(1, 1),
-                        value="12",
-                        is_column_header=None,
-                        is_projected_row_header=None,
-                    ),
-                    type="figure_extracted_table_structure",
-                    locations=[
-                        LocationModel(
-                            height=0.1181,
-                            width=0.33085,
-                            x=0.11975,
-                            y=0.34856,
-                            page_number=0,
-                        )
-                    ],
-                ),
-                AnnotationModel(
-                    content_uids=["14"],
-                    data=AnnotationDataModel(
-                        index=(2, 1),
-                        span=(1, 1),
-                        value="789",
-                        is_column_header=None,
-                        is_projected_row_header=None,
-                    ),
-                    type="figure_extracted_table_structure",
-                    locations=[
-                        LocationModel(
-                            height=0.1181,
-                            width=0.33085,
-                            x=0.11975,
-                            y=0.34856,
-                            page_number=0,
-                        )
-                    ],
-                ),
-                AnnotationModel(
-                    content_uids=["15"],
-                    data=AnnotationDataModel(
-                        index=(2, 2),
-                        span=(1, 1),
-                        value="123",
-                        is_column_header=None,
-                        is_projected_row_header=None,
-                    ),
-                    type="figure_extracted_table_structure",
-                    locations=[
-                        LocationModel(
-                            height=0.1181,
-                            width=0.33085,
-                            x=0.11975,
-                            y=0.34856,
-                            page_number=0,
-                        )
-                    ],
-                ),
-                AnnotationModel(
-                    content_uids=["16"],
-                    data=AnnotationDataModel(
-                        index=(3, 0),
-                        span=(1, 1),
-                        value="789",
-                        is_column_header=None,
-                        is_projected_row_header=None,
-                    ),
-                    type="figure_extracted_table_structure",
-                    locations=[
-                        LocationModel(
-                            height=0.1181,
-                            width=0.33085,
-                            x=0.11975,
-                            y=0.34856,
-                            page_number=0,
-                        )
-                    ],
-                ),
-                AnnotationModel(
-                    content_uids=["17"],
-                    data=AnnotationDataModel(
-                        index=(3, 1),
-                        span=(1, 1),
-                        value="123",
-                        is_column_header=None,
-                        is_projected_row_header=None,
-                    ),
-                    type="figure_extracted_table_structure",
-                    locations=[
-                        LocationModel(
-                            height=0.1181,
-                            width=0.33085,
-                            x=0.11975,
-                            y=0.34856,
-                            page_number=0,
-                        )
-                    ],
-                ),
-                AnnotationModel(
-                    content_uids=["18"],
-                    data=AnnotationDataModel(
-                        index=(3, 2),
-                        span=(1, 1),
-                        value="789",
-                        is_column_header=None,
-                        is_projected_row_header=None,
-                    ),
-                    type="figure_extracted_table_structure",
-                    locations=[
-                        LocationModel(
-                            height=0.1181,
-                            width=0.33085,
-                            x=0.11975,
-                            y=0.34856,
-                            page_number=0,
-                        )
-                    ],
-                ),
-                AnnotationModel(
-                    content_uids=["19"],
-                    data=AnnotationDataModel(
-                        index=(4, 0),
-                        span=(1, 1),
-                        value="789",
-                        is_column_header=None,
-                        is_projected_row_header=None,
-                    ),
-                    type="figure_extracted_table_structure",
-                    locations=[
-                        LocationModel(
-                            height=0.1181,
-                            width=0.33085,
-                            x=0.11975,
-                            y=0.34856,
-                            page_number=0,
-                        )
-                    ],
-                ),
-                AnnotationModel(
-                    content_uids=["20"],
-                    data=AnnotationDataModel(
-                        index=(4, 1),
-                        span=(1, 1),
-                        value="456",
-                        is_column_header=None,
-                        is_projected_row_header=None,
-                    ),
-                    type="figure_extracted_table_structure",
-                    locations=[
-                        LocationModel(
-                            height=0.1181,
-                            width=0.33085,
-                            x=0.11975,
-                            y=0.34856,
-                            page_number=0,
-                        )
-                    ],
-                ),
-                AnnotationModel(
-                    content_uids=["21"],
-                    data=AnnotationDataModel(
-                        index=(4, 2),
-                        span=(1, 1),
-                        value="123",
-                        is_column_header=None,
-                        is_projected_row_header=None,
-                    ),
-                    type="figure_extracted_table_structure",
-                    locations=[
-                        LocationModel(
-                            height=0.1181,
-                            width=0.33085,
-                            x=0.11975,
-                            y=0.34856,
-                            page_number=0,
-                        )
-                    ],
-                ),
-                AnnotationModel(
-                    content_uids=["22"],
-                    data=AnnotationDataModel(
-                        index=(5, 0),
-                        span=(1, 1),
-                        value="123",
-                        is_column_header=None,
-                        is_projected_row_header=None,
-                    ),
-                    type="figure_extracted_table_structure",
-                    locations=[
-                        LocationModel(
-                            height=0.1181,
-                            width=0.33085,
-                            x=0.11975,
-                            y=0.34856,
-                            page_number=0,
-                        )
-                    ],
-                ),
-                AnnotationModel(
-                    content_uids=["23"],
-                    data=AnnotationDataModel(
-                        index=(5, 1),
-                        span=(1, 1),
-                        value="123",
-                        is_column_header=None,
-                        is_projected_row_header=None,
-                    ),
-                    type="figure_extracted_table_structure",
-                    locations=[
-                        LocationModel(
-                            height=0.1181,
-                            width=0.33085,
-                            x=0.11975,
-                            y=0.34856,
-                            page_number=0,
-                        )
-                    ],
-                ),
-                AnnotationModel(
-                    content_uids=["24"],
-                    data=AnnotationDataModel(
-                        index=(5, 2),
-                        span=(1, 1),
-                        value="234",
-                        is_column_header=None,
-                        is_projected_row_header=None,
-                    ),
-                    type="figure_extracted_table_structure",
-                    locations=[
-                        LocationModel(
-                            height=0.1181,
-                            width=0.33085,
-                            x=0.11975,
-                            y=0.34856,
-                            page_number=0,
-                        )
-                    ],
-                ),
-                AnnotationModel(
-                    content_uids=["25"],
-                    data=AnnotationDataModel(
-                        index=(6, 0),
-                        span=(1, 1),
-                        value="345",
-                        is_column_header=None,
-                        is_projected_row_header=None,
-                    ),
-                    type="figure_extracted_table_structure",
-                    locations=[
-                        LocationModel(
-                            height=0.1181,
-                            width=0.33085,
-                            x=0.11975,
-                            y=0.34856,
-                            page_number=0,
-                        )
-                    ],
-                ),
-                AnnotationModel(
-                    content_uids=["26"],
-                    data=AnnotationDataModel(
-                        index=(6, 1),
-                        span=(1, 1),
-                        value="456",
-                        is_column_header=None,
-                        is_projected_row_header=None,
-                    ),
-                    type="figure_extracted_table_structure",
-                    locations=[
-                        LocationModel(
-                            height=0.1181,
-                            width=0.33085,
-                            x=0.11975,
-                            y=0.34856,
-                            page_number=0,
-                        )
-                    ],
-                ),
-                AnnotationModel(
-                    content_uids=["27"],
-                    data=AnnotationDataModel(
-                        index=(6, 2),
-                        span=(1, 1),
-                        value="789",
-                        is_column_header=None,
-                        is_projected_row_header=None,
-                    ),
-                    type="figure_extracted_table_structure",
-                    locations=[
-                        LocationModel(
-                            height=0.1181,
-                            width=0.33085,
-                            x=0.11975,
-                            y=0.34856,
-                            page_number=0,
-                        )
-                    ],
-                ),
-            ],
-            "35": [
-                AnnotationModel(
-                    content_uids=["36"],
-                    data=AnnotationDataModel(
-                        index=(0, 0),
-                        span=(1, 1),
-                        value="EFG",
-                        is_column_header=None,
-                        is_projected_row_header=None,
-                    ),
-                    type="figure_extracted_table_structure",
-                    locations=[
-                        LocationModel(
-                            height=0.12461,
-                            width=0.34248,
-                            x=0.50986,
-                            y=0.34171,
-                            page_number=0,
-                        )
-                    ],
-                ),
-                AnnotationModel(
-                    content_uids=["37"],
-                    data=AnnotationDataModel(
-                        index=(0, 1),
-                        span=(1, 1),
-                        value="ELP",
-                        is_column_header=None,
-                        is_projected_row_header=None,
-                    ),
-                    type="figure_extracted_table_structure",
-                    locations=[
-                        LocationModel(
-                            height=0.12461,
-                            width=0.34248,
-                            x=0.50986,
-                            y=0.34171,
-                            page_number=0,
-                        )
-                    ],
-                ),
-                AnnotationModel(
-                    content_uids=["38"],
-                    data=AnnotationDataModel(
-                        index=(0, 2),
-                        span=(1, 1),
-                        value="345",
-                        is_column_header=None,
-                        is_projected_row_header=None,
-                    ),
-                    type="figure_extracted_table_structure",
-                    locations=[
-                        LocationModel(
-                            height=0.12461,
-                            width=0.34248,
-                            x=0.50986,
-                            y=0.34171,
-                            page_number=0,
-                        )
-                    ],
-                ),
-                AnnotationModel(
-                    content_uids=["39"],
-                    data=AnnotationDataModel(
-                        index=(1, 0),
-                        span=(1, 1),
-                        value="12",
-                        is_column_header=None,
-                        is_projected_row_header=None,
-                    ),
-                    type="figure_extracted_table_structure",
-                    locations=[
-                        LocationModel(
-                            height=0.12461,
-                            width=0.34248,
-                            x=0.50986,
-                            y=0.34171,
-                            page_number=0,
-                        )
-                    ],
-                ),
-                AnnotationModel(
-                    content_uids=["40"],
-                    data=AnnotationDataModel(
-                        index=(1, 1),
-                        span=(1, 1),
-                        value="123",
-                        is_column_header=None,
-                        is_projected_row_header=None,
-                    ),
-                    type="figure_extracted_table_structure",
-                    locations=[
-                        LocationModel(
-                            height=0.12461,
-                            width=0.34248,
-                            x=0.50986,
-                            y=0.34171,
-                            page_number=0,
-                        )
-                    ],
-                ),
-                AnnotationModel(
-                    content_uids=["41"],
-                    data=AnnotationDataModel(
-                        index=(1, 2),
-                        span=(1, 1),
-                        value="345",
-                        is_column_header=None,
-                        is_projected_row_header=None,
-                    ),
-                    type="figure_extracted_table_structure",
-                    locations=[
-                        LocationModel(
-                            height=0.12461,
-                            width=0.34248,
-                            x=0.50986,
-                            y=0.34171,
-                            page_number=0,
-                        )
-                    ],
-                ),
-                AnnotationModel(
-                    content_uids=["42"],
-                    data=AnnotationDataModel(
-                        index=(2, 0),
-                        span=(1, 1),
-                        value="321",
-                        is_column_header=None,
-                        is_projected_row_header=None,
-                    ),
-                    type="figure_extracted_table_structure",
-                    locations=[
-                        LocationModel(
-                            height=0.12461,
-                            width=0.34248,
-                            x=0.50986,
-                            y=0.34171,
-                            page_number=0,
-                        )
-                    ],
-                ),
-                AnnotationModel(
-                    content_uids=["43"],
-                    data=AnnotationDataModel(
-                        index=(2, 1),
-                        span=(1, 1),
-                        value="123",
-                        is_column_header=None,
-                        is_projected_row_header=None,
-                    ),
-                    type="figure_extracted_table_structure",
-                    locations=[
-                        LocationModel(
-                            height=0.12461,
-                            width=0.34248,
-                            x=0.50986,
-                            y=0.34171,
-                            page_number=0,
-                        )
-                    ],
-                ),
-                AnnotationModel(
-                    content_uids=["44"],
-                    data=AnnotationDataModel(
-                        index=(2, 2),
-                        span=(1, 1),
-                        value="123",
-                        is_column_header=None,
-                        is_projected_row_header=None,
-                    ),
-                    type="figure_extracted_table_structure",
-                    locations=[
-                        LocationModel(
-                            height=0.12461,
-                            width=0.34248,
-                            x=0.50986,
-                            y=0.34171,
-                            page_number=0,
-                        )
-                    ],
-                ),
-                AnnotationModel(
-                    content_uids=["45"],
-                    data=AnnotationDataModel(
-                        index=(3, 0),
-                        span=(1, 1),
-                        value="345",
-                        is_column_header=None,
-                        is_projected_row_header=None,
-                    ),
-                    type="figure_extracted_table_structure",
-                    locations=[
-                        LocationModel(
-                            height=0.12461,
-                            width=0.34248,
-                            x=0.50986,
-                            y=0.34171,
-                            page_number=0,
-                        )
-                    ],
-                ),
-                AnnotationModel(
-                    content_uids=["46"],
-                    data=AnnotationDataModel(
-                        index=(3, 1),
-                        span=(1, 1),
-                        value="234",
-                        is_column_header=None,
-                        is_projected_row_header=None,
-                    ),
-                    type="figure_extracted_table_structure",
-                    locations=[
-                        LocationModel(
-                            height=0.12461,
-                            width=0.34248,
-                            x=0.50986,
-                            y=0.34171,
-                            page_number=0,
-                        )
-                    ],
-                ),
-                AnnotationModel(
-                    content_uids=["47"],
-                    data=AnnotationDataModel(
-                        index=(3, 2),
-                        span=(1, 1),
-                        value="123",
-                        is_column_header=None,
-                        is_projected_row_header=None,
-                    ),
-                    type="figure_extracted_table_structure",
-                    locations=[
-                        LocationModel(
-                            height=0.12461,
-                            width=0.34248,
-                            x=0.50986,
-                            y=0.34171,
-                            page_number=0,
-                        )
-                    ],
-                ),
-                AnnotationModel(
-                    content_uids=["48"],
-                    data=AnnotationDataModel(
-                        index=(4, 0),
-                        span=(1, 1),
-                        value="12",
-                        is_column_header=None,
-                        is_projected_row_header=None,
-                    ),
-                    type="figure_extracted_table_structure",
-                    locations=[
-                        LocationModel(
-                            height=0.12461,
-                            width=0.34248,
-                            x=0.50986,
-                            y=0.34171,
-                            page_number=0,
-                        )
-                    ],
-                ),
-                AnnotationModel(
-                    content_uids=["49"],
-                    data=AnnotationDataModel(
-                        index=(4, 1),
-                        span=(1, 1),
-                        value="789",
-                        is_column_header=None,
-                        is_projected_row_header=None,
-                    ),
-                    type="figure_extracted_table_structure",
-                    locations=[
-                        LocationModel(
-                            height=0.12461,
-                            width=0.34248,
-                            x=0.50986,
-                            y=0.34171,
-                            page_number=0,
-                        )
-                    ],
-                ),
-                AnnotationModel(
-                    content_uids=["50"],
-                    data=AnnotationDataModel(
-                        index=(4, 2),
-                        span=(1, 1),
-                        value="12",
-                        is_column_header=None,
-                        is_projected_row_header=None,
-                    ),
-                    type="figure_extracted_table_structure",
-                    locations=[
-                        LocationModel(
-                            height=0.12461,
-                            width=0.34248,
-                            x=0.50986,
-                            y=0.34171,
-                            page_number=0,
-                        )
-                    ],
-                ),
-                AnnotationModel(
-                    content_uids=["51"],
-                    data=AnnotationDataModel(
-                        index=(5, 0),
-                        span=(1, 1),
-                        value="123",
-                        is_column_header=None,
-                        is_projected_row_header=None,
-                    ),
-                    type="figure_extracted_table_structure",
-                    locations=[
-                        LocationModel(
-                            height=0.12461,
-                            width=0.34248,
-                            x=0.50986,
-                            y=0.34171,
-                            page_number=0,
-                        )
-                    ],
-                ),
-                AnnotationModel(
-                    content_uids=["52"],
-                    data=AnnotationDataModel(
-                        index=(5, 1),
-                        span=(1, 1),
-                        value="789",
-                        is_column_header=None,
-                        is_projected_row_header=None,
-                    ),
-                    type="figure_extracted_table_structure",
-                    locations=[
-                        LocationModel(
-                            height=0.12461,
-                            width=0.34248,
-                            x=0.50986,
-                            y=0.34171,
-                            page_number=0,
-                        )
-                    ],
-                ),
-                AnnotationModel(
-                    content_uids=["53"],
-                    data=AnnotationDataModel(
-                        index=(5, 2),
-                        span=(1, 1),
-                        value="910",
-                        is_column_header=None,
-                        is_projected_row_header=None,
-                    ),
-                    type="figure_extracted_table_structure",
-                    locations=[
-                        LocationModel(
-                            height=0.12461,
-                            width=0.34248,
-                            x=0.50986,
-                            y=0.34171,
-                            page_number=0,
-                        )
-                    ],
-                ),
-                AnnotationModel(
-                    content_uids=["54"],
-                    data=AnnotationDataModel(
-                        index=(6, 0),
-                        span=(1, 1),
-                        value="12",
-                        is_column_header=None,
-                        is_projected_row_header=None,
-                    ),
-                    type="figure_extracted_table_structure",
-                    locations=[
-                        LocationModel(
-                            height=0.12461,
-                            width=0.34248,
-                            x=0.50986,
-                            y=0.34171,
-                            page_number=0,
-                        )
-                    ],
-                ),
-                AnnotationModel(
-                    content_uids=["55"],
-                    data=AnnotationDataModel(
-                        index=(6, 1),
-                        span=(1, 1),
-                        value="456",
-                        is_column_header=None,
-                        is_projected_row_header=None,
-                    ),
-                    type="figure_extracted_table_structure",
-                    locations=[
-                        LocationModel(
-                            height=0.12461,
-                            width=0.34248,
-                            x=0.50986,
-                            y=0.34171,
-                            page_number=0,
-                        )
-                    ],
-                ),
-                AnnotationModel(
-                    content_uids=["56"],
-                    data=AnnotationDataModel(
-                        index=(6, 2),
-                        span=(1, 1),
-                        value="321",
-                        is_column_header=None,
-                        is_projected_row_header=None,
-                    ),
-                    type="figure_extracted_table_structure",
-                    locations=[
-                        LocationModel(
-                            height=0.12461,
-                            width=0.34248,
-                            x=0.50986,
-                            y=0.34171,
-                            page_number=0,
-                        )
-                    ],
-                ),
-                AnnotationModel(
-                    content_uids=["57"],
-                    data=AnnotationDataModel(
-                        index=(7, 0),
-                        span=(1, 1),
-                        value="910",
-                        is_column_header=None,
-                        is_projected_row_header=None,
-                    ),
-                    type="figure_extracted_table_structure",
-                    locations=[
-                        LocationModel(
-                            height=0.12461,
-                            width=0.34248,
-                            x=0.50986,
-                            y=0.34171,
-                            page_number=0,
-                        )
-                    ],
-                ),
-                AnnotationModel(
-                    content_uids=["58"],
-                    data=AnnotationDataModel(
-                        index=(7, 1),
-                        span=(1, 1),
-                        value="345",
-                        is_column_header=None,
-                        is_projected_row_header=None,
-                    ),
-                    type="figure_extracted_table_structure",
-                    locations=[
-                        LocationModel(
-                            height=0.12461,
-                            width=0.34248,
-                            x=0.50986,
-                            y=0.34171,
-                            page_number=0,
-                        )
-                    ],
-                ),
-                AnnotationModel(
-                    content_uids=["59"],
-                    data=AnnotationDataModel(
-                        index=(7, 2),
-                        span=(1, 1),
-                        value="234",
-                        is_column_header=None,
-                        is_projected_row_header=None,
-                    ),
-                    type="figure_extracted_table_structure",
-                    locations=[
-                        LocationModel(
-                            height=0.12461,
-                            width=0.34248,
-                            x=0.50986,
-                            y=0.34171,
-                            page_number=0,
-                        )
-                    ],
-                ),
-            ],
-        }
-        tables, table_id_to_cell_annotations = build_table_grids(
+        tables_grid_and_structure = build_table_grids(
             {"content_tree": content, "annotations": annotations}, True
         )
-        self.assertEqual(expected_tables, tables)
-        self.assertEqual(
-            expected_table_id_to_cell_annotations, table_id_to_cell_annotations
-        )
+        self.assertEqual(expected_tables_grid_and_structure, tables_grid_and_structure)
