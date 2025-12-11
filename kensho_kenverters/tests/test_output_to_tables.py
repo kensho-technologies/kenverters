@@ -6,7 +6,7 @@ from unittest import TestCase
 from ..extract_output_models import (
     AnnotationDataModel,
     AnnotationModel,
-    CellType,
+    Cell,
     LocationModel,
     TableGridAndStructure,
 )
@@ -55,7 +55,7 @@ class TestTableExtraction(TestCase):
         self.assertEqual(table.locations, expected_table_locations)
 
         expected_table_structure = [
-            CellType(
+            Cell(
                 index=(0, 0),
                 span=(1, 1),
                 locations=[
@@ -67,10 +67,10 @@ class TestTableExtraction(TestCase):
                         "page_number": 0,
                     }
                 ],
-                is_column_header=None,
-                is_projected_row_header=None,
+                is_column_header=False,
+                is_projected_row_header=False,
             ),
-            CellType(
+            Cell(
                 index=(0, 1),
                 span=(1, 1),
                 locations=[
@@ -82,10 +82,10 @@ class TestTableExtraction(TestCase):
                         "page_number": 0,
                     }
                 ],
-                is_column_header=None,
-                is_projected_row_header=None,
+                is_column_header=False,
+                is_projected_row_header=False,
             ),
-            CellType(
+            Cell(
                 index=(0, 2),
                 span=(1, 1),
                 locations=[
@@ -97,10 +97,10 @@ class TestTableExtraction(TestCase):
                         "page_number": 0,
                     }
                 ],
-                is_column_header=None,
-                is_projected_row_header=None,
+                is_column_header=False,
+                is_projected_row_header=False,
             ),
-            CellType(
+            Cell(
                 index=(0, 3),
                 span=(1, 1),
                 locations=[
@@ -112,10 +112,10 @@ class TestTableExtraction(TestCase):
                         "page_number": 0,
                     }
                 ],
-                is_column_header=None,
-                is_projected_row_header=None,
+                is_column_header=False,
+                is_projected_row_header=False,
             ),
-            CellType(
+            Cell(
                 index=(0, 4),
                 span=(1, 1),
                 locations=[
@@ -127,10 +127,10 @@ class TestTableExtraction(TestCase):
                         "page_number": 0,
                     }
                 ],
-                is_column_header=None,
-                is_projected_row_header=None,
+                is_column_header=False,
+                is_projected_row_header=False,
             ),
-            CellType(
+            Cell(
                 index=(1, 0),
                 span=(1, 1),
                 locations=[
@@ -142,10 +142,10 @@ class TestTableExtraction(TestCase):
                         "page_number": 0,
                     }
                 ],
-                is_column_header=None,
-                is_projected_row_header=None,
+                is_column_header=False,
+                is_projected_row_header=False,
             ),
-            CellType(
+            Cell(
                 index=(1, 1),
                 span=(1, 1),
                 locations=[
@@ -157,10 +157,10 @@ class TestTableExtraction(TestCase):
                         "page_number": 0,
                     }
                 ],
-                is_column_header=None,
-                is_projected_row_header=None,
+                is_column_header=False,
+                is_projected_row_header=False,
             ),
-            CellType(
+            Cell(
                 index=(1, 2),
                 span=(1, 1),
                 locations=[
@@ -172,10 +172,10 @@ class TestTableExtraction(TestCase):
                         "page_number": 0,
                     }
                 ],
-                is_column_header=None,
-                is_projected_row_header=None,
+                is_column_header=False,
+                is_projected_row_header=False,
             ),
-            CellType(
+            Cell(
                 index=(1, 3),
                 span=(1, 1),
                 locations=[
@@ -187,10 +187,10 @@ class TestTableExtraction(TestCase):
                         "page_number": 0,
                     }
                 ],
-                is_column_header=None,
-                is_projected_row_header=None,
+                is_column_header=False,
+                is_projected_row_header=False,
             ),
-            CellType(
+            Cell(
                 index=(1, 4),
                 span=(1, 1),
                 locations=[
@@ -202,10 +202,10 @@ class TestTableExtraction(TestCase):
                         "page_number": 0,
                     }
                 ],
-                is_column_header=None,
-                is_projected_row_header=None,
+                is_column_header=False,
+                is_projected_row_header=False,
             ),
-            CellType(
+            Cell(
                 index=(2, 0),
                 span=(1, 1),
                 locations=[
@@ -217,10 +217,10 @@ class TestTableExtraction(TestCase):
                         "page_number": 0,
                     }
                 ],
-                is_column_header=None,
-                is_projected_row_header=None,
+                is_column_header=False,
+                is_projected_row_header=False,
             ),
-            CellType(
+            Cell(
                 index=(2, 1),
                 span=(1, 1),
                 locations=[
@@ -232,10 +232,10 @@ class TestTableExtraction(TestCase):
                         "page_number": 0,
                     }
                 ],
-                is_column_header=None,
-                is_projected_row_header=None,
+                is_column_header=False,
+                is_projected_row_header=False,
             ),
-            CellType(
+            Cell(
                 index=(2, 2),
                 span=(1, 1),
                 locations=[
@@ -247,10 +247,10 @@ class TestTableExtraction(TestCase):
                         "page_number": 0,
                     }
                 ],
-                is_column_header=None,
-                is_projected_row_header=None,
+                is_column_header=False,
+                is_projected_row_header=False,
             ),
-            CellType(
+            Cell(
                 index=(2, 3),
                 span=(1, 1),
                 locations=[
@@ -262,10 +262,10 @@ class TestTableExtraction(TestCase):
                         "page_number": 0,
                     }
                 ],
-                is_column_header=None,
-                is_projected_row_header=None,
+                is_column_header=False,
+                is_projected_row_header=False,
             ),
-            CellType(
+            Cell(
                 index=(2, 4),
                 span=(1, 1),
                 locations=[
@@ -277,10 +277,10 @@ class TestTableExtraction(TestCase):
                         "page_number": 0,
                     }
                 ],
-                is_column_header=None,
-                is_projected_row_header=None,
+                is_column_header=False,
+                is_projected_row_header=False,
             ),
-            CellType(
+            Cell(
                 index=(3, 0),
                 span=(1, 1),
                 locations=[
@@ -292,10 +292,10 @@ class TestTableExtraction(TestCase):
                         "page_number": 0,
                     }
                 ],
-                is_column_header=None,
-                is_projected_row_header=None,
+                is_column_header=False,
+                is_projected_row_header=False,
             ),
-            CellType(
+            Cell(
                 index=(3, 1),
                 span=(1, 1),
                 locations=[
@@ -307,10 +307,10 @@ class TestTableExtraction(TestCase):
                         "page_number": 0,
                     }
                 ],
-                is_column_header=None,
-                is_projected_row_header=None,
+                is_column_header=False,
+                is_projected_row_header=False,
             ),
-            CellType(
+            Cell(
                 index=(3, 2),
                 span=(1, 1),
                 locations=[
@@ -322,10 +322,10 @@ class TestTableExtraction(TestCase):
                         "page_number": 0,
                     }
                 ],
-                is_column_header=None,
-                is_projected_row_header=None,
+                is_column_header=False,
+                is_projected_row_header=False,
             ),
-            CellType(
+            Cell(
                 index=(3, 3),
                 span=(1, 1),
                 locations=[
@@ -337,10 +337,10 @@ class TestTableExtraction(TestCase):
                         "page_number": 0,
                     }
                 ],
-                is_column_header=None,
-                is_projected_row_header=None,
+                is_column_header=False,
+                is_projected_row_header=False,
             ),
-            CellType(
+            Cell(
                 index=(3, 4),
                 span=(1, 1),
                 locations=[
@@ -352,10 +352,10 @@ class TestTableExtraction(TestCase):
                         "page_number": 0,
                     }
                 ],
-                is_column_header=None,
-                is_projected_row_header=None,
+                is_column_header=False,
+                is_projected_row_header=False,
             ),
-            CellType(
+            Cell(
                 index=(4, 0),
                 span=(1, 1),
                 locations=[
@@ -367,10 +367,10 @@ class TestTableExtraction(TestCase):
                         "page_number": 0,
                     }
                 ],
-                is_column_header=None,
-                is_projected_row_header=None,
+                is_column_header=False,
+                is_projected_row_header=False,
             ),
-            CellType(
+            Cell(
                 index=(4, 1),
                 span=(1, 1),
                 locations=[
@@ -382,10 +382,10 @@ class TestTableExtraction(TestCase):
                         "page_number": 0,
                     }
                 ],
-                is_column_header=None,
-                is_projected_row_header=None,
+                is_column_header=False,
+                is_projected_row_header=False,
             ),
-            CellType(
+            Cell(
                 index=(4, 2),
                 span=(1, 1),
                 locations=[
@@ -397,10 +397,10 @@ class TestTableExtraction(TestCase):
                         "page_number": 0,
                     }
                 ],
-                is_column_header=None,
-                is_projected_row_header=None,
+                is_column_header=False,
+                is_projected_row_header=False,
             ),
-            CellType(
+            Cell(
                 index=(4, 3),
                 span=(1, 1),
                 locations=[
@@ -412,10 +412,10 @@ class TestTableExtraction(TestCase):
                         "page_number": 0,
                     }
                 ],
-                is_column_header=None,
-                is_projected_row_header=None,
+                is_column_header=False,
+                is_projected_row_header=False,
             ),
-            CellType(
+            Cell(
                 index=(4, 4),
                 span=(1, 1),
                 locations=[
@@ -427,8 +427,8 @@ class TestTableExtraction(TestCase):
                         "page_number": 0,
                     }
                 ],
-                is_column_header=None,
-                is_projected_row_header=None,
+                is_column_header=False,
+                is_projected_row_header=False,
             ),
         ]
         self.assertEqual(table.cells, expected_table_structure)
@@ -3650,8 +3650,8 @@ class TestTableExtraction(TestCase):
                             index=(0, 0),
                             span=(1, 1),
                             value="SDFII",
-                            is_column_header=None,
-                            is_projected_row_header=None,
+                            is_column_header=False,
+                            is_projected_row_header=False,
                         ),
                         type="figure_extracted_table_structure",
                         locations=[
@@ -3670,8 +3670,8 @@ class TestTableExtraction(TestCase):
                             index=(0, 1),
                             span=(1, 1),
                             value="YIUIO",
-                            is_column_header=None,
-                            is_projected_row_header=None,
+                            is_column_header=False,
+                            is_projected_row_header=False,
                         ),
                         type="figure_extracted_table_structure",
                         locations=[
@@ -3690,8 +3690,8 @@ class TestTableExtraction(TestCase):
                             index=(0, 2),
                             span=(1, 1),
                             value="789",
-                            is_column_header=None,
-                            is_projected_row_header=None,
+                            is_column_header=False,
+                            is_projected_row_header=False,
                         ),
                         type="figure_extracted_table_structure",
                         locations=[
@@ -3710,8 +3710,8 @@ class TestTableExtraction(TestCase):
                             index=(1, 0),
                             span=(1, 1),
                             value="234",
-                            is_column_header=None,
-                            is_projected_row_header=None,
+                            is_column_header=False,
+                            is_projected_row_header=False,
                         ),
                         type="figure_extracted_table_structure",
                         locations=[
@@ -3730,8 +3730,8 @@ class TestTableExtraction(TestCase):
                             index=(1, 1),
                             span=(1, 1),
                             value="123",
-                            is_column_header=None,
-                            is_projected_row_header=None,
+                            is_column_header=False,
+                            is_projected_row_header=False,
                         ),
                         type="figure_extracted_table_structure",
                         locations=[
@@ -3750,8 +3750,8 @@ class TestTableExtraction(TestCase):
                             index=(1, 2),
                             span=(1, 1),
                             value="123",
-                            is_column_header=None,
-                            is_projected_row_header=None,
+                            is_column_header=False,
+                            is_projected_row_header=False,
                         ),
                         type="figure_extracted_table_structure",
                         locations=[
@@ -3770,8 +3770,8 @@ class TestTableExtraction(TestCase):
                             index=(2, 0),
                             span=(1, 1),
                             value="12",
-                            is_column_header=None,
-                            is_projected_row_header=None,
+                            is_column_header=False,
+                            is_projected_row_header=False,
                         ),
                         type="figure_extracted_table_structure",
                         locations=[
@@ -3790,8 +3790,8 @@ class TestTableExtraction(TestCase):
                             index=(2, 1),
                             span=(1, 1),
                             value="789",
-                            is_column_header=None,
-                            is_projected_row_header=None,
+                            is_column_header=False,
+                            is_projected_row_header=False,
                         ),
                         type="figure_extracted_table_structure",
                         locations=[
@@ -3810,8 +3810,8 @@ class TestTableExtraction(TestCase):
                             index=(2, 2),
                             span=(1, 1),
                             value="123",
-                            is_column_header=None,
-                            is_projected_row_header=None,
+                            is_column_header=False,
+                            is_projected_row_header=False,
                         ),
                         type="figure_extracted_table_structure",
                         locations=[
@@ -3830,8 +3830,8 @@ class TestTableExtraction(TestCase):
                             index=(3, 0),
                             span=(1, 1),
                             value="789",
-                            is_column_header=None,
-                            is_projected_row_header=None,
+                            is_column_header=False,
+                            is_projected_row_header=False,
                         ),
                         type="figure_extracted_table_structure",
                         locations=[
@@ -3850,8 +3850,8 @@ class TestTableExtraction(TestCase):
                             index=(3, 1),
                             span=(1, 1),
                             value="123",
-                            is_column_header=None,
-                            is_projected_row_header=None,
+                            is_column_header=False,
+                            is_projected_row_header=False,
                         ),
                         type="figure_extracted_table_structure",
                         locations=[
@@ -3870,8 +3870,8 @@ class TestTableExtraction(TestCase):
                             index=(3, 2),
                             span=(1, 1),
                             value="789",
-                            is_column_header=None,
-                            is_projected_row_header=None,
+                            is_column_header=False,
+                            is_projected_row_header=False,
                         ),
                         type="figure_extracted_table_structure",
                         locations=[
@@ -3890,8 +3890,8 @@ class TestTableExtraction(TestCase):
                             index=(4, 0),
                             span=(1, 1),
                             value="789",
-                            is_column_header=None,
-                            is_projected_row_header=None,
+                            is_column_header=False,
+                            is_projected_row_header=False,
                         ),
                         type="figure_extracted_table_structure",
                         locations=[
@@ -3910,8 +3910,8 @@ class TestTableExtraction(TestCase):
                             index=(4, 1),
                             span=(1, 1),
                             value="456",
-                            is_column_header=None,
-                            is_projected_row_header=None,
+                            is_column_header=False,
+                            is_projected_row_header=False,
                         ),
                         type="figure_extracted_table_structure",
                         locations=[
@@ -3930,8 +3930,8 @@ class TestTableExtraction(TestCase):
                             index=(4, 2),
                             span=(1, 1),
                             value="123",
-                            is_column_header=None,
-                            is_projected_row_header=None,
+                            is_column_header=False,
+                            is_projected_row_header=False,
                         ),
                         type="figure_extracted_table_structure",
                         locations=[
@@ -3950,8 +3950,8 @@ class TestTableExtraction(TestCase):
                             index=(5, 0),
                             span=(1, 1),
                             value="123",
-                            is_column_header=None,
-                            is_projected_row_header=None,
+                            is_column_header=False,
+                            is_projected_row_header=False,
                         ),
                         type="figure_extracted_table_structure",
                         locations=[
@@ -3970,8 +3970,8 @@ class TestTableExtraction(TestCase):
                             index=(5, 1),
                             span=(1, 1),
                             value="123",
-                            is_column_header=None,
-                            is_projected_row_header=None,
+                            is_column_header=False,
+                            is_projected_row_header=False,
                         ),
                         type="figure_extracted_table_structure",
                         locations=[
@@ -3990,8 +3990,8 @@ class TestTableExtraction(TestCase):
                             index=(5, 2),
                             span=(1, 1),
                             value="234",
-                            is_column_header=None,
-                            is_projected_row_header=None,
+                            is_column_header=False,
+                            is_projected_row_header=False,
                         ),
                         type="figure_extracted_table_structure",
                         locations=[
@@ -4010,8 +4010,8 @@ class TestTableExtraction(TestCase):
                             index=(6, 0),
                             span=(1, 1),
                             value="345",
-                            is_column_header=None,
-                            is_projected_row_header=None,
+                            is_column_header=False,
+                            is_projected_row_header=False,
                         ),
                         type="figure_extracted_table_structure",
                         locations=[
@@ -4030,8 +4030,8 @@ class TestTableExtraction(TestCase):
                             index=(6, 1),
                             span=(1, 1),
                             value="456",
-                            is_column_header=None,
-                            is_projected_row_header=None,
+                            is_column_header=False,
+                            is_projected_row_header=False,
                         ),
                         type="figure_extracted_table_structure",
                         locations=[
@@ -4050,8 +4050,8 @@ class TestTableExtraction(TestCase):
                             index=(6, 2),
                             span=(1, 1),
                             value="789",
-                            is_column_header=None,
-                            is_projected_row_header=None,
+                            is_column_header=False,
+                            is_projected_row_header=False,
                         ),
                         type="figure_extracted_table_structure",
                         locations=[
@@ -4085,8 +4085,8 @@ class TestTableExtraction(TestCase):
                             index=(0, 0),
                             span=(1, 1),
                             value="EFG",
-                            is_column_header=None,
-                            is_projected_row_header=None,
+                            is_column_header=False,
+                            is_projected_row_header=False,
                         ),
                         type="figure_extracted_table_structure",
                         locations=[
@@ -4105,8 +4105,8 @@ class TestTableExtraction(TestCase):
                             index=(0, 1),
                             span=(1, 1),
                             value="ELP",
-                            is_column_header=None,
-                            is_projected_row_header=None,
+                            is_column_header=False,
+                            is_projected_row_header=False,
                         ),
                         type="figure_extracted_table_structure",
                         locations=[
@@ -4125,8 +4125,8 @@ class TestTableExtraction(TestCase):
                             index=(0, 2),
                             span=(1, 1),
                             value="345",
-                            is_column_header=None,
-                            is_projected_row_header=None,
+                            is_column_header=False,
+                            is_projected_row_header=False,
                         ),
                         type="figure_extracted_table_structure",
                         locations=[
@@ -4145,8 +4145,8 @@ class TestTableExtraction(TestCase):
                             index=(1, 0),
                             span=(1, 1),
                             value="12",
-                            is_column_header=None,
-                            is_projected_row_header=None,
+                            is_column_header=False,
+                            is_projected_row_header=False,
                         ),
                         type="figure_extracted_table_structure",
                         locations=[
@@ -4165,8 +4165,8 @@ class TestTableExtraction(TestCase):
                             index=(1, 1),
                             span=(1, 1),
                             value="123",
-                            is_column_header=None,
-                            is_projected_row_header=None,
+                            is_column_header=False,
+                            is_projected_row_header=False,
                         ),
                         type="figure_extracted_table_structure",
                         locations=[
@@ -4185,8 +4185,8 @@ class TestTableExtraction(TestCase):
                             index=(1, 2),
                             span=(1, 1),
                             value="345",
-                            is_column_header=None,
-                            is_projected_row_header=None,
+                            is_column_header=False,
+                            is_projected_row_header=False,
                         ),
                         type="figure_extracted_table_structure",
                         locations=[
@@ -4205,8 +4205,8 @@ class TestTableExtraction(TestCase):
                             index=(2, 0),
                             span=(1, 1),
                             value="321",
-                            is_column_header=None,
-                            is_projected_row_header=None,
+                            is_column_header=False,
+                            is_projected_row_header=False,
                         ),
                         type="figure_extracted_table_structure",
                         locations=[
@@ -4225,8 +4225,8 @@ class TestTableExtraction(TestCase):
                             index=(2, 1),
                             span=(1, 1),
                             value="123",
-                            is_column_header=None,
-                            is_projected_row_header=None,
+                            is_column_header=False,
+                            is_projected_row_header=False,
                         ),
                         type="figure_extracted_table_structure",
                         locations=[
@@ -4245,8 +4245,8 @@ class TestTableExtraction(TestCase):
                             index=(2, 2),
                             span=(1, 1),
                             value="123",
-                            is_column_header=None,
-                            is_projected_row_header=None,
+                            is_column_header=False,
+                            is_projected_row_header=False,
                         ),
                         type="figure_extracted_table_structure",
                         locations=[
@@ -4265,8 +4265,8 @@ class TestTableExtraction(TestCase):
                             index=(3, 0),
                             span=(1, 1),
                             value="345",
-                            is_column_header=None,
-                            is_projected_row_header=None,
+                            is_column_header=False,
+                            is_projected_row_header=False,
                         ),
                         type="figure_extracted_table_structure",
                         locations=[
@@ -4285,8 +4285,8 @@ class TestTableExtraction(TestCase):
                             index=(3, 1),
                             span=(1, 1),
                             value="234",
-                            is_column_header=None,
-                            is_projected_row_header=None,
+                            is_column_header=False,
+                            is_projected_row_header=False,
                         ),
                         type="figure_extracted_table_structure",
                         locations=[
@@ -4305,8 +4305,8 @@ class TestTableExtraction(TestCase):
                             index=(3, 2),
                             span=(1, 1),
                             value="123",
-                            is_column_header=None,
-                            is_projected_row_header=None,
+                            is_column_header=False,
+                            is_projected_row_header=False,
                         ),
                         type="figure_extracted_table_structure",
                         locations=[
@@ -4325,8 +4325,8 @@ class TestTableExtraction(TestCase):
                             index=(4, 0),
                             span=(1, 1),
                             value="12",
-                            is_column_header=None,
-                            is_projected_row_header=None,
+                            is_column_header=False,
+                            is_projected_row_header=False,
                         ),
                         type="figure_extracted_table_structure",
                         locations=[
@@ -4345,8 +4345,8 @@ class TestTableExtraction(TestCase):
                             index=(4, 1),
                             span=(1, 1),
                             value="789",
-                            is_column_header=None,
-                            is_projected_row_header=None,
+                            is_column_header=False,
+                            is_projected_row_header=False,
                         ),
                         type="figure_extracted_table_structure",
                         locations=[
@@ -4365,8 +4365,8 @@ class TestTableExtraction(TestCase):
                             index=(4, 2),
                             span=(1, 1),
                             value="12",
-                            is_column_header=None,
-                            is_projected_row_header=None,
+                            is_column_header=False,
+                            is_projected_row_header=False,
                         ),
                         type="figure_extracted_table_structure",
                         locations=[
@@ -4385,8 +4385,8 @@ class TestTableExtraction(TestCase):
                             index=(5, 0),
                             span=(1, 1),
                             value="123",
-                            is_column_header=None,
-                            is_projected_row_header=None,
+                            is_column_header=False,
+                            is_projected_row_header=False,
                         ),
                         type="figure_extracted_table_structure",
                         locations=[
@@ -4405,8 +4405,8 @@ class TestTableExtraction(TestCase):
                             index=(5, 1),
                             span=(1, 1),
                             value="789",
-                            is_column_header=None,
-                            is_projected_row_header=None,
+                            is_column_header=False,
+                            is_projected_row_header=False,
                         ),
                         type="figure_extracted_table_structure",
                         locations=[
@@ -4425,8 +4425,8 @@ class TestTableExtraction(TestCase):
                             index=(5, 2),
                             span=(1, 1),
                             value="910",
-                            is_column_header=None,
-                            is_projected_row_header=None,
+                            is_column_header=False,
+                            is_projected_row_header=False,
                         ),
                         type="figure_extracted_table_structure",
                         locations=[
@@ -4445,8 +4445,8 @@ class TestTableExtraction(TestCase):
                             index=(6, 0),
                             span=(1, 1),
                             value="12",
-                            is_column_header=None,
-                            is_projected_row_header=None,
+                            is_column_header=False,
+                            is_projected_row_header=False,
                         ),
                         type="figure_extracted_table_structure",
                         locations=[
@@ -4465,8 +4465,8 @@ class TestTableExtraction(TestCase):
                             index=(6, 1),
                             span=(1, 1),
                             value="456",
-                            is_column_header=None,
-                            is_projected_row_header=None,
+                            is_column_header=False,
+                            is_projected_row_header=False,
                         ),
                         type="figure_extracted_table_structure",
                         locations=[
@@ -4485,8 +4485,8 @@ class TestTableExtraction(TestCase):
                             index=(6, 2),
                             span=(1, 1),
                             value="321",
-                            is_column_header=None,
-                            is_projected_row_header=None,
+                            is_column_header=False,
+                            is_projected_row_header=False,
                         ),
                         type="figure_extracted_table_structure",
                         locations=[
@@ -4505,8 +4505,8 @@ class TestTableExtraction(TestCase):
                             index=(7, 0),
                             span=(1, 1),
                             value="910",
-                            is_column_header=None,
-                            is_projected_row_header=None,
+                            is_column_header=False,
+                            is_projected_row_header=False,
                         ),
                         type="figure_extracted_table_structure",
                         locations=[
@@ -4525,8 +4525,8 @@ class TestTableExtraction(TestCase):
                             index=(7, 1),
                             span=(1, 1),
                             value="345",
-                            is_column_header=None,
-                            is_projected_row_header=None,
+                            is_column_header=False,
+                            is_projected_row_header=False,
                         ),
                         type="figure_extracted_table_structure",
                         locations=[
@@ -4545,8 +4545,8 @@ class TestTableExtraction(TestCase):
                             index=(7, 2),
                             span=(1, 1),
                             value="234",
-                            is_column_header=None,
-                            is_projected_row_header=None,
+                            is_column_header=False,
+                            is_projected_row_header=False,
                         ),
                         type="figure_extracted_table_structure",
                         locations=[
@@ -4562,7 +4562,6 @@ class TestTableExtraction(TestCase):
                 ],
             ),
         }
-
         tables_grid_and_structure = build_table_grids(
             {"content_tree": content, "annotations": annotations}, True
         )

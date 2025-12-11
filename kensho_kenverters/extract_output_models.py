@@ -11,12 +11,12 @@ from pydantic import BaseModel  # pylint: disable=no-name-in-module
 LocationType: TypeAlias = dict[str, float | int] | None
 
 
-class CellType(BaseModel):
+class Cell(BaseModel):
     index: Tuple[int, int]
     span: Tuple[int, int]
     locations: list[LocationType] | None
-    is_column_header: bool | None
-    is_projected_row_header: bool | None
+    is_column_header: bool
+    is_projected_row_header: bool
 
 
 TableCategoryType: TypeAlias = Literal[
@@ -32,7 +32,7 @@ class Table(NamedTuple):
     df: pd.DataFrame
     table_type: TableCategoryType
     locations: list[LocationType] | None = None
-    cells: list[CellType] | None = None
+    cells: list[Cell] | None = None
 
 
 class LocationModel(BaseModel):
@@ -51,8 +51,8 @@ class AnnotationDataModel(BaseModel):
     index: tuple[int, int]
     span: tuple[int, int]
     value: str | None = None
-    is_column_header: bool | None = None
-    is_projected_row_header: bool | None = None
+    is_column_header: bool = False
+    is_projected_row_header: bool = False
 
 
 class AnnotationModel(BaseModel):

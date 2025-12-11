@@ -16,7 +16,7 @@ from .constants import (
 )
 from .extract_output_models import (
     AnnotationModel,
-    CellType,
+    Cell,
     ContentModel,
     LocationModel,
     LocationType,
@@ -116,7 +116,7 @@ def get_table_uid_to_annotations_mapping(
 
 def _convert_table_annotations_to_cells(
     table_annotations: list[AnnotationModel],
-) -> list[CellType]:
+) -> list[Cell]:
     """Convert list of table annotations to list of cells.
 
     Args:
@@ -132,7 +132,7 @@ def _convert_table_annotations_to_cells(
         ...]
     """  # noqa: E501
 
-    cells: list[CellType] = []
+    cells: list[Cell] = []
     for annotation in table_annotations:
         cell_index = annotation.data.index
         cell_span = annotation.data.span
@@ -144,7 +144,7 @@ def _convert_table_annotations_to_cells(
             ]
         else:
             cell_locations = None
-        cell = CellType(
+        cell = Cell(
             index=cell_index,
             span=cell_span,
             locations=cell_locations,
@@ -409,7 +409,7 @@ def extract_pd_dfs_with_locs_and_table_structure_from_output(
             locations=[
                 {'height': 0.09188, 'width': 0.66072, 'x': 0.16008, 'y': 0.40464, 'page_number': 0}
             ],
-            cells=[CellType(index=(0, 0), span=(1, 1), locations=[{'height': 0.01188,
+            cells=[Cell(index=(0, 0), span=(1, 1), locations=[{'height': 0.01188,
             'width': 0.22128, 'x': 0.16008, 'y': 0.40464, 'page_number': 0}],
             is_column_header=True, is_projected_row_header=False), ...]
         )]
