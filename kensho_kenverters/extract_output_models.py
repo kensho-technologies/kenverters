@@ -1,7 +1,7 @@
 # Copyright 2024-present Kensho Technologies, LLC.
 """Pydantic models for the output JSON."""
 
-from typing import Literal, NamedTuple, Tuple, TypeAlias
+from typing import Literal, NamedTuple, TypeAlias
 
 import pandas as pd
 from pydantic import BaseModel  # pylint: disable=no-name-in-module
@@ -12,8 +12,8 @@ LocationType: TypeAlias = dict[str, float | int] | None
 
 
 class Cell(BaseModel):
-    index: Tuple[int, int]
-    span: Tuple[int, int]
+    index: tuple[int, int]
+    span: tuple[int, int]
     locations: list[LocationType] | None
     is_column_header: bool
     is_projected_row_header: bool
