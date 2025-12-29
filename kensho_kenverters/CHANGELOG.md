@@ -1,5 +1,9 @@
 # Changelog
 
+## v2.0.0
+
+* Add parsing of table structure.  
+
 ## v1.3.0
 
 * Add support of new figure types. 
