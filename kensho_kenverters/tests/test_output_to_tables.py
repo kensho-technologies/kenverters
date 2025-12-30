@@ -4591,7 +4591,7 @@ class TestSplitLongTables(TestCase):
         # Create annotation models for each cell in the table
         self.table_structure_annotations = []
         # Add annotations for each cell
-        for row_idx in range(len(self.table_string_grid)):
+        for row_idx, _ in enumerate(self.table_string_grid):
             # "Revenue" and "Expenses" are projected row headers
             if row_idx in [1, 4]:
                 is_column_header = False
