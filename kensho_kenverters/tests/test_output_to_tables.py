@@ -3,6 +3,7 @@ import os
 from typing import Any, ClassVar
 from unittest import TestCase
 
+from ..constants import ContentCategory
 from ..extract_output_models import (
     AnnotationDataModel,
     AnnotationModel,
@@ -11,6 +12,10 @@ from ..extract_output_models import (
     TableGridAndStructure,
 )
 from ..output_to_tables import (
+    _get_max_col_header_row_and_project_header_rows,
+    _split_long_tables,
+    _split_row_ids,
+    _split_table_grids_and_annotations,
     build_table_grids,
     extract_pd_dfs_from_output,
     extract_pd_dfs_with_locs_and_table_structure_from_output,
@@ -4566,3 +4571,338 @@ class TestTableExtraction(TestCase):
             {"content_tree": content, "annotations": annotations}, True
         )
         self.assertEqual(expected_tables_grid_and_structure, tables_grid_and_structure)
+
+
+class TestSplitLongTables(TestCase):
+    """Test cases for table splitting functions."""
+
+    def setUp(self) -> None:
+        self.table_string_grid = [
+            ["Category", "Q1 2022", "Q2 2022", "Q3 2022", "Q4 2022"],
+            ["Revenue", "Revenue", "Revenue", "Revenue", "Revenue"],
+            ["", "101", "111", "121", "131"],
+            ["", "102", "112", "122", "132"],
+            ["Expenses", "Expenses", "Expenses", "Expenses", "Expenses"],
+            ["", "201", "211", "221", "231"],
+            ["", "202", "212", "222", "232"],
+            ["Total", "300", "310", "320", "330"],
+        ]
+
+        # Create annotation models for each cell in the table
+        self.table_structure_annotations = []
+        # Add annotations for each cell
+        for row_idx in range(len(self.table_string_grid)):
+            # "Revenue" and "Expenses" are projected row headers
+            if row_idx in [1, 4]:
+                is_column_header = False
+                is_projected_row_header = True
+                # Create a mock location
+                locations = [
+                    LocationModel(
+                        height=0.01188,
+                        width=0.06071,
+                        x=0.10 + len(self.table_string_grid[row_idx]) * 0.1,
+                        y=0.10 + row_idx * 0.05,
+                        page_number=0,
+                    )
+                ]
+                # Create the cell annotation
+                annotation = AnnotationModel(
+                    content_uids=[],
+                    data=AnnotationDataModel(
+                        index=(row_idx, 0),
+                        span=(1, len(self.table_string_grid[row_idx])),
+                        value=None,
+                        is_column_header=is_column_header,
+                        is_projected_row_header=is_projected_row_header,
+                    ),
+                    type="table_structure",
+                    locations=locations,
+                )
+                self.table_structure_annotations.append(annotation)
+            else:
+                for col_idx in range(len(self.table_string_grid[row_idx])):
+                    is_column_header = row_idx <= 0  # First row is column header
+                    is_projected_row_header = False
+                    # Create a mock location
+                    locations = [
+                        LocationModel(
+                            height=0.01188,
+                            width=0.06071,
+                            x=0.10 + col_idx * 0.1,
+                            y=0.10 + row_idx * 0.05,
+                            page_number=0,
+                        )
+                    ]
+
+                    # Create the cell annotation
+                    annotation = AnnotationModel(
+                        content_uids=[f"cell_{row_idx}_{col_idx}"],
+                        data=AnnotationDataModel(
+                            index=(row_idx, col_idx),
+                            span=(1, 1),
+                            value=None,
+                            is_column_header=is_column_header,
+                            is_projected_row_header=is_projected_row_header,
+                        ),
+                        type="table_structure",
+                        locations=locations,
+                    )
+                    self.table_structure_annotations.append(annotation)
+
+            # Create the TableGridAndStructure object
+            self.table_grid_and_structure = TableGridAndStructure(
+                table_category_type=ContentCategory.TABLE.value,
+                table_string_grid=self.table_string_grid,
+                table_structure_annotations=self.table_structure_annotations,
+            )
+
+    def test_get_max_col_header_row_and_project_header_rows(self) -> None:
+        """Test the _get_max_col_header_row_and_project_header_rows function."""
+        # Call the function with our test fixture
+        max_col_header_row, project_header_rows = (
+            _get_max_col_header_row_and_project_header_rows(
+                self.table_structure_annotations, len(self.table_string_grid)
+            )
+        )
+
+        # Verify the results
+        self.assertEqual(
+            max_col_header_row, 0
+        )  # We have column headers in rows 0 and 1
+        self.assertEqual(
+            project_header_rows, [1, 4]
+        )  # We have project row headers in rows 2 and 5
+
+        # Test with a table that has no column headers
+        annotations_no_headers = []
+        for annotation in self.table_structure_annotations:
+            # Create a copy of the annotation with is_column_header set to False
+            new_data = AnnotationDataModel(
+                index=annotation.data.index,
+                span=annotation.data.span,
+                value=annotation.data.value,
+                is_column_header=False,  # Set all to False
+                is_projected_row_header=annotation.data.is_projected_row_header,
+            )
+            new_annotation = AnnotationModel(
+                content_uids=annotation.content_uids,
+                data=new_data,
+                type=annotation.type,
+                locations=annotation.locations,
+            )
+            annotations_no_headers.append(new_annotation)
+
+        # Call the function with no column headers
+        max_col_header_row_none, project_header_rows_same = (
+            _get_max_col_header_row_and_project_header_rows(
+                annotations_no_headers, len(self.table_string_grid)
+            )
+        )
+
+        # Verify the results
+        self.assertIsNone(max_col_header_row_none)  # No column headers
+        self.assertEqual(
+            project_header_rows_same, [1, 4]
+        )  # Project row headers should be the same
+
+        # Test with no project row headers
+        annotations_no_project_headers = []
+        for annotation in self.table_structure_annotations:
+            # Create a copy of the annotation with is_projected_row_header set to False
+            new_data = AnnotationDataModel(
+                index=annotation.data.index,
+                span=annotation.data.span,
+                value=annotation.data.value,
+                is_column_header=annotation.data.is_column_header,
+                is_projected_row_header=False,  # Set all to False
+            )
+            new_annotation = AnnotationModel(
+                content_uids=annotation.content_uids,
+                data=new_data,
+                type=annotation.type,
+                locations=annotation.locations,
+            )
+            annotations_no_project_headers.append(new_annotation)
+
+        # Call the function with no project row headers
+        max_col_header_row_same, project_header_rows_empty = (
+            _get_max_col_header_row_and_project_header_rows(
+                annotations_no_project_headers, len(self.table_string_grid)
+            )
+        )
+
+        # Verify the results
+        self.assertEqual(
+            max_col_header_row_same, 0
+        )  # Column headers should be the same
+        self.assertEqual(project_header_rows_empty, [])  # No project row headers
+
+    def test_split_row_ids(self) -> None:
+        """Test the _split_row_ids function."""
+        # First get the max column header row and project header rows
+        max_col_header_row, project_header_rows = (
+            _get_max_col_header_row_and_project_header_rows(
+                self.table_structure_annotations, len(self.table_string_grid)
+            )
+        )
+
+        # Call the function with our test data
+        subtables_row_id_list = _split_row_ids(
+            max_col_header_row, len(self.table_string_grid), project_header_rows
+        )
+
+        # Expected result:
+        # - Row 1-3 should be in the first subtable (Revenue section)
+        # - Row 4-7 should be in the second subtable (Expenses and Total section)
+        expected_subtables = [[1, 2, 3], [4, 5, 6, 7]]
+
+        self.assertEqual(len(subtables_row_id_list), 2)
+        self.assertEqual(subtables_row_id_list, expected_subtables)
+
+    def test_split_table_grids_and_annotations(self) -> None:
+        """Test the _split_table_grids_and_annotations function."""
+        # First get the max column header row and project header rows
+        max_col_header_row, project_header_rows = (
+            _get_max_col_header_row_and_project_header_rows(
+                self.table_structure_annotations, len(self.table_string_grid)
+            )
+        )
+
+        # Get the subtables row ids
+        subtables_row_id_list = _split_row_ids(
+            max_col_header_row, len(self.table_string_grid), project_header_rows
+        )
+
+        # Call the function with our test data
+        subtable_string_grid_list, subtable_structure_annotations_list = (
+            _split_table_grids_and_annotations(
+                max_col_header_row, subtables_row_id_list, self.table_grid_and_structure
+            )
+        )
+
+        # Verify we got the expected number of subtables
+        self.assertEqual(len(subtable_string_grid_list), 2)
+        self.assertEqual(len(subtable_structure_annotations_list), 2)
+
+        # Check the content of the first subtable (Revenue section)
+        # It should contain rows 1, 2, 3 from the original table
+        expected_first_subtable = [
+            ["Revenue", "Revenue", "Revenue", "Revenue", "Revenue"],
+            ["", "101", "111", "121", "131"],
+            ["", "102", "112", "122", "132"],
+        ]
+        self.assertEqual(subtable_string_grid_list[0], expected_first_subtable)
+
+        # Check the content of the second subtable (Expenses and Total section)
+        # It should contain rows 4, 5, 6, 7 from the original table
+        expected_second_subtable = [
+            ["Expenses", "Expenses", "Expenses", "Expenses", "Expenses"],
+            ["", "201", "211", "221", "231"],
+            ["", "202", "212", "222", "232"],
+            ["Total", "300", "310", "320", "330"],
+        ]
+        self.assertEqual(subtable_string_grid_list[1], expected_second_subtable)
+
+        # Check that the annotations were properly adjusted
+        # For the first subtable
+        first_annotations = subtable_structure_annotations_list[0]
+        # Check a specific annotation: the first cell of the first row in the first subtable
+        # It should have been from row 1 in the original table
+        # and now have an index adjusted to a new position
+        revenue_cell_annotation = next(
+            (a for a in first_annotations if a.data.is_projected_row_header)
+        )
+        self.assertIsNotNone(revenue_cell_annotation)
+        # The index should be adjusted to (max_col_header_row + annotation.data.index[0] -
+        # min(subtable_row_ids) + 1, annotation.data.index[1])
+        # For the Revenue cell, original index was (1, 0), min(subtable_row_ids) was 1
+        # So new index should be (0 + 1 - 1 + 1, 0) = (1, 0)
+        self.assertEqual(revenue_cell_annotation.data.index, (1, 0))
+
+        # For the second subtable
+        second_annotations = subtable_structure_annotations_list[1]
+        # Check the Expenses cell annotation
+        expenses_cell_annotation = next(
+            (a for a in second_annotations if a.data.is_projected_row_header)
+        )
+        self.assertIsNotNone(expenses_cell_annotation)
+        # For the Expenses cell, original index was (4, 0), min(subtable_row_ids) was 4
+        # So new index should be (0 + 4 - 4 + 1, 0) = (1, 0)
+        self.assertEqual(expenses_cell_annotation.data.index, (1, 0))
+
+        # Check total number of annotations in each subtable
+        # First subtable should have 1 project row header + 2 rows × 5 columns = 11 annotations
+        self.assertEqual(len(first_annotations), 11)
+
+        # Second subtable should have 1 project row header + 3 rows × 5 columns = 20 annotations
+        self.assertEqual(len(second_annotations), 16)
+
+        # Test with empty subtables list
+        empty_subtables_grid, empty_subtables_annotations = (
+            _split_table_grids_and_annotations(
+                max_col_header_row, [], self.table_grid_and_structure
+            )
+        )
+        self.assertEqual(len(empty_subtables_grid), 0)
+        self.assertEqual(len(empty_subtables_annotations), 0)
+
+    def test_split_long_tables(self) -> None:
+        """Test the _split_long_tables function."""
+        # Call the function with our test fixture
+        subtable_string_grid_list, subtable_structure_annotations_list = (
+            _split_long_tables(self.table_grid_and_structure)
+        )
+
+        # Verify we got the expected number of subtables
+        self.assertEqual(len(subtable_string_grid_list), 2)
+        self.assertEqual(len(subtable_structure_annotations_list), 2)
+
+        # Each subtable should include the header rows (0 and 1) and the relevant data rows
+
+        # Check the content of the first subtable
+        # It should have the header rows (0, 1) + rows 2, 3, 4 from the original table
+        expected_first_subtable = [
+            ["Category", "Q1 2022", "Q2 2022", "Q3 2022", "Q4 2022"],  # Header row 0
+            [
+                "Revenue",
+                "Revenue",
+                "Revenue",
+                "Revenue",
+                "Revenue",
+            ],  # Data row with project header
+            ["", "101", "111", "121", "131"],  # Regular data row
+            ["", "102", "112", "122", "132"],  # Regular data row
+        ]
+        self.assertEqual(subtable_string_grid_list[0], expected_first_subtable)
+
+        # Check the content of the second subtable
+        # It should have the header rows (0, 1) + rows 5, 6, 7, 8 from the original table
+        expected_second_subtable = [
+            ["Category", "Q1 2022", "Q2 2022", "Q3 2022", "Q4 2022"],  # Header row 0
+            [
+                "Expenses",
+                "Expenses",
+                "Expenses",
+                "Expenses",
+                "Expenses",
+            ],  # Data row with project header
+            ["", "201", "211", "221", "231"],  # Regular data row
+            ["", "202", "212", "222", "232"],  # Regular data row
+            ["Total", "300", "310", "320", "330"],  # Data row
+        ]
+        self.assertEqual(subtable_string_grid_list[1], expected_second_subtable)
+
+        # Check annotations for the first subtable
+        first_annotations = subtable_structure_annotations_list[0]
+
+        # There should be 1 header rows × 5 columns + 1 project row header
+        # + 2 data rows × 5 columns = 16 annotations
+        self.assertEqual(len(first_annotations), 16)
+
+        # Check annotations for the second subtable
+        second_annotations = subtable_structure_annotations_list[1]
+
+        # There should be 1 header rows × 5 columns + 1 project row header
+        # + 3 data rows × 5 columns = 30 annotations
+        self.assertEqual(len(second_annotations), 21)

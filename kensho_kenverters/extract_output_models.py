@@ -9,6 +9,7 @@ from pydantic import BaseModel  # pylint: disable=no-name-in-module
 # Location types are either dictionaries of bbox coordinates and page numbers
 # or None if locations are not returned in the Extract output.
 LocationType: TypeAlias = dict[str, float | int] | None
+TableStringGridType: TypeAlias = list[list[str]]
 
 
 class Cell(BaseModel):
@@ -31,6 +32,9 @@ class Table(NamedTuple):
 
     df: pd.DataFrame
     table_type: TableCategoryType
+    project_row_headers: list[str]
+    table_uid: str
+    subtable_id: int | None = None
     locations: list[LocationType] | None = None
     cells: list[Cell] | None = None
 
@@ -103,5 +107,5 @@ class TableGridAndStructure(NamedTuple):
     """Objects consisting of table category type, string grid and structure annotations."""
 
     table_category_type: TableCategoryType
-    table_string_grid: list[list[str]]
+    table_string_grid: TableStringGridType
     table_structure_annotations: list[AnnotationModel]

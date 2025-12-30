@@ -23,6 +23,7 @@ from .extract_output_models import (
     Table,
     TableCategoryType,
     TableGridAndStructure,
+    TableStringGridType,
 )
 from .tables_utils import (
     convert_table_to_pd_df,
@@ -116,11 +117,13 @@ def get_table_uid_to_annotations_mapping(
 
 def _convert_table_annotations_to_cells(
     table_annotations: list[AnnotationModel],
-) -> list[Cell]:
-    """Convert list of table annotations to list of cells.
+    table_string_grid: TableStringGridType,
+) -> tuple[list[Cell], list[str]]:
+    """Convert list of table annotations to list of cells and return the project row header of the table.
 
     Args:
         table_annotations: a list of table structure annotations.
+        table_string_grid: a list of table string grids.
 
     Example Input:
         table_annotations = [AnnotationModel(content_uids=['2'],data=AnnotationDataModel(index=(0, 0),
@@ -133,7 +136,13 @@ def _convert_table_annotations_to_cells(
     """  # noqa: E501
 
     cells: list[Cell] = []
+    project_row_headers: list[str] = []
     for annotation in table_annotations:
+        if annotation.data.is_projected_row_header:
+            project_row_headers.append(
+                table_string_grid[annotation.data.index[0]][annotation.data.index[1]]
+            )
+
         cell_index = annotation.data.index
         cell_span = annotation.data.span
         cell_is_column_header = annotation.data.is_column_header
@@ -152,7 +161,7 @@ def _convert_table_annotations_to_cells(
             is_projected_row_header=cell_is_projected_row_header,
         )
         cells.append(cell)
-    return cells
+    return cells, project_row_headers
 
 
 def build_uids_grid_from_table_cell_annotations(
@@ -332,13 +341,155 @@ def build_table_grids(
     return tables_grid_and_structure
 
 
+def _get_max_col_header_row_and_project_header_rows(
+    annotations: list[AnnotationModel], n_row: int
+) -> tuple[int | None, list[int]]:
+    """Get the max column header row and project header row from the annotations list."""
+    # Extract the row ids of column headers and project row headers
+    column_header_rows = []
+    project_row_headers_rows = []
+    for annotation in annotations:
+        if annotation.data.is_column_header or annotation.data.is_projected_row_header:
+            for column_header_row_idx in range(
+                annotation.data.index[0],
+                annotation.data.index[0] + annotation.data.span[0],
+            ):
+                if (
+                    annotation.data.is_column_header
+                    and column_header_row_idx not in column_header_rows
+                ):
+                    column_header_rows.append(column_header_row_idx)
+                elif (
+                    annotation.data.is_projected_row_header
+                    and column_header_row_idx not in project_row_headers_rows
+                ):
+                    project_row_headers_rows.append(column_header_row_idx)
+
+    max_column_header_row_id = None
+    for row_idx in range(n_row):
+        if row_idx in column_header_rows:
+            max_column_header_row_id = row_idx
+        else:
+            break
+    project_row_headers_rows.sort()
+    return max_column_header_row_id, project_row_headers_rows
+
+
+def _split_row_ids(
+    max_column_header_row_id: int | None,
+    n_row: int,
+    project_row_headers_rows: list[int],
+) -> list[list[int]]:
+    """Split row ids into several sub-list of row ids based on the project row headers rows."""
+    if max_column_header_row_id is not None:
+        initial_row_id = max_column_header_row_id + 1
+    else:
+        initial_row_id = 0
+    subtables_row_id_list = []
+    row_id_cursor = initial_row_id
+    non_project_row_header_row_id_list: list[int] = []
+    for row_idx in range(initial_row_id, n_row):
+        if row_idx == n_row - 1:
+            subtables_row_id_list.append(list(range(row_id_cursor, row_idx + 1)))
+        elif row_idx in project_row_headers_rows:
+            if len(non_project_row_header_row_id_list) > 0:
+                subtables_row_id_list.append(list(range(row_id_cursor, row_idx)))
+                row_id_cursor = row_idx
+        elif row_idx not in project_row_headers_rows:
+            non_project_row_header_row_id_list.append(row_idx)
+    return subtables_row_id_list
+
+
+def _split_table_grids_and_annotations(
+    max_column_header_row_id: int | None,
+    subtables_row_ids_list: list[list[int]],
+    table_grid_and_structure: TableGridAndStructure,
+) -> tuple[list[TableStringGridType], list[list[AnnotationModel]]]:
+    """Split the table grids and structure annotations into several sub-list of table grid and structure annotations based on the project row headers."""  # noqa: E501
+    if max_column_header_row_id is None:
+        return [table_grid_and_structure.table_string_grid], [
+            table_grid_and_structure.table_structure_annotations
+        ]
+    subtable_string_grids_list: list[TableStringGridType] = []
+    subtable_structure_annotations_list: list[list[AnnotationModel]] = []
+    for subtable_id in range(len(subtables_row_ids_list)):
+        subtable_string_grids_list.append([])
+        subtable_structure_annotations_list.append([])
+
+    for row_id, row_grid in enumerate(table_grid_and_structure.table_string_grid):
+        for subtable_id, subtable_row_ids in enumerate(subtables_row_ids_list):
+            if row_id in subtable_row_ids:
+                subtable_string_grids_list[subtable_id].append(row_grid)
+
+    for annotation in table_grid_and_structure.table_structure_annotations:
+        for subtable_id, subtable_row_ids in enumerate(subtables_row_ids_list):
+            if annotation.data.index[0] in subtable_row_ids:
+                adjusted_index = (
+                    max_column_header_row_id
+                    + annotation.data.index[0]
+                    - min(subtable_row_ids)
+                    + 1,
+                    annotation.data.index[1],
+                )
+                annotation.data.index = adjusted_index
+                subtable_structure_annotations_list[subtable_id].append(annotation)
+
+    return subtable_string_grids_list, subtable_structure_annotations_list
+
+
+def _split_long_tables(
+    table_grid_and_structure: TableGridAndStructure,
+) -> tuple[list[TableStringGridType], list[list[AnnotationModel]]]:
+    """Split the grids and structure annotations of long tables into small tables based on project row header."""  # noqa: E501
+
+    n_row = len(table_grid_and_structure.table_string_grid)
+    max_column_header_row_id, project_row_headers_rows = (
+        _get_max_col_header_row_and_project_header_rows(
+            table_grid_and_structure.table_structure_annotations, n_row
+        )
+    )
+    if max_column_header_row_id is None or len(project_row_headers_rows) == 0:
+        return [table_grid_and_structure.table_string_grid], [
+            table_grid_and_structure.table_structure_annotations
+        ]
+    else:
+        subtables_row_id_list = _split_row_ids(
+            max_column_header_row_id, n_row, project_row_headers_rows
+        )
+        subtable_string_grids_list, subtable_structure_annotations_list = (
+            _split_table_grids_and_annotations(
+                max_column_header_row_id,
+                subtables_row_id_list,
+                table_grid_and_structure,
+            )
+        )
+
+        # Extract column header grids and annotations
+        column_header_grid = table_grid_and_structure.table_string_grid[
+            : max_column_header_row_id + 1
+        ]
+        column_header_annotations = []
+        for annotation in table_grid_and_structure.table_structure_annotations:
+            if annotation.data.index[0] <= max_column_header_row_id:
+                column_header_annotations.append(annotation)
+
+        return [
+            column_header_grid + subtable_string_grid
+            for subtable_string_grid in subtable_string_grids_list
+        ], [
+            column_header_annotations + subtable_structure_annotations
+            for subtable_structure_annotations in subtable_structure_annotations_list
+        ]
+
+
 def extract_pd_dfs_from_output(
     serialized_document: dict[str, Any],
     duplicate_merged_cells_content_flag: bool = True,
     use_first_row_as_header: bool = True,
     include_figure_extracted_table: bool = False,
+    split_long_tables: bool = False,
 ) -> list[pd.DataFrame]:
-    """Extract Extract output's tables and convert them to a list of pandas DataFrames.
+    """Extract output's tables and convert them to a list of pandas DataFrames.
 
     Args:
         serialized_document: a serialized document
@@ -347,6 +498,7 @@ def extract_pd_dfs_from_output(
             empty.
         use_first_row_as_header: if True, use the first row of the extracted table as the columns.
             Set to False if you know there is no header row in your tables.
+        split_long_tables: if True, split long tables based on the projected row headers.
 
     Returns:
             a list of pandas DataFrames, each containing a table
@@ -362,21 +514,33 @@ def extract_pd_dfs_from_output(
         serialized_document, duplicate_merged_cells_content_flag
     )
     table_dfs = []
-    for table_grid_structure in table_id_to_grid_and_structure.values():
-        if table_grid_structure.table_category_type in (
+    for table_grid_and_structure in table_id_to_grid_and_structure.values():
+        if table_grid_and_structure.table_category_type in (
             ContentCategory.TABLE.value,
             ContentCategory.TABLE_OF_CONTENTS.value,
         ) or (
             include_figure_extracted_table
-            and table_grid_structure.table_category_type
+            and table_grid_and_structure.table_category_type
             == ContentCategory.FIGURE_EXTRACTED_TABLE.value
         ):
-            table_df = convert_table_to_pd_df(
-                table_grid_structure.table_string_grid,
-                use_first_row_as_header=use_first_row_as_header,
-            )
-            table_dfs.append(table_df)
-
+            if split_long_tables:
+                subtable_string_grid_list, _ = _split_long_tables(
+                    table_grid_and_structure
+                )
+                for subtable_string_grid in subtable_string_grid_list:
+                    table_dfs.append(
+                        convert_table_to_pd_df(
+                            subtable_string_grid,
+                            use_first_row_as_header=use_first_row_as_header,
+                        )
+                    )
+            else:
+                table_dfs.append(
+                    convert_table_to_pd_df(
+                        table_grid_and_structure.table_string_grid,
+                        use_first_row_as_header=use_first_row_as_header,
+                    )
+                )
     return table_dfs
 
 
@@ -385,6 +549,7 @@ def extract_pd_dfs_with_locs_and_table_structure_from_output(
     duplicate_merged_cells_content_flag: bool = True,
     use_first_row_as_header: bool = True,
     include_figure_extracted_table: bool = False,
+    split_long_tables: bool = False,
 ) -> list[Table]:
     """Extract tables and convert them to a list of pd DataFrames, table locations and structures.
 
@@ -395,6 +560,7 @@ def extract_pd_dfs_with_locs_and_table_structure_from_output(
             empty.
         use_first_row_as_header: if True, use the first row of the extracted table as the columns.
             Set to False if you know there is no header row in your tables.
+        split_long_tables: if True, split long tables based on the projected row headers.
 
     Returns:
         a list of Table NamedTuples with a pandas DataFrame, locations and structures.
@@ -412,7 +578,12 @@ def extract_pd_dfs_with_locs_and_table_structure_from_output(
             cells=[Cell(index=(0, 0), span=(1, 1), locations=[{'height': 0.01188,
             'width': 0.22128, 'x': 0.16008, 'y': 0.40464, 'page_number': 0}],
             is_column_header=True, is_projected_row_header=False), ...]
-        )]
+        )],
+        table_type='TABLE',
+        project_row_headers=[],
+        table_uid='3',
+        subtable_id=None),
+        ]
     """
     # Get dfs
     table_id_to_grid_and_structure = build_table_grids(
@@ -436,19 +607,55 @@ def extract_pd_dfs_with_locs_and_table_structure_from_output(
             and table_grid_and_structure.table_category_type
             == ContentCategory.FIGURE_EXTRACTED_TABLE.value
         ):
-            table_df = convert_table_to_pd_df(
-                table_grid_and_structure.table_string_grid,
-                use_first_row_as_header=use_first_row_as_header,
-            )
-            table_cells = _convert_table_annotations_to_cells(
-                table_grid_and_structure.table_structure_annotations
-            )
-            tables.append(
-                Table(
-                    df=table_df,
-                    table_type=table_grid_and_structure.table_category_type,
-                    locations=table_uid_to_locs_mapping[table_uid],
-                    cells=table_cells,
+            table_category_type = table_grid_and_structure.table_category_type
+            if split_long_tables:
+                subtable_string_grid_list, subtable_structure_annotation_list = (
+                    _split_long_tables(table_grid_and_structure)
                 )
-            )
+                for subtable_id, (
+                    subtable_string_grid,
+                    subtable_structure_annotation,
+                ) in enumerate(
+                    zip(subtable_string_grid_list, subtable_structure_annotation_list)
+                ):
+                    subtable_df = convert_table_to_pd_df(
+                        subtable_string_grid,
+                        use_first_row_as_header=use_first_row_as_header,
+                    )
+                    subtable_cells, project_row_headers = (
+                        _convert_table_annotations_to_cells(
+                            subtable_structure_annotation,
+                            subtable_string_grid,
+                        )
+                    )
+                    tables.append(
+                        Table(
+                            df=subtable_df,
+                            table_type=table_category_type,
+                            locations=table_uid_to_locs_mapping[table_uid],
+                            cells=subtable_cells,
+                            project_row_headers=project_row_headers,
+                            table_uid=table_uid,
+                            subtable_id=subtable_id,
+                        )
+                    )
+            else:
+                table_df = convert_table_to_pd_df(
+                    table_grid_and_structure.table_string_grid,
+                    use_first_row_as_header=use_first_row_as_header,
+                )
+                table_cells, project_row_headers = _convert_table_annotations_to_cells(
+                    table_grid_and_structure.table_structure_annotations,
+                    table_grid_and_structure.table_string_grid,
+                )
+                tables.append(
+                    Table(
+                        df=table_df,
+                        table_type=table_category_type,
+                        locations=table_uid_to_locs_mapping[table_uid],
+                        cells=table_cells,
+                        project_row_headers=project_row_headers,
+                        table_uid=table_uid,
+                    )
+                )
     return tables
