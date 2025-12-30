@@ -4814,10 +4814,10 @@ class TestSplitLongTables(TestCase):
             (a for a in first_annotations if a.data.is_projected_row_header)
         )
         self.assertIsNotNone(revenue_cell_annotation)
-        # The index should be adjusted to (max_col_header_row + annotation.data.index[0] -
-        # min(subtable_row_ids) + 1, annotation.data.index[1])
+        # The index should be adjusted to (max_col_header_row + 1 + annotation.data.index[0] -
+        # min(subtable_row_ids), annotation.data.index[1])
         # For the Revenue cell, original index was (1, 0), min(subtable_row_ids) was 1
-        # So new index should be (0 + 1 - 1 + 1, 0) = (1, 0)
+        # So new index should be (1 + 1 - 1, 0) = (1, 0)
         self.assertEqual(revenue_cell_annotation.data.index, (1, 0))
 
         # For the second subtable
@@ -4828,7 +4828,7 @@ class TestSplitLongTables(TestCase):
         )
         self.assertIsNotNone(expenses_cell_annotation)
         # For the Expenses cell, original index was (4, 0), min(subtable_row_ids) was 4
-        # So new index should be (0 + 4 - 4 + 1, 0) = (1, 0)
+        # So new index should be (1 + 4 - 4, 0) = (1, 0)
         self.assertEqual(expenses_cell_annotation.data.index, (1, 0))
 
         # Check total number of annotations in each subtable

@@ -406,10 +406,11 @@ def _split_table_grids_and_annotations(
     table_grid_and_structure: TableGridAndStructure,
 ) -> tuple[list[TableStringGridType], list[list[AnnotationModel]]]:
     """Split the table grids and structure annotations into several sub-list of table grid and structure annotations based on the project row headers."""  # noqa: E501
-    if max_column_header_row_id is None:
-        return [table_grid_and_structure.table_string_grid], [
-            table_grid_and_structure.table_structure_annotations
-        ]
+    if max_column_header_row_id is not None:
+        intial_row_id = max_column_header_row_id + 1
+    else:
+        intial_row_id = 0
+
     subtable_string_grids_list: list[TableStringGridType] = []
     subtable_structure_annotations_list: list[list[AnnotationModel]] = []
     for subtable_id in range(len(subtables_row_ids_list)):
@@ -425,10 +426,7 @@ def _split_table_grids_and_annotations(
         for subtable_id, subtable_row_ids in enumerate(subtables_row_ids_list):
             if annotation.data.index[0] in subtable_row_ids:
                 adjusted_index = (
-                    max_column_header_row_id
-                    + annotation.data.index[0]
-                    - min(subtable_row_ids)
-                    + 1,
+                    intial_row_id + annotation.data.index[0] - min(subtable_row_ids),
                     annotation.data.index[1],
                 )
                 annotation.data.index = adjusted_index
