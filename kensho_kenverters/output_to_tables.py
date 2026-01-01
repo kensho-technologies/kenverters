@@ -395,6 +395,7 @@ def _split_row_ids(
             if len(non_project_row_header_row_id_list) > 0:
                 subtables_row_id_list.append(list(range(row_id_cursor, row_idx)))
                 row_id_cursor = row_idx
+                non_project_row_header_row_id_list = []
         elif row_idx not in project_row_headers_rows:
             non_project_row_header_row_id_list.append(row_idx)
     return subtables_row_id_list
