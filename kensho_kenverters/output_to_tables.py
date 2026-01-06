@@ -262,6 +262,175 @@ def convert_uid_grid_to_content_grid(
     return content_grid
 
 
+def _get_max_col_header_row_and_project_header_rows(
+    annotations: list[AnnotationModel], n_row: int
+) -> tuple[int | None, list[int]]:
+    """Get the maximum consecutive column header row starting from the initial and project header rows."""  # noqa: E501
+
+    # Extract the row ids of column headers and project header rows.
+    column_header_rows = []
+    project_header_rows = set()
+    for annotation in annotations:
+        if annotation.data.is_column_header or annotation.data.is_projected_row_header:
+            for column_row_idx in range(
+                annotation.data.index[0],
+                annotation.data.index[0] + annotation.data.span[0],
+            ):
+                if (
+                    annotation.data.is_column_header
+                    and column_row_idx not in column_header_rows
+                ):
+                    column_header_rows.append(column_row_idx)
+                elif (
+                    annotation.data.is_projected_row_header
+                    and column_row_idx not in project_header_rows
+                ):
+                    project_header_rows.add(column_row_idx)
+
+    # Find the maximum consecutive column header row starting from the initial.
+    max_column_header_row_id = None
+    for row_idx in range(n_row):
+        if row_idx in column_header_rows:
+            max_column_header_row_id = row_idx
+        else:
+            break
+    return max_column_header_row_id, sorted(project_header_rows)
+
+
+def _split_row_ids(
+    max_column_header_row_id: int | None,
+    n_row: int,
+    project_headers_rows: list[int],
+) -> list[list[int]]:
+    """Split rows of long table into several sub-lists of rows based on the project header rows.
+
+    With the rows of project headers, we split the rows (after the maximum row of column headers) of
+    long tables based on the position of project header rows. The output of this function will be
+    a list of blocks of rows split by the project header rows.
+    """
+    if max_column_header_row_id is not None:
+        initial_row_id = max_column_header_row_id + 1
+    else:
+        initial_row_id = 0
+    # Initial the empty list of subtable rows ids.
+    subtables_row_id_list = []
+    # Split the rows into a list of blocks of rows based on project header rows.
+    row_id_cursor = initial_row_id
+    non_project_row_header_row_id_list: list[int] = []
+    for row_idx in range(initial_row_id, n_row):
+        if row_idx == n_row - 1:
+            subtables_row_id_list.append(list(range(row_id_cursor, row_idx + 1)))
+        elif row_idx in project_headers_rows:
+            if len(non_project_row_header_row_id_list) > 0:
+                subtables_row_id_list.append(list(range(row_id_cursor, row_idx)))
+                row_id_cursor = row_idx
+                non_project_row_header_row_id_list = []
+        else:
+            non_project_row_header_row_id_list.append(row_idx)
+    return subtables_row_id_list
+
+
+def _split_table_grids_and_annotations(
+    max_column_header_row_id: int | None,
+    subtables_row_ids_list: list[list[int]],
+    table_grid_and_structure: TableGridAndStructure,
+) -> tuple[list[TableStringGridType], list[list[AnnotationModel]]]:
+    """Assign the table grids and annotations to different blocks of rows.
+
+    With the list of blocks of rows, we assign the table grids and annotations
+    to different blocks of rows.
+    """
+    if max_column_header_row_id is not None:
+        intial_row_id = max_column_header_row_id + 1
+    else:
+        intial_row_id = 0
+
+    # Initialize the empty list of table grids and structure annotations.
+    subtable_string_grids_list: list[TableStringGridType] = []
+    subtable_structure_annotations_list: list[list[AnnotationModel]] = []
+    for subtable_id in range(len(subtables_row_ids_list)):
+        subtable_string_grids_list.append([])
+        subtable_structure_annotations_list.append([])
+
+    # Assign the table grids to different blocks of rows.
+    for row_id, row_grid in enumerate(table_grid_and_structure.table_string_grid):
+        for subtable_id, subtable_row_ids in enumerate(subtables_row_ids_list):
+            if row_id in subtable_row_ids:
+                subtable_string_grids_list[subtable_id].append(row_grid)
+
+    # Assign the table annotations to different blocks of rows.
+    for annotation in table_grid_and_structure.table_structure_annotations:
+        for subtable_id, subtable_row_ids in enumerate(subtables_row_ids_list):
+            if annotation.data.index[0] in subtable_row_ids:
+                adjusted_index = (
+                    intial_row_id + annotation.data.index[0] - min(subtable_row_ids),
+                    annotation.data.index[1],
+                )
+                annotation.data.index = adjusted_index
+                subtable_structure_annotations_list[subtable_id].append(annotation)
+
+    return subtable_string_grids_list, subtable_structure_annotations_list
+
+
+def _split_long_tables(
+    table_grid_and_structure: TableGridAndStructure,
+) -> tuple[list[TableStringGridType], list[list[AnnotationModel]]]:
+    """Split string grids and structure annotations of long table into small sub-tables based on project header rows.
+
+    This function will split the grids and structure annotations of long table
+    into small sub-tables based on project header rows. And the function will also extract the table
+    grids and annotations of column headers and concatenate them to each sub-table.
+    """  # noqa: E501
+
+    n_row = len(table_grid_and_structure.table_string_grid)
+    # Get the maximum consecutive column header row starting from the initial
+    # and the project header rows of the long table.
+    max_column_header_row_id, project_header_rows = (
+        _get_max_col_header_row_and_project_header_rows(
+            table_grid_and_structure.table_structure_annotations, n_row
+        )
+    )
+    # If there is no column header rows or there is not project header rows,
+    # return the single element list with original table grids and structure annotations
+    if max_column_header_row_id is None or len(project_header_rows) == 0:
+        return [table_grid_and_structure.table_string_grid], [
+            table_grid_and_structure.table_structure_annotations
+        ]
+    else:
+        # Split the rows (after the maximum column header row) based on the
+        # project header rows
+        subtables_row_id_list = _split_row_ids(
+            max_column_header_row_id, n_row, project_header_rows
+        )
+        # Assign the grids and structure annotations of the long table into
+        # sub-tables.
+        subtable_string_grids_list, subtable_structure_annotations_list = (
+            _split_table_grids_and_annotations(
+                max_column_header_row_id,
+                subtables_row_id_list,
+                table_grid_and_structure,
+            )
+        )
+
+        # Extract column header grids and annotations
+        column_header_grid = table_grid_and_structure.table_string_grid[
+            : max_column_header_row_id + 1
+        ]
+        column_header_annotations = []
+        for annotation in table_grid_and_structure.table_structure_annotations:
+            if annotation.data.index[0] <= max_column_header_row_id:
+                column_header_annotations.append(annotation)
+        # Concatenate the column header grids and annotations to each subtable and
+        # return the grids and structure annotations of each subtable.
+        return [
+            column_header_grid + subtable_string_grid
+            for subtable_string_grid in subtable_string_grids_list
+        ], [
+            column_header_annotations + subtable_structure_annotations
+            for subtable_structure_annotations in subtable_structure_annotations_list
+        ]
+
+
 # --------- Main API ---------
 
 
@@ -341,146 +510,6 @@ def build_table_grids(
     return tables_grid_and_structure
 
 
-def _get_max_col_header_row_and_project_header_rows(
-    annotations: list[AnnotationModel], n_row: int
-) -> tuple[int | None, list[int]]:
-    """Get the max column header row and project header row from the annotations list."""
-    # Extract the row ids of column headers and project row headers
-    column_header_rows = []
-    project_row_headers_rows = []
-    for annotation in annotations:
-        if annotation.data.is_column_header or annotation.data.is_projected_row_header:
-            for column_header_row_idx in range(
-                annotation.data.index[0],
-                annotation.data.index[0] + annotation.data.span[0],
-            ):
-                if (
-                    annotation.data.is_column_header
-                    and column_header_row_idx not in column_header_rows
-                ):
-                    column_header_rows.append(column_header_row_idx)
-                elif (
-                    annotation.data.is_projected_row_header
-                    and column_header_row_idx not in project_row_headers_rows
-                ):
-                    project_row_headers_rows.append(column_header_row_idx)
-
-    max_column_header_row_id = None
-    for row_idx in range(n_row):
-        if row_idx in column_header_rows:
-            max_column_header_row_id = row_idx
-        else:
-            break
-    project_row_headers_rows.sort()
-    return max_column_header_row_id, project_row_headers_rows
-
-
-def _split_row_ids(
-    max_column_header_row_id: int | None,
-    n_row: int,
-    project_row_headers_rows: list[int],
-) -> list[list[int]]:
-    """Split row ids into several sub-list of row ids based on the project row headers rows."""
-    if max_column_header_row_id is not None:
-        initial_row_id = max_column_header_row_id + 1
-    else:
-        initial_row_id = 0
-    subtables_row_id_list = []
-    row_id_cursor = initial_row_id
-    non_project_row_header_row_id_list: list[int] = []
-    for row_idx in range(initial_row_id, n_row):
-        if row_idx == n_row - 1:
-            subtables_row_id_list.append(list(range(row_id_cursor, row_idx + 1)))
-        elif row_idx in project_row_headers_rows:
-            if len(non_project_row_header_row_id_list) > 0:
-                subtables_row_id_list.append(list(range(row_id_cursor, row_idx)))
-                row_id_cursor = row_idx
-                non_project_row_header_row_id_list = []
-        elif row_idx not in project_row_headers_rows:
-            non_project_row_header_row_id_list.append(row_idx)
-    return subtables_row_id_list
-
-
-def _split_table_grids_and_annotations(
-    max_column_header_row_id: int | None,
-    subtables_row_ids_list: list[list[int]],
-    table_grid_and_structure: TableGridAndStructure,
-) -> tuple[list[TableStringGridType], list[list[AnnotationModel]]]:
-    """Split the table grids and structure annotations into several sub-list of table grid and structure annotations based on the project row headers."""  # noqa: E501
-    if max_column_header_row_id is not None:
-        intial_row_id = max_column_header_row_id + 1
-    else:
-        intial_row_id = 0
-
-    subtable_string_grids_list: list[TableStringGridType] = []
-    subtable_structure_annotations_list: list[list[AnnotationModel]] = []
-    for subtable_id in range(len(subtables_row_ids_list)):
-        subtable_string_grids_list.append([])
-        subtable_structure_annotations_list.append([])
-
-    for row_id, row_grid in enumerate(table_grid_and_structure.table_string_grid):
-        for subtable_id, subtable_row_ids in enumerate(subtables_row_ids_list):
-            if row_id in subtable_row_ids:
-                subtable_string_grids_list[subtable_id].append(row_grid)
-
-    for annotation in table_grid_and_structure.table_structure_annotations:
-        for subtable_id, subtable_row_ids in enumerate(subtables_row_ids_list):
-            if annotation.data.index[0] in subtable_row_ids:
-                adjusted_index = (
-                    intial_row_id + annotation.data.index[0] - min(subtable_row_ids),
-                    annotation.data.index[1],
-                )
-                annotation.data.index = adjusted_index
-                subtable_structure_annotations_list[subtable_id].append(annotation)
-
-    return subtable_string_grids_list, subtable_structure_annotations_list
-
-
-def _split_long_tables(
-    table_grid_and_structure: TableGridAndStructure,
-) -> tuple[list[TableStringGridType], list[list[AnnotationModel]]]:
-    """Split the grids and structure annotations of long tables into small tables based on project row header."""  # noqa: E501
-
-    n_row = len(table_grid_and_structure.table_string_grid)
-    max_column_header_row_id, project_row_headers_rows = (
-        _get_max_col_header_row_and_project_header_rows(
-            table_grid_and_structure.table_structure_annotations, n_row
-        )
-    )
-    if max_column_header_row_id is None or len(project_row_headers_rows) == 0:
-        return [table_grid_and_structure.table_string_grid], [
-            table_grid_and_structure.table_structure_annotations
-        ]
-    else:
-        subtables_row_id_list = _split_row_ids(
-            max_column_header_row_id, n_row, project_row_headers_rows
-        )
-        subtable_string_grids_list, subtable_structure_annotations_list = (
-            _split_table_grids_and_annotations(
-                max_column_header_row_id,
-                subtables_row_id_list,
-                table_grid_and_structure,
-            )
-        )
-
-        # Extract column header grids and annotations
-        column_header_grid = table_grid_and_structure.table_string_grid[
-            : max_column_header_row_id + 1
-        ]
-        column_header_annotations = []
-        for annotation in table_grid_and_structure.table_structure_annotations:
-            if annotation.data.index[0] <= max_column_header_row_id:
-                column_header_annotations.append(annotation)
-
-        return [
-            column_header_grid + subtable_string_grid
-            for subtable_string_grid in subtable_string_grids_list
-        ], [
-            column_header_annotations + subtable_structure_annotations
-            for subtable_structure_annotations in subtable_structure_annotations_list
-        ]
-
-
 def extract_pd_dfs_from_output(
     serialized_document: dict[str, Any],
     duplicate_merged_cells_content_flag: bool = True,
@@ -488,7 +517,7 @@ def extract_pd_dfs_from_output(
     include_figure_extracted_table: bool = False,
     split_long_tables: bool = False,
 ) -> list[pd.DataFrame]:
-    """Extract output's tables and convert them to a list of pandas DataFrames.
+    """Extract tables from output and convert them to a list of pandas DataFrames.
 
     Args:
         serialized_document: a serialized document
