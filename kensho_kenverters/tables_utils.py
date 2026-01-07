@@ -305,10 +305,10 @@ def split_table_into_subtables(
     column_header_row_ids: set[int],
     project_row_header_row_ids: set[int],
 ) -> tuple[list[TableStringGridType], list[list[AnnotationModel]]]:
-    """To split long table into small sub-tables based on project row headers.
+    """To split long table into small subtables based on project row headers.
 
-    We split the table string grid and structure annotations of long table based on project row headers and return
-    a list of sublist of table strings for subtables and a list of sublist of structure annotations for subtables.
+    We split the string grid and structure annotations of long table based on project row headers and return
+    a list of string grid of subtables and a list of sublist of structure annotations for subtables.
     We also concatenate the string grid and structure annotations from column headers to each subtable.
     """  # noqa: E501
 
@@ -347,7 +347,7 @@ def split_table_into_subtables(
             adjusted_subtable_structure_annotations
         )
 
-    # Extract string grids and annotations of column headers
+    # Extract string grid and structure annotations of column headers
     column_header_grid = table_grid_and_structure.table_string_grid[
         : max_column_header_row_id + 1
     ]
@@ -356,8 +356,8 @@ def split_table_into_subtables(
         if annotation.data.index[0] <= max_column_header_row_id:
             column_header_annotations.append(annotation)
 
-    # Concatenate the column header grids and annotations to each subtable and
-    # return the grid and structure annotations of each subtable.
+    # Concatenate the column header string grid and structure annotations to each subtable and
+    # return the string grid and structure annotations of subtables.
     return [
         column_header_grid + subtable_string_grid
         for subtable_string_grid in subtable_string_grid_list
