@@ -14,7 +14,7 @@ from ..extract_output_models import (
     TableGridAndStructure,
 )
 from ..tables_utils import (
-    _adjust_row_offset_of_structure_annotations,
+    _adjust_row_indexes_of_structure_annotations,
     _extract_string_grids_by_row_ids,
     _extract_structure_annotations_by_row_ids,
     _split_row_ids_after_column_headers,
@@ -1144,7 +1144,7 @@ class TestSplitLongTables(TestCase):
         self.assertIsNotNone(expenses_annotation)
         self.assertEqual(expenses_annotation.data.index[0], 4)
 
-    def test_adjust_row_offset_of_structure_annotations(self) -> None:
+    def test_adjust_row_indexes_of_structure_annotations(self) -> None:
         # Create a simple list of annotations to test with
         test_annotations = [
             AnnotationModel(
@@ -1169,7 +1169,7 @@ class TestSplitLongTables(TestCase):
 
         # Apply a positive row offset (moving rows down)
         row_offset = 3
-        adjusted_annotations = _adjust_row_offset_of_structure_annotations(
+        adjusted_annotations = _adjust_row_indexes_of_structure_annotations(
             row_offset, test_annotations
         )
 
@@ -1183,7 +1183,7 @@ class TestSplitLongTables(TestCase):
 
         # Test with a negative offset (moving rows up)
         row_offset = -1
-        adjusted_annotations = _adjust_row_offset_of_structure_annotations(
+        adjusted_annotations = _adjust_row_indexes_of_structure_annotations(
             row_offset, test_annotations
         )
 

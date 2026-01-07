@@ -198,17 +198,18 @@ def table_can_be_split(
 ) -> bool:
     """To verify if a table can be split.
 
-    A table can be split only if there are column header rows, project_row_headers and the
+    A table can be split only if there are column headers and project row headers and the
     column header row ids are consecutive starting from the initial.
     """
-    # To verify whether there are column header rows
+    # To verify whether there are column headers
     if len(column_header_row_ids) > 0:
+
+        # To verify whether there are project_row_headers and whether the
+        # column header row ids are consecutive starting from the initial.
         col_header_row_ids_consecutive_from_initial = (
             max(column_header_row_ids) == len(column_header_row_ids) - 1
         )
 
-        # To verify whether there are project_row_headers and the
-        # column header row ids are consecutive starting from the initial.
         if (
             len(project_row_headers_row_ids) > 0
             and col_header_row_ids_consecutive_from_initial
@@ -223,11 +224,10 @@ def _split_row_ids_after_column_headers(
     n_row: int,
     project_row_header_row_ids: set[int],
 ) -> list[list[int]]:
-    """To split row ids (after column headers) of long table into sub-lists of row ids based on the project header rows.
+    """To split row ids (after column headers) of long table into sub-lists of row ids based on the project row headers.
 
-    With the rows of project headers, we split the row ids (after the column headers) of
-    long tables based on the position of project header rows. The output of this function will be
-    a list of sublist of row ids for subtables.
+    We split the row ids (after the column headers) of long table based on the position of project row headers. The output
+    of this function will be a list of sub-lists of row ids for subtables.
     """  # noqa: E501
 
     initial_row_id = max_column_header_row_id + 1
@@ -258,8 +258,9 @@ def _extract_string_grids_by_row_ids(
 
     We extract specific rows of table string grid and return it as a new table string grid.
     """
-    # Initialize the empty list of table grids and structure annotations.
+    # Initialize the empty list of table grid.
     extract_string_grid = []
+    # Extrac the table string grid based on row ids
     for row_id, row_grid in enumerate(table_string_grid):
         if row_id in target_row_ids:
             extract_string_grid.append(row_grid)
@@ -273,17 +274,19 @@ def _extract_structure_annotations_by_row_ids(
 
     We extract table structure annotations of specific rows and return them as a new list of table structure annotations.
     """  # noqa: E501
+    # Initialize the empty list of table structure annotations.
     extract_structure_annotations = []
+    # Extrac the table structure annotations grid based on row ids
     for annotation in table_structure_annotations:
         if annotation.data.index[0] in target_row_ids:
             extract_structure_annotations.append(annotation)
     return extract_structure_annotations
 
 
-def _adjust_row_offset_of_structure_annotations(
+def _adjust_row_indexes_of_structure_annotations(
     row_offset: int, table_structure_annotations: list[AnnotationModel]
 ) -> list[AnnotationModel]:
-    """Adjust row offset of structure annotations."""
+    """Adjust the row indexes of the structure annotations."""
 
     adjusted_structure_annotations = []
     for annotation in table_structure_annotations:
@@ -335,7 +338,7 @@ def split_table_into_subtables(
         # Adjust the row index of annotations such that it is compatible to
         # the concatenating column header rows.
         adjusted_subtable_structure_annotations = (
-            _adjust_row_offset_of_structure_annotations(
+            _adjust_row_indexes_of_structure_annotations(
                 max_column_header_row_id - min(subtable_row_ids) + 1,
                 subtable_structure_annotations,
             )
@@ -354,7 +357,7 @@ def split_table_into_subtables(
             column_header_annotations.append(annotation)
 
     # Concatenate the column header grids and annotations to each subtable and
-    # return the grids and structure annotations of each subtable.
+    # return the grid and structure annotations of each subtable.
     return [
         column_header_grid + subtable_string_grid
         for subtable_string_grid in subtable_string_grid_list
