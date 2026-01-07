@@ -450,13 +450,6 @@ def extract_pd_dfs_with_locs_and_table_structure_from_output(
         subtable_id=None),
         ...
         ]
-
-        Note:
-        The table_uid attribute of Table class is the content uid of the table
-        in Extract output.
-        The subtable_id attribute of Table class is the serial id of the subtable within the
-        original long table. If the table is not coming from long table splitting, the
-        subtable_id will be None.
     """
     # Get dfs
     table_id_to_grid_and_structure = build_table_grids(
