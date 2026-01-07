@@ -276,7 +276,7 @@ def _extract_structure_annotations_by_row_ids(
     """  # noqa: E501
     # Initialize the empty list of table structure annotations.
     extract_structure_annotations = []
-    # Extrac the table structure annotations grid based on row ids
+    # Extract the table structure annotations based on row ids
     for annotation in table_structure_annotations:
         if annotation.data.index[0] in target_row_ids:
             extract_structure_annotations.append(annotation)
