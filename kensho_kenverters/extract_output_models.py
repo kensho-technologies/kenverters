@@ -31,9 +31,9 @@ class Table(NamedTuple):
     """Converted table types consisting of the table as a pandas DataFrame and its location(s).
 
     Note:
-        The table_uid attribute of Table class is the content uid of the table
-        in Extract output.
-        The subtable_id attribute of Table class is the serial id of the subtable within the
+        project_row_headers: The list of project row headers in the table.
+        table_uid: the content uid of the table in Extract output.
+        subtable_id: the serial id of the subtable within the
         original long table. If the table is not coming from long table splitting, the
         subtable_id will be None.
     """
