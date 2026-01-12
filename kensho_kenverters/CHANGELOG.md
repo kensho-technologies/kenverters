@@ -1,5 +1,9 @@
 # Changelog
 
+## v2.1.0
+
+* Add splitting of long tables with project row headers. 
+
 ## v2.0.0
 
 * Add parsing of table structure.  

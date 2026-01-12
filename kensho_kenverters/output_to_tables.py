@@ -23,11 +23,16 @@ from .extract_output_models import (
     Table,
     TableCategoryType,
     TableGridAndStructure,
+    TableStringGridType,
 )
 from .tables_utils import (
     convert_table_to_pd_df,
     duplicate_spanning_annotations,
+    extract_project_row_headers,
+    get_column_headers_and_project_row_headers_row_ids,
     get_table_shape,
+    split_table_into_subtables,
+    table_can_be_split,
 )
 from .utils import load_output_to_pydantic
 
@@ -253,9 +258,174 @@ def convert_uid_grid_to_content_grid(
     return content_grid
 
 
+def _table_should_be_extracted(
+    table_grid_and_structure: TableGridAndStructure,
+    include_figure_extracted_table: bool,
+) -> bool:
+    """To verify whether a table should be extracted.
+
+    A table should be extracted if the table belongs to table type or table
+    of contents type. Or the table is figure extracted table and
+    include_figure_extracted_table = True.
+    """
+    table_belong_to_table_or_table_of_content = (
+        table_grid_and_structure.table_category_type
+        in (
+            ContentCategory.TABLE.value,
+            ContentCategory.TABLE_OF_CONTENTS.value,
+        )
+    )
+    table_belong_to_figure_extracted_table = table_belong_to_table_or_table_of_content
+
+    return table_belong_to_table_or_table_of_content or (
+        include_figure_extracted_table and table_belong_to_figure_extracted_table
+    )
+
+
+def _get_dfs_from_table_grid_and_structure(
+    table_grid_and_structure: TableGridAndStructure,
+    use_first_row_as_header: bool,
+    split_long_tables: bool,
+) -> list[pd.DataFrame]:
+    """Get the dataframe(s) from the TableGridAndStructure object of table.
+
+    If split_long_tables is True and the table can be split, the table will be
+    split into sub-dataframes based on the project row headers. Otherwise, the single
+    dataframe of the table will be returned.
+    """
+    column_header_row_ids, project_row_headers_row_ids = (
+        get_column_headers_and_project_row_headers_row_ids(
+            table_grid_and_structure.table_structure_annotations
+        )
+    )
+    # If split_long_tables is True and the table can be split, the dataframe
+    # will be split into sub-dataframes based on the project row headers.
+    if split_long_tables and table_can_be_split(
+        column_header_row_ids, project_row_headers_row_ids
+    ):
+        subtable_string_grid_list, _ = split_table_into_subtables(
+            table_grid_and_structure,
+            column_header_row_ids,
+            project_row_headers_row_ids,
+        )
+        # Initialize the empty list of table dataframes.
+        table_dfs: list[pd.DataFrame] = []
+        for subtable_string_grid in subtable_string_grid_list:
+            table_dfs.append(
+                convert_table_to_pd_df(
+                    subtable_string_grid,
+                    use_first_row_as_header=use_first_row_as_header,
+                )
+            )
+        return table_dfs
+    # Otherwise, return the single dataframe of the table.
+    else:
+        return [
+            convert_table_to_pd_df(
+                table_grid_and_structure.table_string_grid,
+                use_first_row_as_header=use_first_row_as_header,
+            )
+        ]
+
+
+def _build_table_object_from_grid_and_structure_annotations(
+    table_string_grid: TableStringGridType,
+    table_structure_annotations: list[AnnotationModel],
+    table_category_type: TableCategoryType,
+    table_locations: list[LocationType],
+    table_uid: str,
+    use_first_row_as_header: bool,
+    subtable_id: int | None = None,
+) -> Table:
+    """Build a table object from the string grid and structure_annotations of a table."""
+
+    table_df = convert_table_to_pd_df(
+        table_string_grid,
+        use_first_row_as_header=use_first_row_as_header,
+    )
+    table_cells = _convert_table_annotations_to_cells(table_structure_annotations)
+    project_row_headers = extract_project_row_headers(
+        table_structure_annotations,
+        table_string_grid,
+    )
+    return Table(
+        df=table_df,
+        table_type=table_category_type,
+        locations=table_locations,
+        cells=table_cells,
+        project_row_headers=project_row_headers,
+        table_uid=table_uid,
+        subtable_id=subtable_id,
+    )
+
+
+def _get_tables_objects_from_table_grid_and_structure(
+    table_grid_and_structure: TableGridAndStructure,
+    table_locations: list[LocationType],
+    table_uid: str,
+    use_first_row_as_header: bool,
+    split_long_tables: bool,
+) -> list[Table]:
+    """Get table object(s) from the TableGridAndStructure object of table.
+
+    If split_long_tables is True and the table can be split, the table will be
+    split into subtable objects based on the project row headers. Otherwise, the single
+    table object of the table will be returned.
+    """
+    table_category_type = table_grid_and_structure.table_category_type
+    column_header_row_ids, project_row_headers_row_ids = (
+        get_column_headers_and_project_row_headers_row_ids(
+            table_grid_and_structure.table_structure_annotations
+        )
+    )
+    # If split_long_tables is True and the table can be split, the table
+    # will be split into subtable objects based on the project row headers.
+    if split_long_tables and table_can_be_split(
+        column_header_row_ids, project_row_headers_row_ids
+    ):
+        subtable_string_grid_list, subtable_structure_annotations_list = (
+            split_table_into_subtables(
+                table_grid_and_structure,
+                column_header_row_ids,
+                project_row_headers_row_ids,
+            )
+        )
+        tables: list[Table] = []
+        for subtable_id, (
+            subtable_string_grid,
+            subtable_structure_annotations,
+        ) in enumerate(
+            zip(
+                subtable_string_grid_list,
+                subtable_structure_annotations_list,
+            )
+        ):
+            tables.append(
+                _build_table_object_from_grid_and_structure_annotations(
+                    subtable_string_grid,
+                    subtable_structure_annotations,
+                    table_category_type,
+                    table_locations,
+                    table_uid,
+                    use_first_row_as_header,
+                    subtable_id,
+                )
+            )
+        return tables
+    else:
+        return [
+            _build_table_object_from_grid_and_structure_annotations(
+                table_grid_and_structure.table_string_grid,
+                table_grid_and_structure.table_structure_annotations,
+                table_category_type,
+                table_locations,
+                table_uid,
+                use_first_row_as_header,
+            )
+        ]
+
+
 # --------- Main API ---------
-
-
 def build_table_grids(
     serialized_document: dict[str, Any],
     duplicate_merged_cells_content_flag: bool = True,
@@ -328,7 +498,6 @@ def build_table_grids(
             table_string_grid=content_grid,
             table_structure_annotations=table_uid_to_cell_annotations[table_uid],
         )
-
     return tables_grid_and_structure
 
 
@@ -337,8 +506,9 @@ def extract_pd_dfs_from_output(
     duplicate_merged_cells_content_flag: bool = True,
     use_first_row_as_header: bool = True,
     include_figure_extracted_table: bool = False,
+    split_long_tables: bool = False,
 ) -> list[pd.DataFrame]:
-    """Extract Extract output's tables and convert them to a list of pandas DataFrames.
+    """Extract tables from output and convert them to a list of pandas DataFrames.
 
     Args:
         serialized_document: a serialized document
@@ -347,6 +517,7 @@ def extract_pd_dfs_from_output(
             empty.
         use_first_row_as_header: if True, use the first row of the extracted table as the columns.
             Set to False if you know there is no header row in your tables.
+        split_long_tables: if True, split long tables based on the projected row headers.
 
     Returns:
             a list of pandas DataFrames, each containing a table
@@ -361,22 +532,20 @@ def extract_pd_dfs_from_output(
     table_id_to_grid_and_structure = build_table_grids(
         serialized_document, duplicate_merged_cells_content_flag
     )
-    table_dfs = []
-    for table_grid_structure in table_id_to_grid_and_structure.values():
-        if table_grid_structure.table_category_type in (
-            ContentCategory.TABLE.value,
-            ContentCategory.TABLE_OF_CONTENTS.value,
-        ) or (
-            include_figure_extracted_table
-            and table_grid_structure.table_category_type
-            == ContentCategory.FIGURE_EXTRACTED_TABLE.value
-        ):
-            table_df = convert_table_to_pd_df(
-                table_grid_structure.table_string_grid,
-                use_first_row_as_header=use_first_row_as_header,
-            )
-            table_dfs.append(table_df)
 
+    # Get table dataframes
+    table_dfs: list[pd.DataFrame] = []
+    for table_grid_and_structure in table_id_to_grid_and_structure.values():
+        if _table_should_be_extracted(
+            table_grid_and_structure, include_figure_extracted_table
+        ):
+            table_dfs.extend(
+                _get_dfs_from_table_grid_and_structure(
+                    table_grid_and_structure,
+                    use_first_row_as_header=use_first_row_as_header,
+                    split_long_tables=split_long_tables,
+                )
+            )
     return table_dfs
 
 
@@ -385,6 +554,7 @@ def extract_pd_dfs_with_locs_and_table_structure_from_output(
     duplicate_merged_cells_content_flag: bool = True,
     use_first_row_as_header: bool = True,
     include_figure_extracted_table: bool = False,
+    split_long_tables: bool = False,
 ) -> list[Table]:
     """Extract tables and convert them to a list of pd DataFrames, table locations and structures.
 
@@ -395,6 +565,7 @@ def extract_pd_dfs_with_locs_and_table_structure_from_output(
             empty.
         use_first_row_as_header: if True, use the first row of the extracted table as the columns.
             Set to False if you know there is no header row in your tables.
+        split_long_tables: if True, split long tables based on the projected row headers.
 
     Returns:
         a list of Table NamedTuples with a pandas DataFrame, locations and structures.
@@ -412,7 +583,13 @@ def extract_pd_dfs_with_locs_and_table_structure_from_output(
             cells=[Cell(index=(0, 0), span=(1, 1), locations=[{'height': 0.01188,
             'width': 0.22128, 'x': 0.16008, 'y': 0.40464, 'page_number': 0}],
             is_column_header=True, is_projected_row_header=False), ...]
-        )]
+        )],
+        table_type='TABLE',
+        project_row_headers=[],
+        table_uid='3',
+        subtable_id=None),
+        ...
+        ]
     """
     # Get dfs
     table_id_to_grid_and_structure = build_table_grids(
@@ -425,30 +602,20 @@ def extract_pd_dfs_with_locs_and_table_structure_from_output(
         parsed_serialized_document.content_tree
     )
 
-    # Match dfs and locations
+    # Get table objects
     tables: list[Table] = []
     for table_uid, table_grid_and_structure in table_id_to_grid_and_structure.items():
-        if table_grid_and_structure.table_category_type in (
-            ContentCategory.TABLE.value,
-            ContentCategory.TABLE_OF_CONTENTS.value,
-        ) or (
-            include_figure_extracted_table
-            and table_grid_and_structure.table_category_type
-            == ContentCategory.FIGURE_EXTRACTED_TABLE.value
+        if _table_should_be_extracted(
+            table_grid_and_structure, include_figure_extracted_table
         ):
-            table_df = convert_table_to_pd_df(
-                table_grid_and_structure.table_string_grid,
-                use_first_row_as_header=use_first_row_as_header,
-            )
-            table_cells = _convert_table_annotations_to_cells(
-                table_grid_and_structure.table_structure_annotations
-            )
-            tables.append(
-                Table(
-                    df=table_df,
-                    table_type=table_grid_and_structure.table_category_type,
-                    locations=table_uid_to_locs_mapping[table_uid],
-                    cells=table_cells,
+            tables.extend(
+                _get_tables_objects_from_table_grid_and_structure(
+                    table_grid_and_structure,
+                    table_uid_to_locs_mapping[table_uid],
+                    table_uid,
+                    use_first_row_as_header,
+                    split_long_tables,
                 )
             )
+
     return tables
