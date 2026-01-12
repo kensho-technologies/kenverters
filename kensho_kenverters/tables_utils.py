@@ -179,15 +179,9 @@ def get_column_headers_and_project_row_headers_row_ids(
                 annotation.data.index[0],
                 annotation.data.index[0] + annotation.data.span[0],
             ):
-                if (
-                    annotation.data.is_column_header
-                    and column_row_id not in column_header_row_ids
-                ):
+                if annotation.data.is_column_header:
                     column_header_row_ids.add(column_row_id)
-                elif (
-                    annotation.data.is_projected_row_header
-                    and column_row_id not in project_row_headers_row_ids
-                ):
+                elif annotation.data.is_projected_row_header:
                     project_row_headers_row_ids.add(column_row_id)
 
     return column_header_row_ids, project_row_headers_row_ids
