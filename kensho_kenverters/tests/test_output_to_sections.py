@@ -100,6 +100,7 @@ class TestMarkdownConversion(TestCase):
                     ),
                 },
                 {"category": "figure", "text": ""},
+                {"category": "image", "text": ""},
             ],
             [
                 {"category": "title", "text": "Recommendation: BUY"},
@@ -974,6 +975,21 @@ class TestMarkdownConversion(TestCase):
                         ],
                         "type": "FIGURE",
                         "uid": "33",
+                    },
+                    {
+                        "children": [],
+                        "content": "",
+                        "locations": [
+                            {
+                                "height": 0.02,
+                                "page_number": 0,
+                                "width": 0.15,
+                                "x": 0.5,
+                                "y": 0.87,
+                            }
+                        ],
+                        "type": "IMAGE",
+                        "uid": "38",
                     },
                     {
                         "children": [],
@@ -1911,6 +1927,21 @@ class TestMarkdownConversion(TestCase):
                     },
                     {
                         "children": [],
+                        "content": "",
+                        "locations": [
+                            {
+                                "height": 0.02,
+                                "page_number": 0,
+                                "width": 0.15,
+                                "x": 0.5,
+                                "y": 0.87,
+                            }
+                        ],
+                        "type": "IMAGE",
+                        "uid": "38",
+                    },
+                    {
+                        "children": [],
                         "content": "Recommendation: BUY",
                         "locations": [
                             {
@@ -2007,6 +2038,7 @@ class TestMarkdownConversion(TestCase):
                     ),
                 },
                 {"category": "figure", "text": ""},
+                {"category": "image", "text": ""},
             ],
             [{"category": "title", "text": "Recommendation: BUY"}],
         ]
