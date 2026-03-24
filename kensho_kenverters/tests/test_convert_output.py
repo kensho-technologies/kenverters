@@ -123,6 +123,7 @@ class TestMarkdownConversion(TestCase):
                 "to as predictive analytics.",
             },
             {"category": "figure", "text": ""},
+            {"category": "image", "text": ""},
             {"category": "title", "text": "Recommendation: BUY"},
             {"category": "text", "text": "42"},
             {"category": "text", "text": "test noise string at bottom"},
@@ -268,6 +269,19 @@ class TestMarkdownConversion(TestCase):
                         width=0.21622,
                         x=0.60002,
                         y=0.8388,
+                        page_number=0,
+                    )
+                ],
+            },
+            {
+                "category": "image",
+                "text": "",
+                "locations": [
+                    LocationModel(
+                        height=0.02,
+                        width=0.15,
+                        x=0.5,
+                        y=0.87,
                         page_number=0,
                     )
                 ],
