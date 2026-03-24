@@ -1,5 +1,11 @@
 # Changelog
 
+## v2.1.0
+
+### Added
+
+* Add support of image type.  
+
 ## v2.0.0
 
 * Add parsing of table structure.  
