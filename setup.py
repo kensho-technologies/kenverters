@@ -6,7 +6,7 @@ from distutils.core import setup  # pylint: disable=deprecated-module
 setup(
     name="kensho_kenverters",
     packages=["kensho_kenverters"],
-    version="2.0.0",
+    version="2.1.0",
     license="Apache-2.0",
     description="Python Toolkit for Kensho Extract",
     author="Valerie Faucon-Morin",
