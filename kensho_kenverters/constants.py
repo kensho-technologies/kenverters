@@ -20,6 +20,7 @@ class AnnotationType(Enum):
 
     TABLE_STRUCTURE = "table_structure"
     FIGURE_EXTRACTED_TABLE_STRUCTURE = "figure_extracted_table_structure"
+    RELATION = "relation"
 
 
 class ContentCategory(Enum):

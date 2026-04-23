@@ -1,10 +1,10 @@
 # Copyright 2024-present Kensho Technologies, LLC.
 """Pydantic models for the output JSON."""
 
-from typing import Literal, NamedTuple, TypeAlias
+from typing import Annotated, Literal, NamedTuple, TypeAlias, Union
 
 import pandas as pd
-from pydantic import BaseModel  # pylint: disable=no-name-in-module
+from pydantic import BaseModel, Field  # pylint: disable=no-name-in-module
 
 # Location types are either dictionaries of bbox coordinates and page numbers
 # or None if locations are not returned in the Extract output.
@@ -60,8 +60,23 @@ class AnnotationModel(BaseModel):
 
     content_uids: list[str]
     data: AnnotationDataModel
-    type: str
+    type: Literal["table_structure", "figure_extracted_table_structure"]
     locations: list[LocationModel] | None = None
+
+
+class RelationAnnotationDataModel(BaseModel):
+    """Pydantic object for a relation annotation's data."""
+
+    relation_type: str
+    source_content_uid: str
+    target_content_uid: str
+
+
+class RelationAnnotationModel(BaseModel):
+    """Pydantic object for relation annotations."""
+
+    data: RelationAnnotationDataModel
+    type: Literal["relation"]
 
 
 class TextNodeDataModel(BaseModel):
@@ -91,10 +106,16 @@ class PDFPageModel(BaseModel):
     required_ccw_rotation: int
 
 
+AnyAnnotationModel = Annotated[
+    Union[AnnotationModel, RelationAnnotationModel],
+    Field(discriminator="type"),
+]
+
+
 class ExtractOutputModel(BaseModel):
     """Pydantic object for the Extract contents and annotations."""
 
-    annotations: list[AnnotationModel]
+    annotations: list[AnyAnnotationModel]
     content_tree: ContentModel
     pdf_pages: list[PDFPageModel] | None = None
 

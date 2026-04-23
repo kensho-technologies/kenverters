@@ -256,6 +256,8 @@ def convert_output_to_items_list(
                 uid_to_span[uid] = annotation.data.span
         elif annotation.type == AnnotationType.FIGURE_EXTRACTED_TABLE_STRUCTURE.value:
             continue
+        elif annotation.type == AnnotationType.RELATION.value:
+            continue
         else:
             raise TypeError(f"{annotation.type} is not a supported annotation type")
 
