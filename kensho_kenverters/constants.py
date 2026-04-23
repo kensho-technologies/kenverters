@@ -9,6 +9,7 @@ TEXT_KEY = "text"
 TABLE_KEY = "table"
 FIGURE_EXTRACTED_TABLE_KEY = "figure_extracted_table"
 LOCATIONS_KEY = "locations"
+CONTENT_ID_KEY = "content_id"
 DOCUMENT_CATEGORY_KEY = "DOCUMENT"
 
 TableType: TypeAlias = list[list[str]]

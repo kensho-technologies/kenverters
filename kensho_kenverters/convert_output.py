@@ -14,6 +14,7 @@ from .constants import (
     LOCATIONS_KEY,
     TABLE_KEY,
     TEXT_KEY,
+    CONTENT_ID_KEY,
     AnnotationType,
     ContentCategory,
     TableType,
@@ -151,6 +152,7 @@ def _create_segment(
         if len(figure_extracted_table) == 0:
             return {}
         segment = {
+            CONTENT_ID_KEY: content.uid,
             CATEGORY_KEY: content.type.lower(),
             FIGURE_EXTRACTED_TABLE_KEY: figure_extracted_table,
             TEXT_KEY: table_to_markdown(figure_extracted_table),
@@ -164,6 +166,7 @@ def _create_segment(
     # For texts and titles, add the text content and the category
     elif content.type in [e.value for e in ContentCategory]:
         segment = {
+            CONTENT_ID_KEY: content.uid,
             CATEGORY_KEY: content.type.lower(),
             TEXT_KEY: content.content or EMPTY_STRING,
         }
