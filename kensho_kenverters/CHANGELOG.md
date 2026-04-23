@@ -2,9 +2,14 @@
 
 ## v2.2.0
 
+### Changed
+
+* Change the output from convert_output_to_items_list to be data class. 
+
 ### Added
 
-* Add support of relations between segments.  
+* Add content_id to the items from convert_output_to_items_list.
+* Add relations between items to the output from convert_output_to_items_list.  
 
 ## v2.1.0
 
