@@ -55,8 +55,8 @@ class AnnotationDataModel(BaseModel):
     is_projected_row_header: bool = False
 
 
-class AnnotationModel(BaseModel):
-    """Pydantic object for the Extract annotations."""
+class TableStructureAnnotationModel(BaseModel):
+    """Pydantic object for the Extract table structure annotations."""
 
     content_uids: list[str]
     data: AnnotationDataModel
@@ -107,7 +107,7 @@ class PDFPageModel(BaseModel):
 
 
 AnyAnnotationModel = Annotated[
-    Union[AnnotationModel, RelationAnnotationModel],
+    Union[TableStructureAnnotationModel, RelationAnnotationModel],
     Field(discriminator="type"),
 ]
 
@@ -125,4 +125,4 @@ class TableGridAndStructure(NamedTuple):
 
     table_category_type: TableCategoryType
     table_string_grid: list[list[str]]
-    table_structure_annotations: list[AnnotationModel]
+    table_structure_annotations: list[TableStructureAnnotationModel]

@@ -15,7 +15,7 @@ from .constants import (
     TableType,
 )
 from .extract_output_models import (
-    AnnotationModel,
+    TableStructureAnnotationModel,
     Cell,
     ContentModel,
     LocationModel,
@@ -96,10 +96,10 @@ def _get_table_uid_to_locations_mapping(
 
 def get_table_uid_to_annotations_mapping(
     table_uid_to_cells: dict[str, list[ContentModel]],
-    table_cell_annotations: list[AnnotationModel],
-) -> dict[str, list[AnnotationModel]]:
+    table_cell_annotations: list[TableStructureAnnotationModel],
+) -> dict[str, list[TableStructureAnnotationModel]]:
     """Get table uid to table structure annotations mapping."""
-    uid_to_annotation: dict[str, AnnotationModel] = {
+    uid_to_annotation: dict[str, TableStructureAnnotationModel] = {
         annotation.content_uids[0]: annotation for annotation in table_cell_annotations
     }
     table_to_annotations = {}
@@ -115,7 +115,7 @@ def get_table_uid_to_annotations_mapping(
 
 
 def _convert_table_annotations_to_cells(
-    table_annotations: list[AnnotationModel],
+    table_annotations: list[TableStructureAnnotationModel],
 ) -> list[Cell]:
     """Convert list of table annotations to list of cells.
 
@@ -123,10 +123,10 @@ def _convert_table_annotations_to_cells(
         table_annotations: a list of table structure annotations.
 
     Example Input:
-        table_annotations = [AnnotationModel(content_uids=['2'],data=AnnotationDataModel(index=(0, 0),
+        table_annotations = [TableStructureAnnotationModel(content_uids=['2'],data=AnnotationDataModel(index=(0, 0),
         span=(1, 1), value=None, is_column_header=True, is_projected_row_header=False),type='table_structure',
         locations=[LocationModel(height=0.015,width=0.17, x=0.22, y=0.09, page_number=0)] ,
-         AnnotationModel(content_uids=['3'],data=AnnotationDataModel(index=(0, 1), span=(1, 1),
+         TableStructureAnnotationModel(content_uids=['3'],data=AnnotationDataModel(index=(0, 1), span=(1, 1),
         value=None, is_column_header=False,is_projected_row_header=False), type='table_structure',
         locations=[LocationModel(height=0.015, width=0.04, x=0.72, y=0.19, page_number=0),
         ...]
@@ -156,7 +156,7 @@ def _convert_table_annotations_to_cells(
 
 
 def build_uids_grid_from_table_cell_annotations(
-    annotations: Sequence[AnnotationModel],
+    annotations: Sequence[TableStructureAnnotationModel],
     duplicate_content_flag: bool = False,
 ) -> list[list[list[str]]]:
     """Build grid where each location has a list of content uids."""
@@ -189,7 +189,7 @@ def build_uids_grid_from_table_cell_annotations(
 
 
 def build_content_grid_from_figure_extracted_table_cell_annotations(
-    annotations: Sequence[AnnotationModel],
+    annotations: Sequence[TableStructureAnnotationModel],
 ) -> TableType:
     """Build content grid where each location has a string of content."""
     if any(
@@ -275,12 +275,12 @@ def build_table_grids(
         {
             '1': TableGridAndStructure(table_category_type = "TABLE", table_string_grid =
             [['header1', 'header2'], ['row1_val', 'row2_val']], tables_structure_annotations =
-            [AnnotationModel(content_uids=['2'],data=AnnotationDataModel(index=(0, 0), span=(1, 1),
+            [TableStructureAnnotationModel(content_uids=['2'],data=AnnotationDataModel(index=(0, 0), span=(1, 1),
             value=None, is_column_header=True, is_projected_row_header=False),type='table_structure',
             locations=[LocationModel(height=0.015,width=0.17, x=0.22, y=0.09, page_number=0)]), ...]),
             '2': TableGridAndStructure(table_category_type = "FIGURE_EXTRACTED_TABLE",table_string_grid =
              [['another_header1'], ['another_row1_val']], tables_structure_annotations =
-             [AnnotationModel(content_uids=['26'],data=AnnotationDataModel(index=(4, 4), span=(1, 1),
+             [TableStructureAnnotationModel(content_uids=['26'],data=AnnotationDataModel(index=(4, 4), span=(1, 1),
             value=None, is_column_header=False,is_projected_row_header=False), type='table_structure',
             locations=[LocationModel(height=0.015, width=0.04, x=0.72, y=0.19, page_number=0), ...])
         }

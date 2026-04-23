@@ -19,7 +19,7 @@ from .constants import (
     ContentCategory,
     TableType,
 )
-from .extract_output_models import AnnotationModel, ContentModel, LocationModel
+from .extract_output_models import TableStructureAnnotationModel, ContentModel, LocationModel
 from .output_to_tables import (
     build_content_grid_from_figure_extracted_table_cell_annotations,
     get_table_uid_to_annotations_mapping,
@@ -116,7 +116,7 @@ def _create_segment(
     content: ContentModel,
     uid_to_index: dict[str, tuple[int, int]],
     uid_to_span: dict[str, tuple[int, int]],
-    figure_extracted_table_uid_to_cell_annotations: dict[str, list[AnnotationModel]],
+    figure_extracted_table_uid_to_cell_annotations: dict[str, list[TableStructureAnnotationModel]],
 ) -> dict[str, Any]:
     """Create segment dictionary from the content, and if applicable its matching table cells."""
     segment: dict[str, Any] = {}
@@ -182,7 +182,7 @@ def _get_segments_from_all_children(
     content: ContentModel,
     uid_to_index: dict[str, tuple[int, int]],
     uid_to_span: dict[str, tuple[int, int]],
-    figure_extracted_table_uid_to_cell_annotations: dict[str, list[AnnotationModel]],
+    figure_extracted_table_uid_to_cell_annotations: dict[str, list[TableStructureAnnotationModel]],
     return_locations: bool,
     segments: list[dict[str, Any]],
     visited: list[str],

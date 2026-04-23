@@ -4,7 +4,7 @@ from typing import Generic, Mapping, TypeVar
 
 from kensho_kenverters.constants import AnnotationType
 
-from .extract_output_models import AnnotationDataModel, AnnotationModel, ContentModel
+from .extract_output_models import AnnotationDataModel, TableStructureAnnotationModel, ContentModel
 from .output_to_tables import (
     build_uids_grid_from_table_cell_annotations,
     convert_uid_grid_to_content_grid,
@@ -42,7 +42,7 @@ def _calculate_merge_group_for_cell(
 
 def get_grid_and_merges_from_structured_output_table_annotation(
     annotation_content_uid_to_text_contents: Mapping[str, list[T]],
-    annotations_related_to_table: list[AnnotationModel],
+    annotations_related_to_table: list[TableStructureAnnotationModel],
     table_content: ContentModel,
 ) -> GridAndTextObject[T]:
     """Get the table grid, structure, and first/last text objects from a table annotation.

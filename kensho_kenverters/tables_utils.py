@@ -6,12 +6,12 @@ from typing import Sequence
 import pandas as pd
 
 from .constants import AnnotationType
-from .extract_output_models import AnnotationDataModel, AnnotationModel
+from .extract_output_models import AnnotationDataModel, TableStructureAnnotationModel
 
 
-def _create_empty_annotation(row: int, col: int) -> AnnotationModel:
+def _create_empty_annotation(row: int, col: int) -> TableStructureAnnotationModel:
     """Create an empty annotation."""
-    return AnnotationModel(
+    return TableStructureAnnotationModel(
         type=AnnotationType.TABLE_STRUCTURE.value,
         content_uids=[],
         data=AnnotationDataModel(
@@ -23,8 +23,8 @@ def _create_empty_annotation(row: int, col: int) -> AnnotationModel:
 
 
 def _validate_annotations(
-    duplicated_annotations: list[AnnotationModel], max_row: int, max_col: int
-) -> list[AnnotationModel]:
+    duplicated_annotations: list[TableStructureAnnotationModel], max_row: int, max_col: int
+) -> list[TableStructureAnnotationModel]:
     """Validate duplicated annotations.
 
     Fill with empty annotations if rows or columns are missing.
@@ -50,8 +50,8 @@ def _validate_annotations(
 
 
 def duplicate_spanning_annotations(
-    annotations: Sequence[AnnotationModel], duplicate_content_flag: bool = True
-) -> list[AnnotationModel]:
+    annotations: Sequence[TableStructureAnnotationModel], duplicate_content_flag: bool = True
+) -> list[TableStructureAnnotationModel]:
     """Get duplicated annotations.
 
     Returns a list of annotations with span (1, 1). Input annotations that span more than one
@@ -80,7 +80,7 @@ def duplicate_spanning_annotations(
                     content_uids = annotation.content_uids
                 else:
                     content_uids = []
-                new_annotation = AnnotationModel(
+                new_annotation = TableStructureAnnotationModel(
                     type=annotation.type,
                     content_uids=content_uids,
                     data=AnnotationDataModel(
@@ -99,7 +99,7 @@ def duplicate_spanning_annotations(
 
 
 def get_table_shape(
-    table_structure_annotations: Sequence[AnnotationModel],
+    table_structure_annotations: Sequence[TableStructureAnnotationModel],
 ) -> tuple[int, int]:
     """Get table shape from table structure annotations."""
     if any(
