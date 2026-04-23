@@ -4,9 +4,9 @@ from unittest import TestCase
 
 from ..extract_output_models import (
     AnnotationDataModel,
-    TableStructureAnnotationModel,
     ContentModel,
     LocationModel,
+    TableStructureAnnotationModel,
     TextNodeDataModel,
 )
 from ..table_to_text_objects import (

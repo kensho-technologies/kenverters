@@ -93,8 +93,6 @@ FIGURE_CONTENT_CATEGORIES = {
     ContentCategory.FIGURE.value,
 }
 
-RELATIONS_BETWEEN_ITEMS = {
-    "support"
-}
+RELATIONS_BETWEEN_ITEMS = {"support"}
 
 EMPTY_STRING = ""

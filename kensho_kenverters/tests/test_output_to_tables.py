@@ -5,10 +5,10 @@ from unittest import TestCase
 
 from ..extract_output_models import (
     AnnotationDataModel,
-    TableStructureAnnotationModel,
     Cell,
     LocationModel,
     TableGridAndStructure,
+    TableStructureAnnotationModel,
 )
 from ..output_to_tables import (
     build_table_grids,

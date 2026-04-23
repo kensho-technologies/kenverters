@@ -4,7 +4,11 @@ from typing import Generic, Mapping, TypeVar
 
 from kensho_kenverters.constants import AnnotationType
 
-from .extract_output_models import AnnotationDataModel, TableStructureAnnotationModel, ContentModel
+from .extract_output_models import (
+    AnnotationDataModel,
+    ContentModel,
+    TableStructureAnnotationModel,
+)
 from .output_to_tables import (
     build_uids_grid_from_table_cell_annotations,
     convert_uid_grid_to_content_grid,

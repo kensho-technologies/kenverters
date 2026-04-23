@@ -15,7 +15,6 @@ from .constants import (
     TableType,
 )
 from .extract_output_models import (
-    TableStructureAnnotationModel,
     Cell,
     ContentModel,
     LocationModel,
@@ -23,6 +22,7 @@ from .extract_output_models import (
     Table,
     TableCategoryType,
     TableGridAndStructure,
+    TableStructureAnnotationModel,
 )
 from .tables_utils import (
     convert_table_to_pd_df,
@@ -292,10 +292,11 @@ def build_table_grids(
     table_uid_to_cells_mapping = get_table_uid_to_cells_mapping(content)
     table_uid_to_type_mapping = _get_table_uid_to_types_mapping(content)
 
-    table_cell_annotations = [
+    table_cell_annotations: list[TableStructureAnnotationModel] = [
         annotation
         for annotation in annotations
-        if annotation.type
+        if isinstance(annotation, TableStructureAnnotationModel)
+        and annotation.type
         in (
             AnnotationType.TABLE_STRUCTURE.value,
             AnnotationType.FIGURE_EXTRACTED_TABLE_STRUCTURE.value,

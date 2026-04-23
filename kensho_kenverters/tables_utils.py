@@ -23,7 +23,9 @@ def _create_empty_annotation(row: int, col: int) -> TableStructureAnnotationMode
 
 
 def _validate_annotations(
-    duplicated_annotations: list[TableStructureAnnotationModel], max_row: int, max_col: int
+    duplicated_annotations: list[TableStructureAnnotationModel],
+    max_row: int,
+    max_col: int,
 ) -> list[TableStructureAnnotationModel]:
     """Validate duplicated annotations.
 
@@ -50,7 +52,8 @@ def _validate_annotations(
 
 
 def duplicate_spanning_annotations(
-    annotations: Sequence[TableStructureAnnotationModel], duplicate_content_flag: bool = True
+    annotations: Sequence[TableStructureAnnotationModel],
+    duplicate_content_flag: bool = True,
 ) -> list[TableStructureAnnotationModel]:
     """Get duplicated annotations.
 

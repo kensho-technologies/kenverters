@@ -7,9 +7,9 @@ import pandas as pd
 
 from ..extract_output_models import (
     AnnotationDataModel,
-    TableStructureAnnotationModel,
     ExtractOutputModel,
     LocationModel,
+    TableStructureAnnotationModel,
 )
 from ..tables_utils import (
     convert_table_to_pd_df,
@@ -33,9 +33,12 @@ class TestTablesUtils(TestCase):
 
     def test_get_table_shape(self) -> None:
         expected_shape = (5, 5)
-        self.assertEqual(
-            get_table_shape(self.parsed_serialized_document.annotations), expected_shape
-        )
+        table_annotations = [
+            a
+            for a in self.parsed_serialized_document.annotations
+            if isinstance(a, TableStructureAnnotationModel)
+        ]
+        self.assertEqual(get_table_shape(table_annotations), expected_shape)
 
     def test_convert_tpdle_to_pd_df(self) -> None:
         # 1-row table: no headers
@@ -60,7 +63,11 @@ class TestTablesUtils(TestCase):
     def test_duplicate_spanning_annotations_1_spans(self) -> None:
         # Test no duplication when all spans are 1
         duplicated = duplicate_spanning_annotations(
-            self.parsed_serialized_document.annotations
+            [
+                a
+                for a in self.parsed_serialized_document.annotations
+                if isinstance(a, TableStructureAnnotationModel)
+            ]
         )
         expected_duplicated = [
             TableStructureAnnotationModel(
@@ -419,7 +426,11 @@ class TestTablesUtils(TestCase):
 
     def test_duplicate_spanning_annotations_greater_1_spans(self) -> None:
         # Test properly duplicated when cells have a span > 1
-        annotations = self.parsed_serialized_document.annotations
+        annotations = [
+            a
+            for a in self.parsed_serialized_document.annotations
+            if isinstance(a, TableStructureAnnotationModel)
+        ]
         annotations.pop(-1)
         annotations[-1].data.span = (1, 2)
         expected_duplicated = [

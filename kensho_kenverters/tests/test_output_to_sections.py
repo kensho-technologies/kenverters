@@ -22,12 +22,21 @@ class TestMarkdownConversion(TestCase):
         # Example not starting with a title
         expected_sections = [
             [
-                {"category": "text", "text": "2019"},
-                {"category": "text", "text": "test noise string at top"},
+                {"content_id": "1", "category": "text", "text": "2019"},
+                {
+                    "content_id": "2",
+                    "category": "text",
+                    "text": "test noise string at top",
+                },
             ],
             [
-                {"category": "title", "text": "Generated Toy File Title"},
                 {
+                    "content_id": "3",
+                    "category": "title",
+                    "text": "Generated Toy File Title",
+                },
+                {
+                    "content_id": "4",
                     "category": "text",
                     "text": (
                         "Machine learning (ML) is the scientific study of algorithms "
@@ -54,8 +63,9 @@ class TestMarkdownConversion(TestCase):
                 },
             ],
             [
-                {"category": "title", "text": "ESTIMATE for Kensho"},
+                {"content_id": "5", "category": "title", "text": "ESTIMATE for Kensho"},
                 {
+                    "content_id": "6",
                     "category": "table",
                     "table": [
                         ["Kensho Revenue in millions $", "Q1", "Q2", "Q3", "Q4"],
@@ -75,6 +85,7 @@ class TestMarkdownConversion(TestCase):
                     ),
                 },
                 {
+                    "content_id": "32",
                     "category": "text",
                     "text": (
                         "Machine learning (ML) is the scientific study of algorithms "
@@ -99,14 +110,22 @@ class TestMarkdownConversion(TestCase):
                         "hine learning is also referred to as predictive analytics."
                     ),
                 },
-                {"category": "figure", "text": ""},
-                {"category": "image", "text": ""},
+                {"content_id": "33", "category": "figure", "text": ""},
+                {"content_id": "38", "category": "image", "text": ""},
             ],
             [
-                {"category": "title", "text": "Recommendation: BUY"},
-                {"category": "text", "text": "42"},
-                {"category": "text", "text": "test noise string at bottom"},
-                {"category": "text", "text": "999"},
+                {
+                    "content_id": "34",
+                    "category": "title",
+                    "text": "Recommendation: BUY",
+                },
+                {"content_id": "35", "category": "text", "text": "42"},
+                {
+                    "content_id": "36",
+                    "category": "text",
+                    "text": "test noise string at bottom",
+                },
+                {"content_id": "37", "category": "text", "text": "999"},
             ],
         ]
         sections = extract_organized_sections(self.extract_output)
@@ -1965,8 +1984,13 @@ class TestMarkdownConversion(TestCase):
         sections = extract_organized_sections(output)
         expected_sections = [
             [
-                {"category": "title", "text": "Generated Toy File Title"},
                 {
+                    "content_id": "3",
+                    "category": "title",
+                    "text": "Generated Toy File Title",
+                },
+                {
+                    "content_id": "4",
                     "category": "text",
                     "text": (
                         "Machine learning (ML) is the scientific study of algorithms "
@@ -1993,8 +2017,9 @@ class TestMarkdownConversion(TestCase):
                 },
             ],
             [
-                {"category": "title", "text": "ESTIMATE for Kensho"},
+                {"content_id": "5", "category": "title", "text": "ESTIMATE for Kensho"},
                 {
+                    "content_id": "6",
                     "category": "table",
                     "table": [
                         ["Kensho Revenue in millions $", "Q1", "Q2", "Q3", "Q4"],
@@ -2013,6 +2038,7 @@ class TestMarkdownConversion(TestCase):
                     "303,009 | 403,009 |\n",
                 },
                 {
+                    "content_id": "32",
                     "category": "text",
                     "text": (
                         "Machine learning (ML) is the scientific study of algorithms "
@@ -2037,9 +2063,9 @@ class TestMarkdownConversion(TestCase):
                         "hine learning is also referred to as predictive analytics."
                     ),
                 },
-                {"category": "figure", "text": ""},
-                {"category": "image", "text": ""},
+                {"content_id": "33", "category": "figure", "text": ""},
+                {"content_id": "38", "category": "image", "text": ""},
             ],
-            [{"category": "title", "text": "Recommendation: BUY"}],
+            [{"content_id": "34", "category": "title", "text": "Recommendation: BUY"}],
         ]
         self.assertEqual(sections, expected_sections)

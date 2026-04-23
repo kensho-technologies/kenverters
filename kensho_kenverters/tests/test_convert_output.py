@@ -35,6 +35,9 @@ OUTPUT_NO_LOCS_FILE_PATH = os.path.join(
 OUTPUT_CHAR_OFFSETS_FILE_PATH = os.path.join(
     os.path.dirname(__file__), "data", "extract_output_char_offsets.json"
 )
+ITEM_RELATIONS_OUTPUT_FILE_PATH = os.path.join(
+    os.path.dirname(__file__), "data", "extract_output_item_relations.json"
+)
 
 
 class TestMarkdownConversion(TestCase):
@@ -45,6 +48,7 @@ class TestMarkdownConversion(TestCase):
     extract_output_char_offsets: ClassVar[dict[str, Any]]
     extract_output_hierarchical_v2: ClassVar[dict[str, Any]]
     extract_output_figure_extraction: ClassVar[dict[str, Any]]
+    extract_output_item_relations: ClassVar[dict[str, Any]]
 
     @classmethod
     def setUpClass(cls) -> None:
@@ -62,13 +66,20 @@ class TestMarkdownConversion(TestCase):
             cls.extract_output_char_offsets = json.load(f)
         with open(FIGURE_EXTRACTED_TABLE_OUTPUT_FILE_PATH, "r") as f:
             cls.extract_output_figure_extraction = json.load(f)
+        with open(ITEM_RELATIONS_OUTPUT_FILE_PATH, "r") as f:
+            cls.extract_output_item_relations = json.load(f)
 
     def test_convert_output_to_items(self) -> None:
         expected_list = [
-            {"category": "text", "text": "2019"},
-            {"category": "text", "text": "test noise string at top"},
-            {"category": "title", "text": "Generated Toy File Title"},
+            {"content_id": "1", "category": "text", "text": "2019"},
+            {"content_id": "2", "category": "text", "text": "test noise string at top"},
             {
+                "content_id": "3",
+                "category": "title",
+                "text": "Generated Toy File Title",
+            },
+            {
+                "content_id": "4",
                 "category": "text",
                 "text": "Machine learning (ML) is the scientific study of algorithms and "
                 "statistical models that computer systems use in order to perform a specific "
@@ -87,8 +98,9 @@ class TestMarkdownConversion(TestCase):
                 " In its application across business problems, machine learning is also referred "
                 "to as predictive analytics.",
             },
-            {"category": "title", "text": "ESTIMATE for Kensho"},
+            {"content_id": "5", "category": "title", "text": "ESTIMATE for Kensho"},
             {
+                "content_id": "6",
                 "category": "table",
                 "table": [
                     ["Kensho Revenue in millions $", "Q1", "Q2", "Q3", "Q4"],
@@ -104,6 +116,7 @@ class TestMarkdownConversion(TestCase):
                 "303,009 | 403,009 |\n",
             },
             {
+                "content_id": "32",
                 "category": "text",
                 "text": "Machine learning (ML) is the scientific study of algorithms and "
                 "statistical models that computer systems use in order to perform a specific "
@@ -122,12 +135,16 @@ class TestMarkdownConversion(TestCase):
                 " In its application across business problems, machine learning is also referred "
                 "to as predictive analytics.",
             },
-            {"category": "figure", "text": ""},
-            {"category": "image", "text": ""},
-            {"category": "title", "text": "Recommendation: BUY"},
-            {"category": "text", "text": "42"},
-            {"category": "text", "text": "test noise string at bottom"},
-            {"category": "text", "text": "999"},
+            {"content_id": "33", "category": "figure", "text": ""},
+            {"content_id": "38", "category": "image", "text": ""},
+            {"content_id": "34", "category": "title", "text": "Recommendation: BUY"},
+            {"content_id": "35", "category": "text", "text": "42"},
+            {
+                "content_id": "36",
+                "category": "text",
+                "text": "test noise string at bottom",
+            },
+            {"content_id": "37", "category": "text", "text": "999"},
         ]
         output_list = convert_output_to_items_list(self.extract_output).item_list
         self.assertEqual(expected_list, output_list)
@@ -135,6 +152,7 @@ class TestMarkdownConversion(TestCase):
         # With locations
         expected_list_with_locs = [
             {
+                "content_id": "1",
                 "category": "text",
                 "text": "2019",
                 "locations": [
@@ -148,6 +166,7 @@ class TestMarkdownConversion(TestCase):
                 ],
             },
             {
+                "content_id": "2",
                 "category": "text",
                 "text": "test noise string at top",
                 "locations": [
@@ -161,6 +180,7 @@ class TestMarkdownConversion(TestCase):
                 ],
             },
             {
+                "content_id": "3",
                 "category": "title",
                 "text": "Generated Toy File Title",
                 "locations": [
@@ -174,6 +194,7 @@ class TestMarkdownConversion(TestCase):
                 ],
             },
             {
+                "content_id": "4",
                 "category": "text",
                 "text": "Machine learning (ML) is the scientific study of algorithms and "
                 "statistical models that computer systems use in order to perform a specific "
@@ -198,6 +219,7 @@ class TestMarkdownConversion(TestCase):
                 ],
             },
             {
+                "content_id": "5",
                 "category": "title",
                 "text": "ESTIMATE for Kensho",
                 "locations": [
@@ -207,6 +229,7 @@ class TestMarkdownConversion(TestCase):
                 ],
             },
             {
+                "content_id": "6",
                 "category": "table",
                 "table": [
                     ["Kensho Revenue in millions $", "Q1", "Q2", "Q3", "Q4"],
@@ -231,6 +254,7 @@ class TestMarkdownConversion(TestCase):
                 ],
             },
             {
+                "content_id": "32",
                 "category": "text",
                 "text": (
                     "Machine learning (ML) is the scientific study of algorithms "
@@ -261,6 +285,7 @@ class TestMarkdownConversion(TestCase):
                 ],
             },
             {
+                "content_id": "33",
                 "category": "figure",
                 "text": "",
                 "locations": [
@@ -274,6 +299,7 @@ class TestMarkdownConversion(TestCase):
                 ],
             },
             {
+                "content_id": "38",
                 "category": "image",
                 "text": "",
                 "locations": [
@@ -287,6 +313,7 @@ class TestMarkdownConversion(TestCase):
                 ],
             },
             {
+                "content_id": "34",
                 "category": "title",
                 "text": "Recommendation: BUY",
                 "locations": [
@@ -300,6 +327,7 @@ class TestMarkdownConversion(TestCase):
                 ],
             },
             {
+                "content_id": "35",
                 "category": "text",
                 "text": "42",
                 "locations": [
@@ -309,6 +337,7 @@ class TestMarkdownConversion(TestCase):
                 ],
             },
             {
+                "content_id": "36",
                 "category": "text",
                 "text": "test noise string at bottom",
                 "locations": [
@@ -322,6 +351,7 @@ class TestMarkdownConversion(TestCase):
                 ],
             },
             {
+                "content_id": "37",
                 "category": "text",
                 "text": "999",
                 "locations": [
@@ -339,6 +369,7 @@ class TestMarkdownConversion(TestCase):
     def test_convert_output_to_items_figure_extracted_table(self) -> None:
         expected_list_with_locs = [
             {
+                "content_id": "1",
                 "category": "page_header",
                 "text": "3.  |  InForMATIon on SPECIFIC ZoonoSES",
                 "locations": [
@@ -352,6 +383,7 @@ class TestMarkdownConversion(TestCase):
                 ],
             },
             {
+                "content_id": "2",
                 "category": "figure_title",
                 "text": "Figure BR1. | Notification rate of reported1 confirmed cases of "
                 "human brucellosis in the EU2, 2004-2007",
@@ -366,6 +398,7 @@ class TestMarkdownConversion(TestCase):
                 ],
             },
             {
+                "content_id": "3",
                 "category": "figure",
                 "text": "",
                 "locations": [
@@ -379,6 +412,7 @@ class TestMarkdownConversion(TestCase):
                 ],
             },
             {
+                "content_id": "4",
                 "category": "text",
                 "text": "0.350 0.300 0.250 0.200 Conifrmed cases per 100,000 population "
                 "0.150 0.100 0.050 0.000 2004 2005 2006 2007",
@@ -393,6 +427,7 @@ class TestMarkdownConversion(TestCase):
                 ],
             },
             {
+                "content_id": "5",
                 "category": "text",
                 "text": "Year",
                 "locations": [
@@ -406,6 +441,7 @@ class TestMarkdownConversion(TestCase):
                 ],
             },
             {
+                "content_id": "6",
                 "category": "figure_footer",
                 "text": "1. includes total cases for 2004 and confirmed cases from 2005-2007 2. "
                 "includes data from: AT, BE, Cy, EE, Fi, FR, DE, GR, iE, iT, LT, nL, pL, pT, ES, "
@@ -417,6 +453,7 @@ class TestMarkdownConversion(TestCase):
                 ],
             },
             {
+                "content_id": "7",
                 "category": "paragraph",
                 "text": "The highest notification rate of human brucellosis was noted in the age "
                 "group 25-44 followed by the age group 45-64, (36.3% and 31.2% of confirmed cases"
@@ -433,6 +470,7 @@ class TestMarkdownConversion(TestCase):
                 ],
             },
             {
+                "content_id": "8",
                 "category": "figure_title",
                 "text": "Figure BR2. | Age-specific notification rate of reported confirmed human "
                 "cases of brucellosis, TESSy data for reporting MSs¹, 2007",
@@ -447,6 +485,7 @@ class TestMarkdownConversion(TestCase):
                 ],
             },
             {
+                "content_id": "9",
                 "category": "figure_extracted_table",
                 "figure_extracted_table": [
                     ["Age group", "Conifrmed cases per 100,000 population"],
@@ -471,6 +510,7 @@ class TestMarkdownConversion(TestCase):
                 ],
             },
             {
+                "content_id": "24",
                 "category": "figure",
                 "text": "",
                 "locations": [
@@ -484,6 +524,7 @@ class TestMarkdownConversion(TestCase):
                 ],
             },
             {
+                "content_id": "25",
                 "category": "text",
                 "text": "0.2 0.18 0.16 0.14 0.12 0.1 Conifrmed cases per 100,000 population "
                 "0.08 0.06 0.04 0.02 0 0-4 5-14 15-24 25-44 45-64 ≥65 Age group",
@@ -498,6 +539,7 @@ class TestMarkdownConversion(TestCase):
                 ],
             },
             {
+                "content_id": "26",
                 "category": "figure_footer",
                 "text": "1. includes data from all EU mSs, except Cy, CZ, DK, EE, LV, LT, "
                 "LU, mT, SK (n=526)",
@@ -508,6 +550,7 @@ class TestMarkdownConversion(TestCase):
                 ],
             },
             {
+                "content_id": "27",
                 "category": "page_footer",
                 "text": "180  The EFSA Journal 2009 – 223  180/312",
                 "locations": [
@@ -521,6 +564,7 @@ class TestMarkdownConversion(TestCase):
                 ],
             },
             {
+                "content_id": "28",
                 "category": "page_header",
                 "text": "Brucella  |  3.5.",
                 "locations": [
@@ -534,6 +578,7 @@ class TestMarkdownConversion(TestCase):
                 ],
             },
             {
+                "content_id": "29",
                 "category": "figure_title",
                 "text": "Figure BR3. | Seasonal distribution of reported confirmed "
                 "human cases of brucellosis in reporting MSs1, 2007",
@@ -548,6 +593,7 @@ class TestMarkdownConversion(TestCase):
                 ],
             },
             {
+                "content_id": "30",
                 "category": "figure",
                 "text": "",
                 "locations": [
@@ -557,6 +603,7 @@ class TestMarkdownConversion(TestCase):
                 ],
             },
             {
+                "content_id": "31",
                 "category": "text",
                 "text": "70 60 50 40 Conifrmed cases 30 20 10 0 Jan Feb Mar Apr May Jun "
                 "Jul Aug Sep Oct Nov Dec",
@@ -571,6 +618,7 @@ class TestMarkdownConversion(TestCase):
                 ],
             },
             {
+                "content_id": "32",
                 "category": "figure_footer",
                 "text": "1. includes data from: BE, Fi, FR, DE, GR, hU, iE, iT, nL, pL, pT, Ro, "
                 "Si, ES, SE and UK (n = 532)",
@@ -585,6 +633,7 @@ class TestMarkdownConversion(TestCase):
                 ],
             },
             {
+                "content_id": "33",
                 "category": "paragraph",
                 "text": "nine mSs with confirmed human cases reported whether the cases were "
                 "imported or domestically acquired. All brucellosis cases in Austria, France, "
@@ -603,6 +652,7 @@ class TestMarkdownConversion(TestCase):
                 ],
             },
             {
+                "content_id": "34",
                 "category": "paragraph",
                 "text": "The suspected vehicle of transmission was reported for 306 of the "
                 "confirmed cases, however in 251 of these cases the vehicle was reported as "
@@ -620,6 +670,7 @@ class TestMarkdownConversion(TestCase):
                 ],
             },
             {
+                "content_id": "35",
                 "category": "page_footer",
                 "text": "The EFSA Journal 2009 – 223  181/312 181",
                 "locations": [
@@ -633,6 +684,7 @@ class TestMarkdownConversion(TestCase):
                 ],
             },
             {
+                "content_id": "36",
                 "category": "page_header",
                 "text": "3.  |  InForMATIon on SPECIFIC ZoonoSES",
                 "locations": [
@@ -646,6 +698,7 @@ class TestMarkdownConversion(TestCase):
                 ],
             },
             {
+                "content_id": "37",
                 "category": "table_title",
                 "text": "Table BR3. | Reported confirmed brucellosis cases in humans by "
                 "reporting countries and origin of case (imported/domestic), 2007",
@@ -660,6 +713,7 @@ class TestMarkdownConversion(TestCase):
                 ],
             },
             {
+                "content_id": "38",
                 "category": "table",
                 "table": [
                     [
@@ -709,6 +763,7 @@ class TestMarkdownConversion(TestCase):
                 ],
             },
             {
+                "content_id": "132",
                 "category": "paragraph",
                 "text": "only  12%  of  Brucella isolates in the  EU  were further  speciated.  "
                 "B. melitensis represented  8%  and B. abortus 4% of reported confirmed cases "
@@ -724,6 +779,7 @@ class TestMarkdownConversion(TestCase):
                 ],
             },
             {
+                "content_id": "133",
                 "category": "h1",
                 "text": "3.5.2 | Brucella in food",
                 "locations": [
@@ -733,6 +789,7 @@ class TestMarkdownConversion(TestCase):
                 ],
             },
             {
+                "content_id": "134",
                 "category": "paragraph",
                 "text": "only Belgium and italy reported investigations including more than 25 "
                 "samples of milk and cheese for the presence of Brucella. The majority of "
@@ -756,6 +813,7 @@ class TestMarkdownConversion(TestCase):
                 ],
             },
             {
+                "content_id": "135",
                 "category": "paragraph",
                 "text": "overall, since 2001, only Greece, italy and portugal have reported "
                 "findings of Brucella in raw cow’s milk.",
@@ -770,6 +828,7 @@ class TestMarkdownConversion(TestCase):
                 ],
             },
             {
+                "content_id": "136",
                 "category": "paragraph",
                 "text": "All data on Brucella in food are presented in Level 3.",
                 "locations": [
@@ -779,6 +838,7 @@ class TestMarkdownConversion(TestCase):
                 ],
             },
             {
+                "content_id": "137",
                 "category": "page_footer",
                 "text": "182  The EFSA Journal 2009 – 223  182/312",
                 "locations": [
@@ -798,28 +858,44 @@ class TestMarkdownConversion(TestCase):
         self.assertEqual(expected_list_with_locs, output_list_with_locs)
 
     def test_convert_output_to_items_hierarchical(self) -> None:
-        output_list = convert_output_to_items_list(self.extract_output_hierarchical).item_list
+        output_list = convert_output_to_items_list(
+            self.extract_output_hierarchical
+        ).item_list
         expected_list = [
-            {"category": "text", "text": "July 1, 2000"},
-            {"category": "h1", "text": "Research Update: A Company"},
-            {"category": "h1", "text": "Bank"},
-            {"category": "text", "text": "Credit Analyst:"},
-            {"category": "text", "text": "A Guy"},
-            {"category": "text", "text": "Table Of Contents"},
-            {"category": "text", "text": "Ratings List"},
-            {"category": "text", "text": "E-Mail Addresses"},
-            {"category": "h1", "text": "Research Update: The Company"},
-            {"category": "table_title", "text": "Credit Rating"},
-            {"category": "table_title", "text": "Rationale"},
-            {"category": "paragraph", "text": "S&P assigned it a AAAAAAA"},
-            {"category": "h1", "text": "Outlook"},
-            {"category": "paragraph", "text": "The unstable outlook,"},
+            {"content_id": "1", "category": "text", "text": "July 1, 2000"},
+            {"content_id": "2", "category": "h1", "text": "Research Update: A Company"},
+            {"content_id": "3", "category": "h1", "text": "Bank"},
+            {"content_id": "4", "category": "text", "text": "Credit Analyst:"},
+            {"content_id": "5", "category": "text", "text": "A Guy"},
+            {"content_id": "6", "category": "text", "text": "Table Of Contents"},
+            {"content_id": "7", "category": "text", "text": "Ratings List"},
+            {"content_id": "8", "category": "text", "text": "E-Mail Addresses"},
             {
+                "content_id": "9",
+                "category": "h1",
+                "text": "Research Update: The Company",
+            },
+            {"content_id": "10", "category": "table_title", "text": "Credit Rating"},
+            {"content_id": "11", "category": "table_title", "text": "Rationale"},
+            {
+                "content_id": "12",
+                "category": "paragraph",
+                "text": "S&P assigned it a AAAAAAA",
+            },
+            {"content_id": "13", "category": "h1", "text": "Outlook"},
+            {
+                "content_id": "14",
+                "category": "paragraph",
+                "text": "The unstable outlook,",
+            },
+            {
+                "content_id": "15",
                 "category": "paragraph",
                 "text": "the discontinued support of the parent company.",
             },
-            {"category": "table_title", "text": "Ratings List"},
+            {"content_id": "16", "category": "table_title", "text": "Ratings List"},
             {
+                "content_id": "17",
                 "category": "table",
                 "table": [
                     [
@@ -973,20 +1049,31 @@ class TestMarkdownConversion(TestCase):
                 "|\n| Ratings | Ratings | Desk | in | NYC | at | (44) | number. | number. |  |  |  "
                 "|  |\n",
             },
-            {"category": "h2", "text": "Analytical E-Mail Addresses"},
-            {"category": "h2", "text": "email"},
-            {"category": "paragraph", "text": "email"},
-            {"category": "text", "text": "email"},
+            {
+                "content_id": "81",
+                "category": "h2",
+                "text": "Analytical E-Mail Addresses",
+            },
+            {"content_id": "82", "category": "h2", "text": "email"},
+            {"content_id": "83", "category": "paragraph", "text": "email"},
+            {"content_id": "84", "category": "text", "text": "email"},
         ]
         self.maxDiff = None
         self.assertEqual(expected_list, output_list)
 
     def test_convert_output_to_items_hierarchical_v2(self) -> None:
-        output_list = convert_output_to_items_list(self.extract_output_hierarchical_v2).item_list
+        output_list = convert_output_to_items_list(
+            self.extract_output_hierarchical_v2
+        ).item_list
         expected_list = [
-            {"category": "page_header", "text": "2019  test noise string at top"},
-            {"category": "h1", "text": "Generated Toy File Title"},
             {
+                "content_id": "1",
+                "category": "page_header",
+                "text": "2019  test noise string at top",
+            },
+            {"content_id": "2", "category": "h1", "text": "Generated Toy File Title"},
+            {
+                "content_id": "3",
                 "category": "paragraph",
                 "text": "Machine learning (ML) is the scientific study of algorithms and "
                 "statistical models that computer systems use in order to perform a specific "
@@ -1006,8 +1093,9 @@ class TestMarkdownConversion(TestCase):
                 "application across business problems, machine learning is also referred to "
                 "as predictive analytics.",
             },
-            {"category": "text", "text": "ESTIMATE for Kensho"},
+            {"content_id": "4", "category": "text", "text": "ESTIMATE for Kensho"},
             {
+                "content_id": "5",
                 "category": "table",
                 "table": [
                     ["Kensho Revenue in millions $", "Q1", "Q2", "Q3", "Q4"],
@@ -1022,6 +1110,7 @@ class TestMarkdownConversion(TestCase):
                 "| 402,004 |\n| 2023 | 103,009 | 203,009 | 303,009 | 403,009 |\n",
             },
             {
+                "content_id": "31",
                 "category": "paragraph",
                 "text": "Machine learning (ML) is the scientific study of algorithms and "
                 "statistical models that computer systems use in order to perform a specific "
@@ -1041,18 +1130,29 @@ class TestMarkdownConversion(TestCase):
                 "application across business problems, machine learning is also referred to "
                 "as predictive analytics.",
             },
-            {"category": "text", "text": "Recommendation: BUY"},
-            {"category": "page_footer", "text": "42  test noise string at bottom  999"},
+            {"content_id": "32", "category": "text", "text": "Recommendation: BUY"},
+            {
+                "content_id": "33",
+                "category": "page_footer",
+                "text": "42  test noise string at bottom  999",
+            },
         ]
         self.assertEqual(expected_list, output_list)
 
     def test_convert_output_to_items_char_offsets(self) -> None:
-        output_list = convert_output_to_items_list(self.extract_output_char_offsets).item_list
+        output_list = convert_output_to_items_list(
+            self.extract_output_char_offsets
+        ).item_list
         expected_output_list = [
-            {"category": "text", "text": "2019"},
-            {"category": "text", "text": "test noise string at top"},
-            {"category": "title", "text": "Generated Toy File Title"},
+            {"content_id": "1", "category": "text", "text": "2019"},
+            {"content_id": "2", "category": "text", "text": "test noise string at top"},
             {
+                "content_id": "3",
+                "category": "title",
+                "text": "Generated Toy File Title",
+            },
+            {
+                "content_id": "4",
                 "category": "text",
                 "text": "Machine learning (ML) is the scientific study of algorithms and "
                 "statistical models that computer sys"
@@ -1076,8 +1176,9 @@ class TestMarkdownConversion(TestCase):
                 " application across business problems, machine learning is also "
                 "referred to as predictive analytics.",
             },
-            {"category": "title", "text": "ESTIMATE for Kensho"},
+            {"content_id": "5", "category": "title", "text": "ESTIMATE for Kensho"},
             {
+                "content_id": "6",
                 "category": "table",
                 "table": [
                     ["Kensho Revenue in millions $", "Q1", "Q2", "Q3", "Q4"],
@@ -1093,6 +1194,7 @@ class TestMarkdownConversion(TestCase):
                 "|\n",
             },
             {
+                "content_id": "32",
                 "category": "text",
                 "text": "Machine learning (ML) is the scientific study of algorithms and statis"
                 "tical models that computer systems use in order to perform a specific "
@@ -1113,10 +1215,14 @@ class TestMarkdownConversion(TestCase):
                 "business problems, machine learning is also referred to as predictive "
                 "analytics.",
             },
-            {"category": "title", "text": "Recommendation: BUY"},
-            {"category": "text", "text": "42"},
-            {"category": "text", "text": "test noise string at bottom"},
-            {"category": "text", "text": "999"},
+            {"content_id": "33", "category": "title", "text": "Recommendation: BUY"},
+            {"content_id": "34", "category": "text", "text": "42"},
+            {
+                "content_id": "35",
+                "category": "text",
+                "text": "test noise string at bottom",
+            },
+            {"content_id": "36", "category": "text", "text": "999"},
         ]
         self.assertListEqual(expected_output_list, output_list)
 
@@ -4155,3 +4261,219 @@ class TestMarkdownConversion(TestCase):
             ["2023", "103,009", "203,009", "303,009", "403,009"],
         ]
         self.assertEqual(table, expected_table)
+
+    def test_convert_output_to_items_relations(self) -> None:
+        # With return_relations=False (default), relations should be None
+        result_no_rel = convert_output_to_items_list(self.extract_output_item_relations)
+        self.assertIsNone(result_no_rel.relations)
+
+        # With return_relations=True, relations should be extracted
+        result = convert_output_to_items_list(
+            self.extract_output_item_relations, return_relations=True
+        )
+        self.assertIsNotNone(result.relations)
+        expected_relations = [
+            {
+                "relation_type": "support",
+                "source_content_id": "1201",
+                "target_content_id": "1202",
+            },
+            {
+                "relation_type": "support",
+                "source_content_id": "1545",
+                "target_content_id": "1202",
+            },
+            {
+                "relation_type": "support",
+                "source_content_id": "1546",
+                "target_content_id": "1547",
+            },
+            {
+                "relation_type": "support",
+                "source_content_id": "1555",
+                "target_content_id": "1556",
+            },
+            {
+                "relation_type": "support",
+                "source_content_id": "1751",
+                "target_content_id": "1556",
+            },
+            {
+                "relation_type": "support",
+                "source_content_id": "1752",
+                "target_content_id": "1753",
+            },
+            {
+                "relation_type": "support",
+                "source_content_id": "1768",
+                "target_content_id": "1770",
+            },
+            {
+                "relation_type": "support",
+                "source_content_id": "1769",
+                "target_content_id": "1770",
+            },
+            {
+                "relation_type": "support",
+                "source_content_id": "179",
+                "target_content_id": "57",
+            },
+            {
+                "relation_type": "support",
+                "source_content_id": "1952",
+                "target_content_id": "1770",
+            },
+            {
+                "relation_type": "support",
+                "source_content_id": "1953",
+                "target_content_id": "1954",
+            },
+            {
+                "relation_type": "support",
+                "source_content_id": "2187",
+                "target_content_id": "1954",
+            },
+            {
+                "relation_type": "support",
+                "source_content_id": "2190",
+                "target_content_id": "2192",
+            },
+            {
+                "relation_type": "support",
+                "source_content_id": "2191",
+                "target_content_id": "2192",
+            },
+            {
+                "relation_type": "support",
+                "source_content_id": "22",
+                "target_content_id": "23",
+            },
+            {
+                "relation_type": "support",
+                "source_content_id": "2278",
+                "target_content_id": "2279",
+            },
+            {
+                "relation_type": "support",
+                "source_content_id": "2296",
+                "target_content_id": "2279",
+            },
+            {
+                "relation_type": "support",
+                "source_content_id": "2297",
+                "target_content_id": "2298",
+            },
+            {
+                "relation_type": "support",
+                "source_content_id": "2330",
+                "target_content_id": "2298",
+            },
+            {
+                "relation_type": "support",
+                "source_content_id": "2331",
+                "target_content_id": "2332",
+            },
+            {
+                "relation_type": "support",
+                "source_content_id": "2352",
+                "target_content_id": "2332",
+            },
+            {
+                "relation_type": "support",
+                "source_content_id": "2353",
+                "target_content_id": "2354",
+            },
+            {
+                "relation_type": "support",
+                "source_content_id": "2363",
+                "target_content_id": "2354",
+            },
+            {
+                "relation_type": "support",
+                "source_content_id": "2364",
+                "target_content_id": "2365",
+            },
+            {
+                "relation_type": "support",
+                "source_content_id": "2524",
+                "target_content_id": "2365",
+            },
+            {
+                "relation_type": "support",
+                "source_content_id": "326",
+                "target_content_id": "327",
+            },
+            {
+                "relation_type": "support",
+                "source_content_id": "415",
+                "target_content_id": "327",
+            },
+            {
+                "relation_type": "support",
+                "source_content_id": "435",
+                "target_content_id": "436",
+            },
+            {
+                "relation_type": "support",
+                "source_content_id": "528",
+                "target_content_id": "436",
+            },
+            {
+                "relation_type": "support",
+                "source_content_id": "56",
+                "target_content_id": "57",
+            },
+            {
+                "relation_type": "support",
+                "source_content_id": "628",
+                "target_content_id": "629",
+            },
+            {
+                "relation_type": "support",
+                "source_content_id": "765",
+                "target_content_id": "766",
+            },
+            {
+                "relation_type": "support",
+                "source_content_id": "775",
+                "target_content_id": "766",
+            },
+            {
+                "relation_type": "support",
+                "source_content_id": "779",
+                "target_content_id": "780",
+            },
+            {
+                "relation_type": "support",
+                "source_content_id": "937",
+                "target_content_id": "938",
+            },
+            {
+                "relation_type": "support",
+                "source_content_id": "958",
+                "target_content_id": "959",
+            },
+        ]
+        self.assertEqual(expected_relations, result.relations)
+
+    def test_convert_output_to_items_relations_filters_unsupported_types(self) -> None:
+        import copy
+
+        modified_output = copy.deepcopy(self.extract_output_item_relations)
+        modified_output["annotations"].append(
+            {
+                "type": "relation",
+                "data": {
+                    "relation_type": "unsupported_type",
+                    "source_content_uid": "100",
+                    "target_content_uid": "200",
+                },
+            }
+        )
+        result = convert_output_to_items_list(modified_output, return_relations=True)
+        # The unsupported relation type should be filtered out
+        assert result.relations is not None
+        for relation in result.relations:
+            self.assertIn(relation["relation_type"], {"support"})
+        # Count should still be 36 (only the "support" relations)
+        self.assertEqual(36, len(result.relations))

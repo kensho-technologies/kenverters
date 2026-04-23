@@ -7,25 +7,25 @@ from typing import Any
 
 from .constants import (
     CATEGORY_KEY,
+    CONTENT_ID_KEY,
     DOCUMENT_CATEGORY_KEY,
     ELEMENT_TITLE_CONTENT_CATEGORIES,
     EMPTY_STRING,
     FIGURE_EXTRACTED_TABLE_KEY,
     LOCATIONS_KEY,
+    RELATIONS_BETWEEN_ITEMS,
     TABLE_KEY,
     TEXT_KEY,
-    CONTENT_ID_KEY,
-    RELATIONS_BETWEEN_ITEMS,
     AnnotationType,
     ContentCategory,
     TableType,
 )
 from .extract_output_models import (
-    ConvertOutputResult,
-    TableStructureAnnotationModel,
     ContentModel,
+    ConvertOutputResult,
     LocationModel,
     RelationAnnotationModel,
+    TableStructureAnnotationModel,
 )
 from .output_to_tables import (
     build_content_grid_from_figure_extracted_table_cell_annotations,
@@ -123,7 +123,9 @@ def _create_segment(
     content: ContentModel,
     uid_to_index: dict[str, tuple[int, int]],
     uid_to_span: dict[str, tuple[int, int]],
-    figure_extracted_table_uid_to_cell_annotations: dict[str, list[TableStructureAnnotationModel]],
+    figure_extracted_table_uid_to_cell_annotations: dict[
+        str, list[TableStructureAnnotationModel]
+    ],
 ) -> dict[str, Any]:
     """Create segment dictionary from the content, and if applicable its matching table cells."""
     segment: dict[str, Any] = {}
@@ -145,6 +147,7 @@ def _create_segment(
         if len(table) == 0:
             return {}
         segment = {
+            CONTENT_ID_KEY: content.uid,
             CATEGORY_KEY: content.type.lower(),
             TABLE_KEY: table,
             TEXT_KEY: table_to_markdown(table),
@@ -189,7 +192,9 @@ def _get_segments_from_all_children(
     content: ContentModel,
     uid_to_index: dict[str, tuple[int, int]],
     uid_to_span: dict[str, tuple[int, int]],
-    figure_extracted_table_uid_to_cell_annotations: dict[str, list[TableStructureAnnotationModel]],
+    figure_extracted_table_uid_to_cell_annotations: dict[
+        str, list[TableStructureAnnotationModel]
+    ],
     return_locations: bool,
     segments: list[dict[str, Any]],
     visited: list[str],
@@ -262,8 +267,9 @@ def convert_output_to_items_list(
     uid_to_index: dict[str, tuple[int, int]] = {}
     uid_to_span: dict[str, tuple[int, int]] = {}
     relations: list[dict[str, str]] | None = None
+    relation_list: list[dict[str, str]] = []
     if return_relations:
-        relations = []
+        relations = relation_list
     for annotation in annotations:
         if annotation.type == AnnotationType.TABLE_STRUCTURE.value:
             content_uids = annotation.content_uids  # a list
@@ -276,11 +282,14 @@ def convert_output_to_items_list(
         elif annotation.type == AnnotationType.RELATION.value:
             if return_relations:
                 assert isinstance(annotation, RelationAnnotationModel)
-                relations.append({
-                    "relation_type": annotation.data.relation_type,
-                    "source_content_id": annotation.data.source_content_uid,
-                    "target_content_id": annotation.data.target_content_uid,
-                })
+                if annotation.data.relation_type in RELATIONS_BETWEEN_ITEMS:
+                    relation_list.append(
+                        {
+                            "relation_type": annotation.data.relation_type,
+                            "source_content_id": annotation.data.source_content_uid,
+                            "target_content_id": annotation.data.target_content_uid,
+                        }
+                    )
         else:
             raise TypeError(f"{annotation.type} is not a supported annotation type")
 
