@@ -39,7 +39,7 @@ def extract_organized_sections(
             }
         ]]
     """
-    markdown_items = convert_output_to_items_list(serialized_document)
+    markdown_items = convert_output_to_items_list(serialized_document).item_list
     paragraphs: list[list[dict[str, Any]]] = []
     current_paragraph: list[dict[str, Any]] = []
     for item in markdown_items:

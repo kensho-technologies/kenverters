@@ -129,7 +129,7 @@ class TestMarkdownConversion(TestCase):
             {"category": "text", "text": "test noise string at bottom"},
             {"category": "text", "text": "999"},
         ]
-        output_list = convert_output_to_items_list(self.extract_output)
+        output_list = convert_output_to_items_list(self.extract_output).item_list
         self.assertEqual(expected_list, output_list)
 
         # With locations
@@ -333,7 +333,7 @@ class TestMarkdownConversion(TestCase):
         ]
         output_list_with_locs = convert_output_to_items_list(
             self.extract_output, return_locations=True
-        )
+        ).item_list
         self.assertEqual(expected_list_with_locs, output_list_with_locs)
 
     def test_convert_output_to_items_figure_extracted_table(self) -> None:
@@ -794,11 +794,11 @@ class TestMarkdownConversion(TestCase):
         ]
         output_list_with_locs = convert_output_to_items_list(
             self.extract_output_figure_extraction, return_locations=True
-        )
+        ).item_list
         self.assertEqual(expected_list_with_locs, output_list_with_locs)
 
     def test_convert_output_to_items_hierarchical(self) -> None:
-        output_list = convert_output_to_items_list(self.extract_output_hierarchical)
+        output_list = convert_output_to_items_list(self.extract_output_hierarchical).item_list
         expected_list = [
             {"category": "text", "text": "July 1, 2000"},
             {"category": "h1", "text": "Research Update: A Company"},
@@ -982,7 +982,7 @@ class TestMarkdownConversion(TestCase):
         self.assertEqual(expected_list, output_list)
 
     def test_convert_output_to_items_hierarchical_v2(self) -> None:
-        output_list = convert_output_to_items_list(self.extract_output_hierarchical_v2)
+        output_list = convert_output_to_items_list(self.extract_output_hierarchical_v2).item_list
         expected_list = [
             {"category": "page_header", "text": "2019  test noise string at top"},
             {"category": "h1", "text": "Generated Toy File Title"},
@@ -1047,7 +1047,7 @@ class TestMarkdownConversion(TestCase):
         self.assertEqual(expected_list, output_list)
 
     def test_convert_output_to_items_char_offsets(self) -> None:
-        output_list = convert_output_to_items_list(self.extract_output_char_offsets)
+        output_list = convert_output_to_items_list(self.extract_output_char_offsets).item_list
         expected_output_list = [
             {"category": "text", "text": "2019"},
             {"category": "text", "text": "test noise string at top"},

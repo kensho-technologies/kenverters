@@ -1,7 +1,8 @@
 # Copyright 2024-present Kensho Technologies, LLC.
 """Pydantic models for the output JSON."""
 
-from typing import Annotated, Literal, NamedTuple, TypeAlias, Union
+from dataclasses import dataclass
+from typing import Annotated, Any, Literal, NamedTuple, TypeAlias, Union
 
 import pandas as pd
 from pydantic import BaseModel, Field  # pylint: disable=no-name-in-module
@@ -118,6 +119,14 @@ class ExtractOutputModel(BaseModel):
     annotations: list[AnyAnnotationModel]
     content_tree: ContentModel
     pdf_pages: list[PDFPageModel] | None = None
+
+
+@dataclass
+class ConvertOutputResult:
+    """Result of convert_output_to_items_list containing items and optional relations."""
+
+    item_list: list[dict[str, Any]]
+    relations: list[dict[str, str]] | None
 
 
 class TableGridAndStructure(NamedTuple):
