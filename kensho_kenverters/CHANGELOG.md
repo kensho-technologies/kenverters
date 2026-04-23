@@ -1,5 +1,11 @@
 # Changelog
 
+## v2.2.0
+
+### Added
+
+* Add support of relations between segments.  
+
 ## v2.1.0
 
 ### Added
