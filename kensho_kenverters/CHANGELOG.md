@@ -1,15 +1,16 @@
 # Changelog
 
-## v2.2.0
+## v3.0.0
 
 ### Changed
 
-* Change the output from convert_output_to_items_list to be data class. 
+* Change the convert_output_to_items_list to convert_output_to_items_list_and_relations
+* Change the output from convert_output_to_items_list_and_relations to be data class. 
 
 ### Added
 
-* Add content_id to the items from convert_output_to_items_list.
-* Add relations between items to the output from convert_output_to_items_list.  
+* Add content_id to the items from convert_output_to_items_list_and_relations.
+* Add relations between items to the output from convert_output_to_items_list_and_relations.  
 
 ## v2.1.0
 

@@ -107,7 +107,7 @@ class PDFPageModel(BaseModel):
     required_ccw_rotation: int
 
 
-AnyAnnotationModel = Annotated[
+AnnotationModel = Annotated[
     Union[TableStructureAnnotationModel, RelationAnnotationModel],
     Field(discriminator="type"),
 ]
@@ -116,14 +116,14 @@ AnyAnnotationModel = Annotated[
 class ExtractOutputModel(BaseModel):
     """Pydantic object for the Extract contents and annotations."""
 
-    annotations: list[AnyAnnotationModel]
+    annotations: list[AnnotationModel]
     content_tree: ContentModel
     pdf_pages: list[PDFPageModel] | None = None
 
 
 @dataclass
 class ConvertOutputResult:
-    """Result of convert_output_to_items_list containing items and optional relations."""
+    """Result of convert_output_to_items_list_and_relations."""
 
     item_list: list[dict[str, Any]]
     relations: list[dict[str, str]] | None

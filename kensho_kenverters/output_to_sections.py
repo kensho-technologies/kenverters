@@ -4,7 +4,7 @@
 from typing import Any
 
 from .constants import CATEGORY_KEY, ContentCategory
-from .convert_output import convert_output_to_items_list
+from .convert_output import convert_output_to_items_list_and_relations
 
 
 def extract_organized_sections(
@@ -39,7 +39,9 @@ def extract_organized_sections(
             }
         ]]
     """
-    markdown_items = convert_output_to_items_list(serialized_document).item_list
+    markdown_items = convert_output_to_items_list_and_relations(
+        serialized_document
+    ).item_list
     paragraphs: list[list[dict[str, Any]]] = []
     current_paragraph: list[dict[str, Any]] = []
     for item in markdown_items:

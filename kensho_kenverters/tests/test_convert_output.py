@@ -5,7 +5,7 @@ from unittest import TestCase
 
 from ..convert_output import (
     _construct_table_from_cells,
-    convert_output_to_items_list,
+    convert_output_to_items_list_and_relations,
     convert_output_to_markdown,
     convert_output_to_markdown_by_page,
     convert_output_to_str,
@@ -146,7 +146,9 @@ class TestMarkdownConversion(TestCase):
             },
             {"content_id": "37", "category": "text", "text": "999"},
         ]
-        output_list = convert_output_to_items_list(self.extract_output).item_list
+        output_list = convert_output_to_items_list_and_relations(
+            self.extract_output
+        ).item_list
         self.assertEqual(expected_list, output_list)
 
         # With locations
@@ -361,7 +363,7 @@ class TestMarkdownConversion(TestCase):
                 ],
             },
         ]
-        output_list_with_locs = convert_output_to_items_list(
+        output_list_with_locs = convert_output_to_items_list_and_relations(
             self.extract_output, return_locations=True
         ).item_list
         self.assertEqual(expected_list_with_locs, output_list_with_locs)
@@ -852,13 +854,13 @@ class TestMarkdownConversion(TestCase):
                 ],
             },
         ]
-        output_list_with_locs = convert_output_to_items_list(
+        output_list_with_locs = convert_output_to_items_list_and_relations(
             self.extract_output_figure_extraction, return_locations=True
         ).item_list
         self.assertEqual(expected_list_with_locs, output_list_with_locs)
 
     def test_convert_output_to_items_hierarchical(self) -> None:
-        output_list = convert_output_to_items_list(
+        output_list = convert_output_to_items_list_and_relations(
             self.extract_output_hierarchical
         ).item_list
         expected_list = [
@@ -1062,7 +1064,7 @@ class TestMarkdownConversion(TestCase):
         self.assertEqual(expected_list, output_list)
 
     def test_convert_output_to_items_hierarchical_v2(self) -> None:
-        output_list = convert_output_to_items_list(
+        output_list = convert_output_to_items_list_and_relations(
             self.extract_output_hierarchical_v2
         ).item_list
         expected_list = [
@@ -1140,7 +1142,7 @@ class TestMarkdownConversion(TestCase):
         self.assertEqual(expected_list, output_list)
 
     def test_convert_output_to_items_char_offsets(self) -> None:
-        output_list = convert_output_to_items_list(
+        output_list = convert_output_to_items_list_and_relations(
             self.extract_output_char_offsets
         ).item_list
         expected_output_list = [
@@ -4264,11 +4266,13 @@ class TestMarkdownConversion(TestCase):
 
     def test_convert_output_to_items_relations(self) -> None:
         # With return_relations=False (default), relations should be None
-        result_no_rel = convert_output_to_items_list(self.extract_output_item_relations)
+        result_no_rel = convert_output_to_items_list_and_relations(
+            self.extract_output_item_relations
+        )
         self.assertIsNone(result_no_rel.relations)
 
         # With return_relations=True, relations should be extracted
-        result = convert_output_to_items_list(
+        result = convert_output_to_items_list_and_relations(
             self.extract_output_item_relations, return_relations=True
         )
         self.assertIsNotNone(result.relations)
@@ -4470,7 +4474,9 @@ class TestMarkdownConversion(TestCase):
                 },
             }
         )
-        result = convert_output_to_items_list(modified_output, return_relations=True)
+        result = convert_output_to_items_list_and_relations(
+            modified_output, return_relations=True
+        )
         # The unsupported relation type should be filtered out
         assert result.relations is not None
         for relation in result.relations:

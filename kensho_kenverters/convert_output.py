@@ -229,12 +229,12 @@ def _get_segments_from_all_children(
         )
 
 
-def convert_output_to_items_list(
+def convert_output_to_items_list_and_relations(
     serialized_document: dict[str, Any],
     return_locations: bool = False,
     return_relations: bool = False,
 ) -> ConvertOutputResult:
-    """Convert Extract output into a list of items representing the different document entitites.
+    """Convert Extract output into a list of items and their relationships.
 
     Args:
         serialized_document: a serialized document
@@ -266,10 +266,7 @@ def convert_output_to_items_list(
     # Read table cell structure
     uid_to_index: dict[str, tuple[int, int]] = {}
     uid_to_span: dict[str, tuple[int, int]] = {}
-    relations: list[dict[str, str]] | None = None
-    relation_list: list[dict[str, str]] = []
-    if return_relations:
-        relations = relation_list
+    relations: list[dict[str, str]] | None = [] if return_relations else None
     for annotation in annotations:
         if annotation.type == AnnotationType.TABLE_STRUCTURE.value:
             content_uids = annotation.content_uids  # a list
@@ -280,10 +277,10 @@ def convert_output_to_items_list(
         elif annotation.type == AnnotationType.FIGURE_EXTRACTED_TABLE_STRUCTURE.value:
             continue
         elif annotation.type == AnnotationType.RELATION.value:
-            if return_relations:
+            if relations is not None:
                 assert isinstance(annotation, RelationAnnotationModel)
                 if annotation.data.relation_type in RELATIONS_BETWEEN_ITEMS:
-                    relation_list.append(
+                    relations.append(
                         {
                             "relation_type": annotation.data.relation_type,
                             "source_content_id": annotation.data.source_content_uid,
@@ -333,7 +330,9 @@ def convert_output_to_str(serialized_document: dict[str, Any]) -> str:
     Returns:
         full text string of the document with markdown-style tables using | as a delimiter
     """
-    document_items = convert_output_to_items_list(serialized_document).item_list
+    document_items = convert_output_to_items_list_and_relations(
+        serialized_document
+    ).item_list
     return "\n".join(item[TEXT_KEY] for item in document_items if item[TEXT_KEY])
 
 
@@ -354,7 +353,7 @@ def convert_output_to_str_by_page(serialized_document: dict[str, Any]) -> list[s
             'Supplementary materials found here\n|T|L|'
         ]
     """
-    document_items = convert_output_to_items_list(
+    document_items = convert_output_to_items_list_and_relations(
         serialized_document, return_locations=True
     ).item_list
     page_texts = defaultdict(list)
@@ -381,7 +380,9 @@ def convert_output_to_markdown(serialized_document: dict[str, Any]) -> str:
         full text string of the document with markdown-style tables using | as a delimiter
         and titles prefaced with #
     """
-    document_items = convert_output_to_items_list(serialized_document).item_list
+    document_items = convert_output_to_items_list_and_relations(
+        serialized_document
+    ).item_list
     item_texts = []
     for item in document_items:
         # Some types like figures don't have content
@@ -411,7 +412,7 @@ def convert_output_to_markdown_by_page(
             'Supplementary materials found here\n|T|L|'
         ]
     """
-    document_items = convert_output_to_items_list(
+    document_items = convert_output_to_items_list_and_relations(
         serialized_document, return_locations=True
     ).item_list
     page_texts = defaultdict(list)
