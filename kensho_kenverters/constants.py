@@ -9,6 +9,7 @@ TEXT_KEY = "text"
 TABLE_KEY = "table"
 FIGURE_EXTRACTED_TABLE_KEY = "figure_extracted_table"
 LOCATIONS_KEY = "locations"
+CONTENT_ID_KEY = "content_id"
 DOCUMENT_CATEGORY_KEY = "DOCUMENT"
 
 TableType: TypeAlias = list[list[str]]
@@ -19,6 +20,7 @@ class AnnotationType(Enum):
 
     TABLE_STRUCTURE = "table_structure"
     FIGURE_EXTRACTED_TABLE_STRUCTURE = "figure_extracted_table_structure"
+    RELATION = "relation"
 
 
 class ContentCategory(Enum):
@@ -90,5 +92,7 @@ TABLE_CONTENT_CATEGORIES = {
 FIGURE_CONTENT_CATEGORIES = {
     ContentCategory.FIGURE.value,
 }
+
+RELATIONS_BETWEEN_ITEMS = {"support"}
 
 EMPTY_STRING = ""

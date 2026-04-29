@@ -7,9 +7,9 @@ import pandas as pd
 
 from ..extract_output_models import (
     AnnotationDataModel,
-    AnnotationModel,
     ExtractOutputModel,
     LocationModel,
+    TableStructureAnnotationModel,
 )
 from ..tables_utils import (
     convert_table_to_pd_df,
@@ -33,9 +33,12 @@ class TestTablesUtils(TestCase):
 
     def test_get_table_shape(self) -> None:
         expected_shape = (5, 5)
-        self.assertEqual(
-            get_table_shape(self.parsed_serialized_document.annotations), expected_shape
-        )
+        table_annotations = [
+            a
+            for a in self.parsed_serialized_document.annotations
+            if isinstance(a, TableStructureAnnotationModel)
+        ]
+        self.assertEqual(get_table_shape(table_annotations), expected_shape)
 
     def test_convert_tpdle_to_pd_df(self) -> None:
         # 1-row table: no headers
@@ -60,10 +63,14 @@ class TestTablesUtils(TestCase):
     def test_duplicate_spanning_annotations_1_spans(self) -> None:
         # Test no duplication when all spans are 1
         duplicated = duplicate_spanning_annotations(
-            self.parsed_serialized_document.annotations
+            [
+                a
+                for a in self.parsed_serialized_document.annotations
+                if isinstance(a, TableStructureAnnotationModel)
+            ]
         )
         expected_duplicated = [
-            AnnotationModel(
+            TableStructureAnnotationModel(
                 content_uids=["7"],
                 data=AnnotationDataModel(index=(0, 0), span=(1, 1)),
                 type="table_structure",
@@ -77,7 +84,7 @@ class TestTablesUtils(TestCase):
                     )
                 ],
             ),
-            AnnotationModel(
+            TableStructureAnnotationModel(
                 content_uids=["8"],
                 data=AnnotationDataModel(index=(0, 1), span=(1, 1)),
                 type="table_structure",
@@ -91,7 +98,7 @@ class TestTablesUtils(TestCase):
                     )
                 ],
             ),
-            AnnotationModel(
+            TableStructureAnnotationModel(
                 content_uids=["9"],
                 data=AnnotationDataModel(index=(0, 2), span=(1, 1)),
                 type="table_structure",
@@ -105,7 +112,7 @@ class TestTablesUtils(TestCase):
                     )
                 ],
             ),
-            AnnotationModel(
+            TableStructureAnnotationModel(
                 content_uids=["10"],
                 data=AnnotationDataModel(index=(0, 3), span=(1, 1)),
                 type="table_structure",
@@ -119,7 +126,7 @@ class TestTablesUtils(TestCase):
                     )
                 ],
             ),
-            AnnotationModel(
+            TableStructureAnnotationModel(
                 content_uids=["11"],
                 data=AnnotationDataModel(index=(0, 4), span=(1, 1)),
                 type="table_structure",
@@ -133,7 +140,7 @@ class TestTablesUtils(TestCase):
                     )
                 ],
             ),
-            AnnotationModel(
+            TableStructureAnnotationModel(
                 content_uids=["12"],
                 data=AnnotationDataModel(index=(1, 0), span=(1, 1)),
                 type="table_structure",
@@ -147,7 +154,7 @@ class TestTablesUtils(TestCase):
                     )
                 ],
             ),
-            AnnotationModel(
+            TableStructureAnnotationModel(
                 content_uids=["13"],
                 data=AnnotationDataModel(index=(1, 1), span=(1, 1)),
                 type="table_structure",
@@ -161,7 +168,7 @@ class TestTablesUtils(TestCase):
                     )
                 ],
             ),
-            AnnotationModel(
+            TableStructureAnnotationModel(
                 content_uids=["14"],
                 data=AnnotationDataModel(index=(1, 2), span=(1, 1)),
                 type="table_structure",
@@ -175,7 +182,7 @@ class TestTablesUtils(TestCase):
                     )
                 ],
             ),
-            AnnotationModel(
+            TableStructureAnnotationModel(
                 content_uids=["15"],
                 data=AnnotationDataModel(index=(1, 3), span=(1, 1)),
                 type="table_structure",
@@ -189,7 +196,7 @@ class TestTablesUtils(TestCase):
                     )
                 ],
             ),
-            AnnotationModel(
+            TableStructureAnnotationModel(
                 content_uids=["16"],
                 data=AnnotationDataModel(index=(1, 4), span=(1, 1)),
                 type="table_structure",
@@ -203,7 +210,7 @@ class TestTablesUtils(TestCase):
                     )
                 ],
             ),
-            AnnotationModel(
+            TableStructureAnnotationModel(
                 content_uids=["17"],
                 data=AnnotationDataModel(index=(2, 0), span=(1, 1)),
                 type="table_structure",
@@ -217,7 +224,7 @@ class TestTablesUtils(TestCase):
                     )
                 ],
             ),
-            AnnotationModel(
+            TableStructureAnnotationModel(
                 content_uids=["18"],
                 data=AnnotationDataModel(index=(2, 1), span=(1, 1)),
                 type="table_structure",
@@ -231,7 +238,7 @@ class TestTablesUtils(TestCase):
                     )
                 ],
             ),
-            AnnotationModel(
+            TableStructureAnnotationModel(
                 content_uids=["19"],
                 data=AnnotationDataModel(index=(2, 2), span=(1, 1)),
                 type="table_structure",
@@ -245,7 +252,7 @@ class TestTablesUtils(TestCase):
                     )
                 ],
             ),
-            AnnotationModel(
+            TableStructureAnnotationModel(
                 content_uids=["20"],
                 data=AnnotationDataModel(index=(2, 3), span=(1, 1)),
                 type="table_structure",
@@ -259,7 +266,7 @@ class TestTablesUtils(TestCase):
                     )
                 ],
             ),
-            AnnotationModel(
+            TableStructureAnnotationModel(
                 content_uids=["21"],
                 data=AnnotationDataModel(index=(2, 4), span=(1, 1)),
                 type="table_structure",
@@ -273,7 +280,7 @@ class TestTablesUtils(TestCase):
                     )
                 ],
             ),
-            AnnotationModel(
+            TableStructureAnnotationModel(
                 content_uids=["22"],
                 data=AnnotationDataModel(index=(3, 0), span=(1, 1)),
                 type="table_structure",
@@ -287,7 +294,7 @@ class TestTablesUtils(TestCase):
                     )
                 ],
             ),
-            AnnotationModel(
+            TableStructureAnnotationModel(
                 content_uids=["23"],
                 data=AnnotationDataModel(index=(3, 1), span=(1, 1)),
                 type="table_structure",
@@ -301,7 +308,7 @@ class TestTablesUtils(TestCase):
                     )
                 ],
             ),
-            AnnotationModel(
+            TableStructureAnnotationModel(
                 content_uids=["24"],
                 data=AnnotationDataModel(index=(3, 2), span=(1, 1)),
                 type="table_structure",
@@ -315,7 +322,7 @@ class TestTablesUtils(TestCase):
                     )
                 ],
             ),
-            AnnotationModel(
+            TableStructureAnnotationModel(
                 content_uids=["25"],
                 data=AnnotationDataModel(index=(3, 3), span=(1, 1)),
                 type="table_structure",
@@ -329,7 +336,7 @@ class TestTablesUtils(TestCase):
                     )
                 ],
             ),
-            AnnotationModel(
+            TableStructureAnnotationModel(
                 content_uids=["26"],
                 data=AnnotationDataModel(index=(3, 4), span=(1, 1)),
                 type="table_structure",
@@ -343,7 +350,7 @@ class TestTablesUtils(TestCase):
                     )
                 ],
             ),
-            AnnotationModel(
+            TableStructureAnnotationModel(
                 content_uids=["27"],
                 data=AnnotationDataModel(index=(4, 0), span=(1, 1)),
                 type="table_structure",
@@ -357,7 +364,7 @@ class TestTablesUtils(TestCase):
                     )
                 ],
             ),
-            AnnotationModel(
+            TableStructureAnnotationModel(
                 content_uids=["28"],
                 data=AnnotationDataModel(index=(4, 1), span=(1, 1)),
                 type="table_structure",
@@ -371,7 +378,7 @@ class TestTablesUtils(TestCase):
                     )
                 ],
             ),
-            AnnotationModel(
+            TableStructureAnnotationModel(
                 content_uids=["29"],
                 data=AnnotationDataModel(index=(4, 2), span=(1, 1)),
                 type="table_structure",
@@ -385,7 +392,7 @@ class TestTablesUtils(TestCase):
                     )
                 ],
             ),
-            AnnotationModel(
+            TableStructureAnnotationModel(
                 content_uids=["30"],
                 data=AnnotationDataModel(index=(4, 3), span=(1, 1)),
                 type="table_structure",
@@ -399,7 +406,7 @@ class TestTablesUtils(TestCase):
                     )
                 ],
             ),
-            AnnotationModel(
+            TableStructureAnnotationModel(
                 content_uids=["31"],
                 data=AnnotationDataModel(index=(4, 4), span=(1, 1)),
                 type="table_structure",
@@ -419,11 +426,15 @@ class TestTablesUtils(TestCase):
 
     def test_duplicate_spanning_annotations_greater_1_spans(self) -> None:
         # Test properly duplicated when cells have a span > 1
-        annotations = self.parsed_serialized_document.annotations
+        annotations = [
+            a
+            for a in self.parsed_serialized_document.annotations
+            if isinstance(a, TableStructureAnnotationModel)
+        ]
         annotations.pop(-1)
         annotations[-1].data.span = (1, 2)
         expected_duplicated = [
-            AnnotationModel(
+            TableStructureAnnotationModel(
                 content_uids=["7"],
                 data=AnnotationDataModel(index=(0, 0), span=(1, 1)),
                 type="table_structure",
@@ -437,7 +448,7 @@ class TestTablesUtils(TestCase):
                     )
                 ],
             ),
-            AnnotationModel(
+            TableStructureAnnotationModel(
                 content_uids=["8"],
                 data=AnnotationDataModel(index=(0, 1), span=(1, 1)),
                 type="table_structure",
@@ -451,7 +462,7 @@ class TestTablesUtils(TestCase):
                     )
                 ],
             ),
-            AnnotationModel(
+            TableStructureAnnotationModel(
                 content_uids=["9"],
                 data=AnnotationDataModel(index=(0, 2), span=(1, 1)),
                 type="table_structure",
@@ -465,7 +476,7 @@ class TestTablesUtils(TestCase):
                     )
                 ],
             ),
-            AnnotationModel(
+            TableStructureAnnotationModel(
                 content_uids=["10"],
                 data=AnnotationDataModel(index=(0, 3), span=(1, 1)),
                 type="table_structure",
@@ -479,7 +490,7 @@ class TestTablesUtils(TestCase):
                     )
                 ],
             ),
-            AnnotationModel(
+            TableStructureAnnotationModel(
                 content_uids=["11"],
                 data=AnnotationDataModel(index=(0, 4), span=(1, 1)),
                 type="table_structure",
@@ -493,7 +504,7 @@ class TestTablesUtils(TestCase):
                     )
                 ],
             ),
-            AnnotationModel(
+            TableStructureAnnotationModel(
                 content_uids=["12"],
                 data=AnnotationDataModel(index=(1, 0), span=(1, 1)),
                 type="table_structure",
@@ -507,7 +518,7 @@ class TestTablesUtils(TestCase):
                     )
                 ],
             ),
-            AnnotationModel(
+            TableStructureAnnotationModel(
                 content_uids=["13"],
                 data=AnnotationDataModel(index=(1, 1), span=(1, 1)),
                 type="table_structure",
@@ -521,7 +532,7 @@ class TestTablesUtils(TestCase):
                     )
                 ],
             ),
-            AnnotationModel(
+            TableStructureAnnotationModel(
                 content_uids=["14"],
                 data=AnnotationDataModel(index=(1, 2), span=(1, 1)),
                 type="table_structure",
@@ -535,7 +546,7 @@ class TestTablesUtils(TestCase):
                     )
                 ],
             ),
-            AnnotationModel(
+            TableStructureAnnotationModel(
                 content_uids=["15"],
                 data=AnnotationDataModel(index=(1, 3), span=(1, 1)),
                 type="table_structure",
@@ -549,7 +560,7 @@ class TestTablesUtils(TestCase):
                     )
                 ],
             ),
-            AnnotationModel(
+            TableStructureAnnotationModel(
                 content_uids=["16"],
                 data=AnnotationDataModel(index=(1, 4), span=(1, 1)),
                 type="table_structure",
@@ -563,7 +574,7 @@ class TestTablesUtils(TestCase):
                     )
                 ],
             ),
-            AnnotationModel(
+            TableStructureAnnotationModel(
                 content_uids=["17"],
                 data=AnnotationDataModel(index=(2, 0), span=(1, 1)),
                 type="table_structure",
@@ -577,7 +588,7 @@ class TestTablesUtils(TestCase):
                     )
                 ],
             ),
-            AnnotationModel(
+            TableStructureAnnotationModel(
                 content_uids=["18"],
                 data=AnnotationDataModel(index=(2, 1), span=(1, 1)),
                 type="table_structure",
@@ -591,7 +602,7 @@ class TestTablesUtils(TestCase):
                     )
                 ],
             ),
-            AnnotationModel(
+            TableStructureAnnotationModel(
                 content_uids=["19"],
                 data=AnnotationDataModel(index=(2, 2), span=(1, 1)),
                 type="table_structure",
@@ -605,7 +616,7 @@ class TestTablesUtils(TestCase):
                     )
                 ],
             ),
-            AnnotationModel(
+            TableStructureAnnotationModel(
                 content_uids=["20"],
                 data=AnnotationDataModel(index=(2, 3), span=(1, 1)),
                 type="table_structure",
@@ -619,7 +630,7 @@ class TestTablesUtils(TestCase):
                     )
                 ],
             ),
-            AnnotationModel(
+            TableStructureAnnotationModel(
                 content_uids=["21"],
                 data=AnnotationDataModel(index=(2, 4), span=(1, 1)),
                 type="table_structure",
@@ -633,7 +644,7 @@ class TestTablesUtils(TestCase):
                     )
                 ],
             ),
-            AnnotationModel(
+            TableStructureAnnotationModel(
                 content_uids=["22"],
                 data=AnnotationDataModel(index=(3, 0), span=(1, 1)),
                 type="table_structure",
@@ -647,7 +658,7 @@ class TestTablesUtils(TestCase):
                     )
                 ],
             ),
-            AnnotationModel(
+            TableStructureAnnotationModel(
                 content_uids=["23"],
                 data=AnnotationDataModel(index=(3, 1), span=(1, 1)),
                 type="table_structure",
@@ -661,7 +672,7 @@ class TestTablesUtils(TestCase):
                     )
                 ],
             ),
-            AnnotationModel(
+            TableStructureAnnotationModel(
                 content_uids=["24"],
                 data=AnnotationDataModel(index=(3, 2), span=(1, 1)),
                 type="table_structure",
@@ -675,7 +686,7 @@ class TestTablesUtils(TestCase):
                     )
                 ],
             ),
-            AnnotationModel(
+            TableStructureAnnotationModel(
                 content_uids=["25"],
                 data=AnnotationDataModel(index=(3, 3), span=(1, 1)),
                 type="table_structure",
@@ -689,7 +700,7 @@ class TestTablesUtils(TestCase):
                     )
                 ],
             ),
-            AnnotationModel(
+            TableStructureAnnotationModel(
                 content_uids=["26"],
                 data=AnnotationDataModel(index=(3, 4), span=(1, 1)),
                 type="table_structure",
@@ -703,7 +714,7 @@ class TestTablesUtils(TestCase):
                     )
                 ],
             ),
-            AnnotationModel(
+            TableStructureAnnotationModel(
                 content_uids=["27"],
                 data=AnnotationDataModel(index=(4, 0), span=(1, 1)),
                 type="table_structure",
@@ -717,7 +728,7 @@ class TestTablesUtils(TestCase):
                     )
                 ],
             ),
-            AnnotationModel(
+            TableStructureAnnotationModel(
                 content_uids=["28"],
                 data=AnnotationDataModel(index=(4, 1), span=(1, 1)),
                 type="table_structure",
@@ -731,7 +742,7 @@ class TestTablesUtils(TestCase):
                     )
                 ],
             ),
-            AnnotationModel(
+            TableStructureAnnotationModel(
                 content_uids=["29"],
                 data=AnnotationDataModel(index=(4, 2), span=(1, 1)),
                 type="table_structure",
@@ -745,7 +756,7 @@ class TestTablesUtils(TestCase):
                     )
                 ],
             ),
-            AnnotationModel(
+            TableStructureAnnotationModel(
                 content_uids=["30"],
                 data=AnnotationDataModel(index=(4, 3), span=(1, 1)),
                 type="table_structure",
@@ -759,7 +770,7 @@ class TestTablesUtils(TestCase):
                     )
                 ],
             ),
-            AnnotationModel(
+            TableStructureAnnotationModel(
                 content_uids=["30"],
                 data=AnnotationDataModel(index=(4, 4), span=(1, 1)),
                 type="table_structure",
@@ -780,7 +791,7 @@ class TestTablesUtils(TestCase):
     def test_duplicate_spanning_annotations_missing_cells(self) -> None:
         # Test missing cells
         annotations = [
-            AnnotationModel(
+            TableStructureAnnotationModel(
                 content_uids=["7"],
                 data=AnnotationDataModel(index=(0, 0), span=(1, 1)),
                 type="table_structure",
@@ -794,7 +805,7 @@ class TestTablesUtils(TestCase):
                     )
                 ],
             ),
-            AnnotationModel(
+            TableStructureAnnotationModel(
                 content_uids=["8"],
                 data=AnnotationDataModel(index=(0, 1), span=(1, 1)),
                 type="table_structure",
@@ -808,7 +819,7 @@ class TestTablesUtils(TestCase):
                     )
                 ],
             ),
-            AnnotationModel(
+            TableStructureAnnotationModel(
                 content_uids=["9"],
                 data=AnnotationDataModel(index=(3, 0), span=(1, 1)),
                 type="table_structure",

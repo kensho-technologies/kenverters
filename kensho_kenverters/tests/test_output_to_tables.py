@@ -5,10 +5,10 @@ from unittest import TestCase
 
 from ..extract_output_models import (
     AnnotationDataModel,
-    AnnotationModel,
     Cell,
     LocationModel,
     TableGridAndStructure,
+    TableStructureAnnotationModel,
 )
 from ..output_to_tables import (
     build_table_grids,
@@ -1500,7 +1500,7 @@ class TestTableExtraction(TestCase):
                     ["2028", "800,000", "805,000", "810,000", "820,000"],
                 ],
                 table_structure_annotations=[
-                    AnnotationModel(
+                    TableStructureAnnotationModel(
                         content_uids=["12"],
                         data=AnnotationDataModel(
                             index=(0, 0),
@@ -1520,7 +1520,7 @@ class TestTableExtraction(TestCase):
                             )
                         ],
                     ),
-                    AnnotationModel(
+                    TableStructureAnnotationModel(
                         content_uids=["13"],
                         data=AnnotationDataModel(
                             index=(1, 0),
@@ -1540,7 +1540,7 @@ class TestTableExtraction(TestCase):
                             )
                         ],
                     ),
-                    AnnotationModel(
+                    TableStructureAnnotationModel(
                         content_uids=["14"],
                         data=AnnotationDataModel(
                             index=(2, 0),
@@ -1560,7 +1560,7 @@ class TestTableExtraction(TestCase):
                             )
                         ],
                     ),
-                    AnnotationModel(
+                    TableStructureAnnotationModel(
                         content_uids=["15"],
                         data=AnnotationDataModel(
                             index=(3, 0),
@@ -1580,7 +1580,7 @@ class TestTableExtraction(TestCase):
                             )
                         ],
                     ),
-                    AnnotationModel(
+                    TableStructureAnnotationModel(
                         content_uids=["16"],
                         data=AnnotationDataModel(
                             index=(4, 0),
@@ -1600,7 +1600,7 @@ class TestTableExtraction(TestCase):
                             )
                         ],
                     ),
-                    AnnotationModel(
+                    TableStructureAnnotationModel(
                         content_uids=["17"],
                         data=AnnotationDataModel(
                             index=(0, 1),
@@ -1620,7 +1620,7 @@ class TestTableExtraction(TestCase):
                             )
                         ],
                     ),
-                    AnnotationModel(
+                    TableStructureAnnotationModel(
                         content_uids=["18"],
                         data=AnnotationDataModel(
                             index=(1, 1),
@@ -1640,7 +1640,7 @@ class TestTableExtraction(TestCase):
                             )
                         ],
                     ),
-                    AnnotationModel(
+                    TableStructureAnnotationModel(
                         content_uids=["19"],
                         data=AnnotationDataModel(
                             index=(2, 1),
@@ -1660,7 +1660,7 @@ class TestTableExtraction(TestCase):
                             )
                         ],
                     ),
-                    AnnotationModel(
+                    TableStructureAnnotationModel(
                         content_uids=["20"],
                         data=AnnotationDataModel(
                             index=(3, 1),
@@ -1680,7 +1680,7 @@ class TestTableExtraction(TestCase):
                             )
                         ],
                     ),
-                    AnnotationModel(
+                    TableStructureAnnotationModel(
                         content_uids=["21"],
                         data=AnnotationDataModel(
                             index=(4, 1),
@@ -1700,7 +1700,7 @@ class TestTableExtraction(TestCase):
                             )
                         ],
                     ),
-                    AnnotationModel(
+                    TableStructureAnnotationModel(
                         content_uids=["22"],
                         data=AnnotationDataModel(
                             index=(0, 2),
@@ -1720,7 +1720,7 @@ class TestTableExtraction(TestCase):
                             )
                         ],
                     ),
-                    AnnotationModel(
+                    TableStructureAnnotationModel(
                         content_uids=["23"],
                         data=AnnotationDataModel(
                             index=(1, 2),
@@ -1740,7 +1740,7 @@ class TestTableExtraction(TestCase):
                             )
                         ],
                     ),
-                    AnnotationModel(
+                    TableStructureAnnotationModel(
                         content_uids=["24"],
                         data=AnnotationDataModel(
                             index=(2, 2),
@@ -1760,7 +1760,7 @@ class TestTableExtraction(TestCase):
                             )
                         ],
                     ),
-                    AnnotationModel(
+                    TableStructureAnnotationModel(
                         content_uids=["25"],
                         data=AnnotationDataModel(
                             index=(3, 2),
@@ -1780,7 +1780,7 @@ class TestTableExtraction(TestCase):
                             )
                         ],
                     ),
-                    AnnotationModel(
+                    TableStructureAnnotationModel(
                         content_uids=["26"],
                         data=AnnotationDataModel(
                             index=(4, 2),
@@ -1800,7 +1800,7 @@ class TestTableExtraction(TestCase):
                             )
                         ],
                     ),
-                    AnnotationModel(
+                    TableStructureAnnotationModel(
                         content_uids=["27"],
                         data=AnnotationDataModel(
                             index=(0, 3),
@@ -1820,7 +1820,7 @@ class TestTableExtraction(TestCase):
                             )
                         ],
                     ),
-                    AnnotationModel(
+                    TableStructureAnnotationModel(
                         content_uids=["28"],
                         data=AnnotationDataModel(
                             index=(1, 3),
@@ -1840,7 +1840,7 @@ class TestTableExtraction(TestCase):
                             )
                         ],
                     ),
-                    AnnotationModel(
+                    TableStructureAnnotationModel(
                         content_uids=["29"],
                         data=AnnotationDataModel(
                             index=(2, 3),
@@ -1860,7 +1860,7 @@ class TestTableExtraction(TestCase):
                             )
                         ],
                     ),
-                    AnnotationModel(
+                    TableStructureAnnotationModel(
                         content_uids=["30"],
                         data=AnnotationDataModel(
                             index=(3, 3),
@@ -1880,7 +1880,7 @@ class TestTableExtraction(TestCase):
                             )
                         ],
                     ),
-                    AnnotationModel(
+                    TableStructureAnnotationModel(
                         content_uids=["31"],
                         data=AnnotationDataModel(
                             index=(4, 3),
@@ -1900,7 +1900,7 @@ class TestTableExtraction(TestCase):
                             )
                         ],
                     ),
-                    AnnotationModel(
+                    TableStructureAnnotationModel(
                         content_uids=["32"],
                         data=AnnotationDataModel(
                             index=(0, 4),
@@ -1920,7 +1920,7 @@ class TestTableExtraction(TestCase):
                             )
                         ],
                     ),
-                    AnnotationModel(
+                    TableStructureAnnotationModel(
                         content_uids=["33"],
                         data=AnnotationDataModel(
                             index=(1, 4),
@@ -1940,7 +1940,7 @@ class TestTableExtraction(TestCase):
                             )
                         ],
                     ),
-                    AnnotationModel(
+                    TableStructureAnnotationModel(
                         content_uids=["34"],
                         data=AnnotationDataModel(
                             index=(2, 4),
@@ -1960,7 +1960,7 @@ class TestTableExtraction(TestCase):
                             )
                         ],
                     ),
-                    AnnotationModel(
+                    TableStructureAnnotationModel(
                         content_uids=["35"],
                         data=AnnotationDataModel(
                             index=(3, 4),
@@ -1980,7 +1980,7 @@ class TestTableExtraction(TestCase):
                             )
                         ],
                     ),
-                    AnnotationModel(
+                    TableStructureAnnotationModel(
                         content_uids=["36"],
                         data=AnnotationDataModel(
                             index=(4, 4),
@@ -3644,7 +3644,7 @@ class TestTableExtraction(TestCase):
                     ["345", "456", "789"],
                 ],
                 table_structure_annotations=[
-                    AnnotationModel(
+                    TableStructureAnnotationModel(
                         content_uids=["7"],
                         data=AnnotationDataModel(
                             index=(0, 0),
@@ -3664,7 +3664,7 @@ class TestTableExtraction(TestCase):
                             )
                         ],
                     ),
-                    AnnotationModel(
+                    TableStructureAnnotationModel(
                         content_uids=["8"],
                         data=AnnotationDataModel(
                             index=(0, 1),
@@ -3684,7 +3684,7 @@ class TestTableExtraction(TestCase):
                             )
                         ],
                     ),
-                    AnnotationModel(
+                    TableStructureAnnotationModel(
                         content_uids=["9"],
                         data=AnnotationDataModel(
                             index=(0, 2),
@@ -3704,7 +3704,7 @@ class TestTableExtraction(TestCase):
                             )
                         ],
                     ),
-                    AnnotationModel(
+                    TableStructureAnnotationModel(
                         content_uids=["10"],
                         data=AnnotationDataModel(
                             index=(1, 0),
@@ -3724,7 +3724,7 @@ class TestTableExtraction(TestCase):
                             )
                         ],
                     ),
-                    AnnotationModel(
+                    TableStructureAnnotationModel(
                         content_uids=["11"],
                         data=AnnotationDataModel(
                             index=(1, 1),
@@ -3744,7 +3744,7 @@ class TestTableExtraction(TestCase):
                             )
                         ],
                     ),
-                    AnnotationModel(
+                    TableStructureAnnotationModel(
                         content_uids=["12"],
                         data=AnnotationDataModel(
                             index=(1, 2),
@@ -3764,7 +3764,7 @@ class TestTableExtraction(TestCase):
                             )
                         ],
                     ),
-                    AnnotationModel(
+                    TableStructureAnnotationModel(
                         content_uids=["13"],
                         data=AnnotationDataModel(
                             index=(2, 0),
@@ -3784,7 +3784,7 @@ class TestTableExtraction(TestCase):
                             )
                         ],
                     ),
-                    AnnotationModel(
+                    TableStructureAnnotationModel(
                         content_uids=["14"],
                         data=AnnotationDataModel(
                             index=(2, 1),
@@ -3804,7 +3804,7 @@ class TestTableExtraction(TestCase):
                             )
                         ],
                     ),
-                    AnnotationModel(
+                    TableStructureAnnotationModel(
                         content_uids=["15"],
                         data=AnnotationDataModel(
                             index=(2, 2),
@@ -3824,7 +3824,7 @@ class TestTableExtraction(TestCase):
                             )
                         ],
                     ),
-                    AnnotationModel(
+                    TableStructureAnnotationModel(
                         content_uids=["16"],
                         data=AnnotationDataModel(
                             index=(3, 0),
@@ -3844,7 +3844,7 @@ class TestTableExtraction(TestCase):
                             )
                         ],
                     ),
-                    AnnotationModel(
+                    TableStructureAnnotationModel(
                         content_uids=["17"],
                         data=AnnotationDataModel(
                             index=(3, 1),
@@ -3864,7 +3864,7 @@ class TestTableExtraction(TestCase):
                             )
                         ],
                     ),
-                    AnnotationModel(
+                    TableStructureAnnotationModel(
                         content_uids=["18"],
                         data=AnnotationDataModel(
                             index=(3, 2),
@@ -3884,7 +3884,7 @@ class TestTableExtraction(TestCase):
                             )
                         ],
                     ),
-                    AnnotationModel(
+                    TableStructureAnnotationModel(
                         content_uids=["19"],
                         data=AnnotationDataModel(
                             index=(4, 0),
@@ -3904,7 +3904,7 @@ class TestTableExtraction(TestCase):
                             )
                         ],
                     ),
-                    AnnotationModel(
+                    TableStructureAnnotationModel(
                         content_uids=["20"],
                         data=AnnotationDataModel(
                             index=(4, 1),
@@ -3924,7 +3924,7 @@ class TestTableExtraction(TestCase):
                             )
                         ],
                     ),
-                    AnnotationModel(
+                    TableStructureAnnotationModel(
                         content_uids=["21"],
                         data=AnnotationDataModel(
                             index=(4, 2),
@@ -3944,7 +3944,7 @@ class TestTableExtraction(TestCase):
                             )
                         ],
                     ),
-                    AnnotationModel(
+                    TableStructureAnnotationModel(
                         content_uids=["22"],
                         data=AnnotationDataModel(
                             index=(5, 0),
@@ -3964,7 +3964,7 @@ class TestTableExtraction(TestCase):
                             )
                         ],
                     ),
-                    AnnotationModel(
+                    TableStructureAnnotationModel(
                         content_uids=["23"],
                         data=AnnotationDataModel(
                             index=(5, 1),
@@ -3984,7 +3984,7 @@ class TestTableExtraction(TestCase):
                             )
                         ],
                     ),
-                    AnnotationModel(
+                    TableStructureAnnotationModel(
                         content_uids=["24"],
                         data=AnnotationDataModel(
                             index=(5, 2),
@@ -4004,7 +4004,7 @@ class TestTableExtraction(TestCase):
                             )
                         ],
                     ),
-                    AnnotationModel(
+                    TableStructureAnnotationModel(
                         content_uids=["25"],
                         data=AnnotationDataModel(
                             index=(6, 0),
@@ -4024,7 +4024,7 @@ class TestTableExtraction(TestCase):
                             )
                         ],
                     ),
-                    AnnotationModel(
+                    TableStructureAnnotationModel(
                         content_uids=["26"],
                         data=AnnotationDataModel(
                             index=(6, 1),
@@ -4044,7 +4044,7 @@ class TestTableExtraction(TestCase):
                             )
                         ],
                     ),
-                    AnnotationModel(
+                    TableStructureAnnotationModel(
                         content_uids=["27"],
                         data=AnnotationDataModel(
                             index=(6, 2),
@@ -4079,7 +4079,7 @@ class TestTableExtraction(TestCase):
                     ["910", "345", "234"],
                 ],
                 table_structure_annotations=[
-                    AnnotationModel(
+                    TableStructureAnnotationModel(
                         content_uids=["36"],
                         data=AnnotationDataModel(
                             index=(0, 0),
@@ -4099,7 +4099,7 @@ class TestTableExtraction(TestCase):
                             )
                         ],
                     ),
-                    AnnotationModel(
+                    TableStructureAnnotationModel(
                         content_uids=["37"],
                         data=AnnotationDataModel(
                             index=(0, 1),
@@ -4119,7 +4119,7 @@ class TestTableExtraction(TestCase):
                             )
                         ],
                     ),
-                    AnnotationModel(
+                    TableStructureAnnotationModel(
                         content_uids=["38"],
                         data=AnnotationDataModel(
                             index=(0, 2),
@@ -4139,7 +4139,7 @@ class TestTableExtraction(TestCase):
                             )
                         ],
                     ),
-                    AnnotationModel(
+                    TableStructureAnnotationModel(
                         content_uids=["39"],
                         data=AnnotationDataModel(
                             index=(1, 0),
@@ -4159,7 +4159,7 @@ class TestTableExtraction(TestCase):
                             )
                         ],
                     ),
-                    AnnotationModel(
+                    TableStructureAnnotationModel(
                         content_uids=["40"],
                         data=AnnotationDataModel(
                             index=(1, 1),
@@ -4179,7 +4179,7 @@ class TestTableExtraction(TestCase):
                             )
                         ],
                     ),
-                    AnnotationModel(
+                    TableStructureAnnotationModel(
                         content_uids=["41"],
                         data=AnnotationDataModel(
                             index=(1, 2),
@@ -4199,7 +4199,7 @@ class TestTableExtraction(TestCase):
                             )
                         ],
                     ),
-                    AnnotationModel(
+                    TableStructureAnnotationModel(
                         content_uids=["42"],
                         data=AnnotationDataModel(
                             index=(2, 0),
@@ -4219,7 +4219,7 @@ class TestTableExtraction(TestCase):
                             )
                         ],
                     ),
-                    AnnotationModel(
+                    TableStructureAnnotationModel(
                         content_uids=["43"],
                         data=AnnotationDataModel(
                             index=(2, 1),
@@ -4239,7 +4239,7 @@ class TestTableExtraction(TestCase):
                             )
                         ],
                     ),
-                    AnnotationModel(
+                    TableStructureAnnotationModel(
                         content_uids=["44"],
                         data=AnnotationDataModel(
                             index=(2, 2),
@@ -4259,7 +4259,7 @@ class TestTableExtraction(TestCase):
                             )
                         ],
                     ),
-                    AnnotationModel(
+                    TableStructureAnnotationModel(
                         content_uids=["45"],
                         data=AnnotationDataModel(
                             index=(3, 0),
@@ -4279,7 +4279,7 @@ class TestTableExtraction(TestCase):
                             )
                         ],
                     ),
-                    AnnotationModel(
+                    TableStructureAnnotationModel(
                         content_uids=["46"],
                         data=AnnotationDataModel(
                             index=(3, 1),
@@ -4299,7 +4299,7 @@ class TestTableExtraction(TestCase):
                             )
                         ],
                     ),
-                    AnnotationModel(
+                    TableStructureAnnotationModel(
                         content_uids=["47"],
                         data=AnnotationDataModel(
                             index=(3, 2),
@@ -4319,7 +4319,7 @@ class TestTableExtraction(TestCase):
                             )
                         ],
                     ),
-                    AnnotationModel(
+                    TableStructureAnnotationModel(
                         content_uids=["48"],
                         data=AnnotationDataModel(
                             index=(4, 0),
@@ -4339,7 +4339,7 @@ class TestTableExtraction(TestCase):
                             )
                         ],
                     ),
-                    AnnotationModel(
+                    TableStructureAnnotationModel(
                         content_uids=["49"],
                         data=AnnotationDataModel(
                             index=(4, 1),
@@ -4359,7 +4359,7 @@ class TestTableExtraction(TestCase):
                             )
                         ],
                     ),
-                    AnnotationModel(
+                    TableStructureAnnotationModel(
                         content_uids=["50"],
                         data=AnnotationDataModel(
                             index=(4, 2),
@@ -4379,7 +4379,7 @@ class TestTableExtraction(TestCase):
                             )
                         ],
                     ),
-                    AnnotationModel(
+                    TableStructureAnnotationModel(
                         content_uids=["51"],
                         data=AnnotationDataModel(
                             index=(5, 0),
@@ -4399,7 +4399,7 @@ class TestTableExtraction(TestCase):
                             )
                         ],
                     ),
-                    AnnotationModel(
+                    TableStructureAnnotationModel(
                         content_uids=["52"],
                         data=AnnotationDataModel(
                             index=(5, 1),
@@ -4419,7 +4419,7 @@ class TestTableExtraction(TestCase):
                             )
                         ],
                     ),
-                    AnnotationModel(
+                    TableStructureAnnotationModel(
                         content_uids=["53"],
                         data=AnnotationDataModel(
                             index=(5, 2),
@@ -4439,7 +4439,7 @@ class TestTableExtraction(TestCase):
                             )
                         ],
                     ),
-                    AnnotationModel(
+                    TableStructureAnnotationModel(
                         content_uids=["54"],
                         data=AnnotationDataModel(
                             index=(6, 0),
@@ -4459,7 +4459,7 @@ class TestTableExtraction(TestCase):
                             )
                         ],
                     ),
-                    AnnotationModel(
+                    TableStructureAnnotationModel(
                         content_uids=["55"],
                         data=AnnotationDataModel(
                             index=(6, 1),
@@ -4479,7 +4479,7 @@ class TestTableExtraction(TestCase):
                             )
                         ],
                     ),
-                    AnnotationModel(
+                    TableStructureAnnotationModel(
                         content_uids=["56"],
                         data=AnnotationDataModel(
                             index=(6, 2),
@@ -4499,7 +4499,7 @@ class TestTableExtraction(TestCase):
                             )
                         ],
                     ),
-                    AnnotationModel(
+                    TableStructureAnnotationModel(
                         content_uids=["57"],
                         data=AnnotationDataModel(
                             index=(7, 0),
@@ -4519,7 +4519,7 @@ class TestTableExtraction(TestCase):
                             )
                         ],
                     ),
-                    AnnotationModel(
+                    TableStructureAnnotationModel(
                         content_uids=["58"],
                         data=AnnotationDataModel(
                             index=(7, 1),
@@ -4539,7 +4539,7 @@ class TestTableExtraction(TestCase):
                             )
                         ],
                     ),
-                    AnnotationModel(
+                    TableStructureAnnotationModel(
                         content_uids=["59"],
                         data=AnnotationDataModel(
                             index=(7, 2),

@@ -1,10 +1,11 @@
 # Copyright 2024-present Kensho Technologies, LLC.
 """Pydantic models for the output JSON."""
 
-from typing import Literal, NamedTuple, TypeAlias
+from dataclasses import dataclass
+from typing import Annotated, Any, Literal, NamedTuple, TypeAlias, Union
 
 import pandas as pd
-from pydantic import BaseModel  # pylint: disable=no-name-in-module
+from pydantic import BaseModel, Field  # pylint: disable=no-name-in-module
 
 # Location types are either dictionaries of bbox coordinates and page numbers
 # or None if locations are not returned in the Extract output.
@@ -55,13 +56,28 @@ class AnnotationDataModel(BaseModel):
     is_projected_row_header: bool = False
 
 
-class AnnotationModel(BaseModel):
-    """Pydantic object for the Extract annotations."""
+class TableStructureAnnotationModel(BaseModel):
+    """Pydantic object for the Extract table structure annotations."""
 
     content_uids: list[str]
     data: AnnotationDataModel
-    type: str
+    type: Literal["table_structure", "figure_extracted_table_structure"]
     locations: list[LocationModel] | None = None
+
+
+class RelationAnnotationDataModel(BaseModel):
+    """Pydantic object for a relation annotation's data."""
+
+    relation_type: str
+    source_content_uid: str
+    target_content_uid: str
+
+
+class RelationAnnotationModel(BaseModel):
+    """Pydantic object for relation annotations."""
+
+    data: RelationAnnotationDataModel
+    type: Literal["relation"]
 
 
 class TextNodeDataModel(BaseModel):
@@ -91,6 +107,12 @@ class PDFPageModel(BaseModel):
     required_ccw_rotation: int
 
 
+AnnotationModel = Annotated[
+    Union[TableStructureAnnotationModel, RelationAnnotationModel],
+    Field(discriminator="type"),
+]
+
+
 class ExtractOutputModel(BaseModel):
     """Pydantic object for the Extract contents and annotations."""
 
@@ -99,9 +121,17 @@ class ExtractOutputModel(BaseModel):
     pdf_pages: list[PDFPageModel] | None = None
 
 
+@dataclass
+class ConvertOutputResult:
+    """Result of convert_output_to_items_list_and_relations."""
+
+    item_list: list[dict[str, Any]]
+    relations: list[dict[str, str]] | None
+
+
 class TableGridAndStructure(NamedTuple):
     """Objects consisting of table category type, string grid and structure annotations."""
 
     table_category_type: TableCategoryType
     table_string_grid: list[list[str]]
-    table_structure_annotations: list[AnnotationModel]
+    table_structure_annotations: list[TableStructureAnnotationModel]
