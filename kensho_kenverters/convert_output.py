@@ -493,6 +493,7 @@ def _build_header_tree_node(
     figure_extracted_table_uid_to_cell_annotations: dict[
         str, list[TableStructureAnnotationModel]
     ],
+    return_contents: bool = True,
 ) -> dict[str, Any]:
     """Build a header tree node from a ContentModel that is a heading or document root."""
     children: list[dict[str, Any]] = []
@@ -506,9 +507,10 @@ def _build_header_tree_node(
                     uid_to_index,
                     uid_to_span,
                     figure_extracted_table_uid_to_cell_annotations,
+                    return_contents,
                 )
             )
-        else:
+        elif return_contents:
             segment = _create_content_segment(
                 child,
                 uid_to_index,
@@ -518,17 +520,20 @@ def _build_header_tree_node(
             if segment is not None:
                 contents.append(segment)
 
-    return {
+    node: dict[str, Any] = {
         "type": content.type.lower(),
         "text": content.content or EMPTY_STRING,
         "children": children,
-        "contents": contents,
         LOCATIONS_KEY: content.locations or [],
     }
+    if return_contents:
+        node["contents"] = contents
+    return node
 
 
 def convert_output_to_header_tree(
     serialized_document: dict[str, Any],
+    return_contents: bool = True,
 ) -> dict[str, Any]:
     """Convert Extract output into a header content tree.
 
@@ -537,6 +542,7 @@ def convert_output_to_header_tree(
 
     Args:
         serialized_document: a serialized document
+        return_contents: whether to include the "contents" list on each node
 
     Returns:
         a dict representing the root "document" node with:
@@ -544,6 +550,7 @@ def convert_output_to_header_tree(
             - "text": the heading text (empty for document root)
             - "children": list of child header nodes
             - "contents": list of content segments under this heading
+                (only present if return_contents is True)
             - "locations": list of LocationModel
     """
     parsed = load_output_to_pydantic(serialized_document)
@@ -575,4 +582,5 @@ def convert_output_to_header_tree(
         uid_to_index,
         uid_to_span,
         figure_extracted_table_uid_to_cell_annotations,
+        return_contents,
     )

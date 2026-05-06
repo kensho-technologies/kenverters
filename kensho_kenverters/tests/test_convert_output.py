@@ -4590,6 +4590,25 @@ class TestConvertOutputToHeaderTree(TestCase):
         self.assertIn("paragraph", categories)
         self.assertIn("text", categories)
 
+    def test_return_contents_false(self) -> None:
+        tree = convert_output_to_header_tree(
+            self.extract_output_hierarchical_v2, return_contents=False
+        )
+        self.assertNotIn("contents", tree)
+        self.assertNotIn("contents", tree["children"][0])
+        # Other fields should still be present
+        self.assertEqual(tree["type"], "document")
+        self.assertEqual(tree["children"][0]["type"], "h1")
+        self.assertEqual(tree["children"][0]["text"], "Generated Toy File Title")
+        self.assertTrue(len(tree["children"][0]["locations"]) > 0)
+
+    def test_return_contents_true(self) -> None:
+        tree = convert_output_to_header_tree(
+            self.extract_output_hierarchical_v2, return_contents=True
+        )
+        self.assertIn("contents", tree)
+        self.assertIn("contents", tree["children"][0])
+
 
 class TestCreateContentSegment(TestCase):
     def test_paragraph_segment(self) -> None:
