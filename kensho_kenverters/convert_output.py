@@ -12,6 +12,7 @@ from .constants import (
     ELEMENT_TITLE_CONTENT_CATEGORIES,
     EMPTY_STRING,
     FIGURE_EXTRACTED_TABLE_KEY,
+    HEADING_CATEGORIES,
     LOCATIONS_KEY,
     RELATIONS_BETWEEN_ITEMS,
     TABLE_KEY,
@@ -430,16 +431,6 @@ def convert_output_to_markdown_by_page(
             page_texts[location.page_number].append(item_text)
 
     return ["\n".join(text) for _, text in sorted(page_texts.items())]
-
-
-HEADING_CATEGORIES = {
-    ContentCategory.TITLE.value,
-    ContentCategory.H1.value,
-    ContentCategory.H2.value,
-    ContentCategory.H3.value,
-    ContentCategory.H4.value,
-    ContentCategory.H5.value,
-}
 
 
 def _create_content_segment(

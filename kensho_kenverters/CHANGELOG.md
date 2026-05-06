@@ -6,7 +6,7 @@
 
 * Add `convert_output_to_header_tree` function to `convert_output` to build a header content tree from the Extract output. Each heading (TITLE, H1-H5) becomes a tree node with `children` (sub-headings) and `contents` (non-heading segments such as paragraphs and tables).
 
-## v3.1.0
+## v3.0.0
 
 ### Changed
 
