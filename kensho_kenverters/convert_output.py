@@ -430,3 +430,158 @@ def convert_output_to_markdown_by_page(
             page_texts[location.page_number].append(item_text)
 
     return ["\n".join(text) for _, text in sorted(page_texts.items())]
+
+
+HEADING_CATEGORIES = {
+    ContentCategory.TITLE.value,
+    ContentCategory.H1.value,
+    ContentCategory.H2.value,
+    ContentCategory.H3.value,
+    ContentCategory.H4.value,
+    ContentCategory.H5.value,
+}
+
+
+def _create_content_segment(
+    content: ContentModel,
+    uid_to_index: dict[str, tuple[int, int]],
+    uid_to_span: dict[str, tuple[int, int]],
+    figure_extracted_table_uid_to_cell_annotations: dict[
+        str, list[TableStructureAnnotationModel]
+    ],
+) -> dict[str, Any] | None:
+    """Create a content segment dict for the header tree's 'contents' list."""
+    locations = content.locations or []
+    if content.type in (
+        ContentCategory.TABLE.value,
+        ContentCategory.TABLE_OF_CONTENTS.value,
+    ):
+        table_cells = content.children
+        if len(table_cells) == 0:
+            return None
+        table = _construct_table_from_cells(table_cells, uid_to_index, uid_to_span)
+        if len(table) == 0:
+            return None
+        return {
+            CATEGORY_KEY: content.type.lower(),
+            TEXT_KEY: table_to_markdown(table),
+            LOCATIONS_KEY: locations,
+            TABLE_KEY: table,
+        }
+    elif content.type == ContentCategory.FIGURE_EXTRACTED_TABLE.value:
+        if content.uid not in figure_extracted_table_uid_to_cell_annotations:
+            return None
+        table = build_content_grid_from_figure_extracted_table_cell_annotations(
+            figure_extracted_table_uid_to_cell_annotations[content.uid]
+        )
+        if len(table) == 0:
+            return None
+        return {
+            CATEGORY_KEY: content.type.lower(),
+            TEXT_KEY: table_to_markdown(table),
+            LOCATIONS_KEY: locations,
+            TABLE_KEY: table,
+        }
+    elif content.type in (
+        ContentCategory.TABLE_CELL.value,
+        ContentCategory.FIGURE_EXTRACTED_TABLE_CELL.value,
+    ):
+        return None
+    else:
+        return {
+            CATEGORY_KEY: content.type.lower(),
+            TEXT_KEY: content.content or EMPTY_STRING,
+            LOCATIONS_KEY: locations,
+        }
+
+
+def _build_header_tree_node(
+    content: ContentModel,
+    uid_to_index: dict[str, tuple[int, int]],
+    uid_to_span: dict[str, tuple[int, int]],
+    figure_extracted_table_uid_to_cell_annotations: dict[
+        str, list[TableStructureAnnotationModel]
+    ],
+) -> dict[str, Any]:
+    """Build a header tree node from a ContentModel that is a heading or document root."""
+    children: list[dict[str, Any]] = []
+    contents: list[dict[str, Any]] = []
+
+    for child in content.children:
+        if child.type in HEADING_CATEGORIES:
+            children.append(
+                _build_header_tree_node(
+                    child,
+                    uid_to_index,
+                    uid_to_span,
+                    figure_extracted_table_uid_to_cell_annotations,
+                )
+            )
+        else:
+            segment = _create_content_segment(
+                child,
+                uid_to_index,
+                uid_to_span,
+                figure_extracted_table_uid_to_cell_annotations,
+            )
+            if segment is not None:
+                contents.append(segment)
+
+    return {
+        "type": content.type.lower(),
+        "text": content.content or EMPTY_STRING,
+        "children": children,
+        "contents": contents,
+        LOCATIONS_KEY: content.locations or [],
+    }
+
+
+def convert_output_to_header_tree(
+    serialized_document: dict[str, Any],
+) -> dict[str, Any]:
+    """Convert Extract output into a header content tree.
+
+    Builds a tree where only headings (TITLE, H1-H5) and the document root
+    serve as nodes. Non-heading content is collected in each node's "contents".
+
+    Args:
+        serialized_document: a serialized document
+
+    Returns:
+        a dict representing the root "document" node with:
+            - "type": the node type (lowercased)
+            - "text": the heading text (empty for document root)
+            - "children": list of child header nodes
+            - "contents": list of content segments under this heading
+            - "locations": list of LocationModel
+    """
+    parsed = load_output_to_pydantic(serialized_document)
+    annotations = parsed.annotations
+
+    uid_to_index: dict[str, tuple[int, int]] = {}
+    uid_to_span: dict[str, tuple[int, int]] = {}
+    for annotation in annotations:
+        if annotation.type == AnnotationType.TABLE_STRUCTURE.value:
+            for uid in annotation.content_uids:
+                uid_to_index[uid] = annotation.data.index
+                uid_to_span[uid] = annotation.data.span
+
+    figure_extracted_table_cell_annotations = [
+        annotation
+        for annotation in annotations
+        if annotation.type == AnnotationType.FIGURE_EXTRACTED_TABLE_STRUCTURE.value
+    ]
+    table_uid_to_cells_mapping = get_table_uid_to_cells_mapping(parsed.content_tree)
+    figure_extracted_table_uid_to_cell_annotations = (
+        get_table_uid_to_annotations_mapping(
+            table_uid_to_cells_mapping,
+            figure_extracted_table_cell_annotations,
+        )
+    )
+
+    return _build_header_tree_node(
+        parsed.content_tree,
+        uid_to_index,
+        uid_to_span,
+        figure_extracted_table_uid_to_cell_annotations,
+    )
