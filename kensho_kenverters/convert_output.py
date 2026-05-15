@@ -546,8 +546,7 @@ def convert_output_to_header_tree(
 
     Returns:
         A HeaderTreeNodeModel representing the root "document" node.
-        Serialize with model_dump() / model_dump_json().
-        Deserialize with HeaderTreeNodeModel.model_validate(data).
+        Serialize with to_dict(). Deserialize with HeaderTreeNodeModel.from_dict(data).
     """
     parsed = load_output_to_pydantic(serialized_document)
     annotations = parsed.annotations
