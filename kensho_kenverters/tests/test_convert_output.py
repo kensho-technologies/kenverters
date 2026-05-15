@@ -4531,7 +4531,9 @@ class TestConvertOutputToHeaderTree(TestCase):
         tree = convert_output_to_header_tree(self.extract_output)
         # Contents before first title belong to root
         root_contents = tree.contents
-        assert root_contents is not None
+        self.assertIsNotNone(root_contents)
+        if root_contents is None:
+            return
         self.assertTrue(len(root_contents) >= 2)
         self.assertEqual(root_contents[0].category, "text")
         self.assertEqual(root_contents[0].text, "2019")
@@ -4542,7 +4544,9 @@ class TestConvertOutputToHeaderTree(TestCase):
         tree = convert_output_to_header_tree(self.extract_output_hierarchical_v2)
         # H1 "Generated Toy File Title" has paragraph/text children
         h1 = tree.children[0]
-        assert h1.contents is not None
+        self.assertIsNotNone(h1.contents)
+        if h1.contents is None:
+            return
         self.assertTrue(len(h1.contents) >= 1)
         categories = [s.category for s in h1.contents]
         self.assertIn("paragraph", categories)
@@ -4551,13 +4555,16 @@ class TestConvertOutputToHeaderTree(TestCase):
         tree = convert_output_to_header_tree(self.extract_output_hierarchical_v2)
         # H1 "Generated Toy File Title" has a table child
         h1 = tree.children[0]
-        assert h1.contents is not None
+        self.assertIsNotNone(h1.contents)
+        if h1.contents is None:
+            return
         table_segments = [s for s in h1.contents if s.table is not None]
         self.assertTrue(len(table_segments) >= 1)
         table_seg = table_segments[0]
         self.assertEqual(table_seg.category, "table")
         self.assertIsNotNone(table_seg.table)
-        assert table_seg.table is not None
+        if table_seg.table is None:
+            return
         self.assertEqual(
             table_seg.table[0],
             ["Kensho Revenue in millions $", "Q1", "Q2", "Q3", "Q4"],
@@ -4595,7 +4602,9 @@ class TestConvertOutputToHeaderTree(TestCase):
         self.assertEqual(children[0].locations[0].page_number, 0)
         # H1 should have paragraph and table contents
         h1_contents = children[0].contents
-        assert h1_contents is not None
+        self.assertIsNotNone(h1_contents)
+        if h1_contents is None:
+            return
         categories = [s.category for s in h1_contents]
         self.assertIn("paragraph", categories)
         self.assertIn("text", categories)
@@ -4756,7 +4765,9 @@ class TestBuildHeaderTreeNode(TestCase):
         )
         result = _build_header_tree_node(content, {}, {}, {})
         self.assertEqual(result.type, "document")
-        assert result.contents is not None
+        self.assertIsNotNone(result.contents)
+        if result.contents is None:
+            return
         self.assertEqual(result.contents[0].category, "paragraph")
         self.assertEqual(result.contents[0].text, "Before heading")
         self.assertEqual(len(result.children), 1)
@@ -4764,7 +4775,9 @@ class TestBuildHeaderTreeNode(TestCase):
         self.assertEqual(h1_node.type, "h1")
         self.assertEqual(h1_node.text, "Title")
         self.assertEqual(h1_node.locations[0].page_number, 0)
-        assert h1_node.contents is not None
+        self.assertIsNotNone(h1_node.contents)
+        if h1_node.contents is None:
+            return
         self.assertEqual(h1_node.contents[0].text, "Under title")
 
     def test_nested_headings(self) -> None:
@@ -4820,7 +4833,9 @@ class TestBuildHeaderTreeNode(TestCase):
         h2 = h1.children[0]
         self.assertEqual(h2.type, "h2")
         self.assertEqual(h2.text, "Section")
-        assert h2.contents is not None
+        self.assertIsNotNone(h2.contents)
+        if h2.contents is None:
+            return
         self.assertEqual(h2.contents[0].text, "Body")
 
 
