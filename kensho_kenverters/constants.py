@@ -73,14 +73,16 @@ ELEMENT_TITLE_CONTENT_CATEGORIES = {
     ContentCategory.TABLE_OF_CONTENTS_TITLE.value,
 }
 
-TITLE_CONTENT_CATEGORIES = {
+HEADING_CATEGORIES = {
     ContentCategory.TITLE.value,
     ContentCategory.H1.value,
     ContentCategory.H2.value,
     ContentCategory.H3.value,
     ContentCategory.H4.value,
     ContentCategory.H5.value,
-} | ELEMENT_TITLE_CONTENT_CATEGORIES
+}
+
+TITLE_CONTENT_CATEGORIES = HEADING_CATEGORIES | ELEMENT_TITLE_CONTENT_CATEGORIES
 
 
 TABLE_CONTENT_CATEGORIES = {

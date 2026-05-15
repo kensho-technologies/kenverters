@@ -135,3 +135,31 @@ class TableGridAndStructure(NamedTuple):
     table_category_type: TableCategoryType
     table_string_grid: list[list[str]]
     table_structure_annotations: list[TableStructureAnnotationModel]
+
+
+class ContentSegmentModel(BaseModel):
+    """A content segment within a header tree node."""
+
+    category: str
+    text: str
+    locations: list[LocationModel]
+    table: list[list[str]] | None = None
+
+
+class HeaderTreeNodeModel(BaseModel):
+    """A node in the header content tree produced by convert_output_to_header_tree."""
+
+    type: str
+    text: str
+    children: list["HeaderTreeNodeModel"]
+    locations: list[LocationModel]
+    contents: list[ContentSegmentModel] | None = None
+
+    def to_dict(self) -> dict[str, Any]:
+        """Serialize the tree to a plain dictionary."""
+        return self.model_dump()
+
+    @classmethod
+    def from_dict(cls, data: dict[str, Any]) -> "HeaderTreeNodeModel":
+        """Deserialize a plain dictionary into a HeaderTreeNodeModel."""
+        return cls.model_validate(data)

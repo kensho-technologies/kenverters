@@ -4,7 +4,10 @@ from typing import Any, ClassVar
 from unittest import TestCase
 
 from ..convert_output import (
+    _build_header_tree_node,
     _construct_table_from_cells,
+    _create_content_segment,
+    convert_output_to_header_tree,
     convert_output_to_items_list_and_relations,
     convert_output_to_markdown,
     convert_output_to_markdown_by_page,
@@ -12,7 +15,12 @@ from ..convert_output import (
     convert_output_to_str_by_page,
     table_to_markdown,
 )
-from ..extract_output_models import ContentModel, LocationModel
+from ..extract_output_models import (
+    ContentModel,
+    ContentSegmentModel,
+    HeaderTreeNodeModel,
+    LocationModel,
+)
 
 OUTPUT_FILE_PATH = os.path.join(
     os.path.dirname(__file__), "data", "extract_output.json"
@@ -4483,3 +4491,376 @@ class TestMarkdownConversion(TestCase):
             self.assertIn(relation["relation_type"], {"support"})
         # Count should still be 36 (only the "support" relations)
         self.assertEqual(36, len(result.relations))
+
+
+class TestConvertOutputToHeaderTree(TestCase):
+    extract_output: ClassVar[dict[str, Any]]
+    extract_output_hierarchical: ClassVar[dict[str, Any]]
+    extract_output_hierarchical_v2: ClassVar[dict[str, Any]]
+
+    @classmethod
+    def setUpClass(cls) -> None:
+        with open(OUTPUT_FILE_PATH, "r") as f:
+            cls.extract_output = json.load(f)
+        with open(HIERARCHICAL_OUTPUT_FILE_PATH, "r") as f:
+            cls.extract_output_hierarchical = json.load(f)
+        with open(HIERARCHICAL_v2_OUTPUT_FILE_PATH, "r") as f:
+            cls.extract_output_hierarchical_v2 = json.load(f)
+
+    def test_root_node_structure(self) -> None:
+        tree = convert_output_to_header_tree(self.extract_output)
+        self.assertEqual(tree.type, "document")
+        self.assertEqual(tree.text, "")
+        self.assertEqual(tree.locations, [])
+        self.assertIsNotNone(tree.children)
+        self.assertIsNotNone(tree.contents)
+
+    def test_flat_document_headings(self) -> None:
+        tree = convert_output_to_header_tree(self.extract_output)
+        # Flat document: TITLE nodes become children of document root
+        children = tree.children
+        self.assertEqual(len(children), 3)
+        self.assertEqual(children[0].type, "title")
+        self.assertEqual(children[0].text, "Generated Toy File Title")
+        self.assertEqual(children[1].type, "title")
+        self.assertEqual(children[1].text, "ESTIMATE for Kensho")
+        self.assertEqual(children[2].type, "title")
+        self.assertEqual(children[2].text, "Recommendation: BUY")
+
+    def test_heading_node_has_contents(self) -> None:
+        tree = convert_output_to_header_tree(self.extract_output_hierarchical_v2)
+        # H1 "Generated Toy File Title" has paragraph/text children
+        h1 = tree.children[0]
+        assert isinstance(h1.contents, list)
+        self.assertTrue(len(h1.contents) >= 1)
+        categories = [s.category for s in h1.contents]
+        self.assertIn("paragraph", categories)
+
+    def test_table_in_contents(self) -> None:
+        tree = convert_output_to_header_tree(self.extract_output_hierarchical_v2)
+        # H1 "Generated Toy File Title" has a table child
+        h1 = tree.children[0]
+        assert isinstance(h1.contents, list)
+        table_segments = [s for s in h1.contents if s.table is not None]
+        self.assertTrue(len(table_segments) >= 1)
+        table_seg = table_segments[0]
+        self.assertEqual(table_seg.category, "table")
+        assert isinstance(table_seg.table, list)
+        self.assertEqual(
+            table_seg.table[0],
+            ["Kensho Revenue in millions $", "Q1", "Q2", "Q3", "Q4"],
+        )
+
+    def test_locations_on_heading_node(self) -> None:
+        tree = convert_output_to_header_tree(self.extract_output)
+        first_title = tree.children[0]
+        self.assertTrue(len(first_title.locations) > 0)
+        self.assertEqual(first_title.locations[0].page_number, 0)
+
+    def test_hierarchical_nesting(self) -> None:
+        tree = convert_output_to_header_tree(self.extract_output_hierarchical)
+        children = tree.children
+        self.assertEqual(len(children), 4)
+        self.assertEqual(children[0].type, "h1")
+        self.assertEqual(children[0].text, "Research Update: A Company")
+        self.assertEqual(children[3].type, "h1")
+        self.assertEqual(children[3].text, "Outlook")
+        # H2s nested under "Outlook"
+        outlook_children = children[3].children
+        self.assertEqual(len(outlook_children), 2)
+        self.assertEqual(outlook_children[0].type, "h2")
+        self.assertEqual(outlook_children[0].text, "Analytical E-Mail Addresses")
+        self.assertEqual(outlook_children[1].type, "h2")
+        self.assertEqual(outlook_children[1].text, "email")
+
+    def test_hierarchical_v2(self) -> None:
+        tree = convert_output_to_header_tree(self.extract_output_hierarchical_v2)
+        self.assertEqual(tree.type, "document")
+        children = tree.children
+        self.assertEqual(len(children), 1)
+        self.assertEqual(children[0].type, "h1")
+        self.assertEqual(children[0].text, "Generated Toy File Title")
+        self.assertEqual(children[0].locations[0].page_number, 0)
+        # H1 should have paragraph and table contents
+        h1_contents = children[0].contents
+        assert isinstance(h1_contents, list)
+        categories = [s.category for s in h1_contents]
+        self.assertIn("paragraph", categories)
+        self.assertIn("text", categories)
+
+    def test_return_contents_false(self) -> None:
+        tree = convert_output_to_header_tree(
+            self.extract_output_hierarchical_v2, return_contents=False
+        )
+        self.assertIsNone(tree.contents)
+        self.assertIsNone(tree.children[0].contents)
+        # Other fields should still be present
+        self.assertEqual(tree.type, "document")
+        self.assertEqual(tree.children[0].type, "h1")
+        self.assertEqual(tree.children[0].text, "Generated Toy File Title")
+        self.assertTrue(len(tree.children[0].locations) > 0)
+
+    def test_return_contents_true(self) -> None:
+        tree = convert_output_to_header_tree(
+            self.extract_output_hierarchical_v2, return_contents=True
+        )
+        self.assertIsNotNone(tree.contents)
+        self.assertIsNotNone(tree.children[0].contents)
+
+
+class TestCreateContentSegment(TestCase):
+    def test_paragraph_segment(self) -> None:
+        content = ContentModel(
+            uid="1",
+            type="PARAGRAPH",
+            content="Hello world",
+            children=[],
+            locations=[
+                LocationModel(height=0.01, width=0.5, x=0.1, y=0.1, page_number=0)
+            ],
+        )
+        result = _create_content_segment(content, {}, {}, {})
+        assert result is not None
+        self.assertIsInstance(result, ContentSegmentModel)
+        self.assertEqual(result.category, "paragraph")
+        self.assertEqual(result.text, "Hello world")
+        self.assertEqual(len(result.locations), 1)
+        self.assertEqual(result.locations[0].page_number, 0)
+        self.assertIsNone(result.table)
+
+    def test_paragraph_no_locations(self) -> None:
+        content = ContentModel(
+            uid="1",
+            type="PARAGRAPH",
+            content="No loc",
+            children=[],
+            locations=None,
+        )
+        result = _create_content_segment(content, {}, {}, {})
+        assert result is not None
+        self.assertEqual(result.locations, [])
+
+    def test_table_segment(self) -> None:
+        content = ContentModel(
+            uid="t1",
+            type="TABLE",
+            content=None,
+            children=[
+                ContentModel(
+                    uid="c1",
+                    type="TABLE_CELL",
+                    content="A",
+                    children=[],
+                ),
+                ContentModel(
+                    uid="c2",
+                    type="TABLE_CELL",
+                    content="B",
+                    children=[],
+                ),
+            ],
+            locations=[
+                LocationModel(height=0.05, width=0.5, x=0.1, y=0.3, page_number=1)
+            ],
+        )
+        uid_to_index = {"c1": (0, 0), "c2": (0, 1)}
+        uid_to_span = {"c1": (1, 1), "c2": (1, 1)}
+        result = _create_content_segment(content, uid_to_index, uid_to_span, {})
+        assert result is not None
+        self.assertEqual(result.category, "table")
+        self.assertEqual(result.table, [["A", "B"]])
+        self.assertTrue(len(result.text) > 0)
+        self.assertEqual(result.locations[0].page_number, 1)
+
+    def test_empty_table_returns_none(self) -> None:
+        content = ContentModel(
+            uid="t1",
+            type="TABLE",
+            content=None,
+            children=[],
+            locations=None,
+        )
+        result = _create_content_segment(content, {}, {}, {})
+        self.assertIsNone(result)
+
+    def test_table_cell_returns_none(self) -> None:
+        content = ContentModel(
+            uid="c1",
+            type="TABLE_CELL",
+            content="cell",
+            children=[],
+        )
+        result = _create_content_segment(content, {}, {}, {})
+        self.assertIsNone(result)
+
+    def test_none_content_uses_empty_string(self) -> None:
+        content = ContentModel(
+            uid="1",
+            type="TEXT",
+            content=None,
+            children=[],
+        )
+        result = _create_content_segment(content, {}, {}, {})
+        assert result is not None
+        self.assertEqual(result.text, "")
+
+
+class TestBuildHeaderTreeNode(TestCase):
+    def test_document_with_heading_and_content(self) -> None:
+        content = ContentModel(
+            uid="0",
+            type="DOCUMENT",
+            content=None,
+            children=[
+                ContentModel(
+                    uid="1",
+                    type="PARAGRAPH",
+                    content="Before heading",
+                    children=[],
+                ),
+                ContentModel(
+                    uid="2",
+                    type="H1",
+                    content="Title",
+                    children=[
+                        ContentModel(
+                            uid="3",
+                            type="TEXT",
+                            content="Under title",
+                            children=[],
+                        ),
+                    ],
+                    locations=[
+                        LocationModel(
+                            height=0.02,
+                            width=0.5,
+                            x=0.1,
+                            y=0.1,
+                            page_number=0,
+                        )
+                    ],
+                ),
+            ],
+        )
+        result = _build_header_tree_node(content, {}, {}, {})
+        self.assertEqual(result.type, "document")
+        self.assertIsNotNone(result.contents)
+        self.assertEqual(len(result.children), 1)
+        h1_node = result.children[0]
+        self.assertEqual(h1_node.type, "h1")
+        self.assertEqual(h1_node.text, "Title")
+        self.assertEqual(h1_node.locations[0].page_number, 0)
+        assert isinstance(h1_node.contents, list)
+        self.assertEqual(h1_node.contents[0].text, "Under title")
+
+    def test_nested_headings(self) -> None:
+        content = ContentModel(
+            uid="0",
+            type="DOCUMENT",
+            content=None,
+            children=[
+                ContentModel(
+                    uid="1",
+                    type="H1",
+                    content="Chapter",
+                    children=[
+                        ContentModel(
+                            uid="2",
+                            type="H2",
+                            content="Section",
+                            children=[
+                                ContentModel(
+                                    uid="3",
+                                    type="PARAGRAPH",
+                                    content="Body",
+                                    children=[],
+                                ),
+                            ],
+                            locations=[
+                                LocationModel(
+                                    height=0.01,
+                                    width=0.3,
+                                    x=0.1,
+                                    y=0.3,
+                                    page_number=1,
+                                )
+                            ],
+                        ),
+                    ],
+                    locations=[
+                        LocationModel(
+                            height=0.02,
+                            width=0.5,
+                            x=0.1,
+                            y=0.1,
+                            page_number=0,
+                        )
+                    ],
+                ),
+            ],
+        )
+        result = _build_header_tree_node(content, {}, {}, {})
+        h1 = result.children[0]
+        self.assertEqual(h1.type, "h1")
+        self.assertEqual(len(h1.children), 1)
+        h2 = h1.children[0]
+        self.assertEqual(h2.type, "h2")
+        self.assertEqual(h2.text, "Section")
+        assert isinstance(h2.contents, list)
+        self.assertEqual(h2.contents[0].text, "Body")
+
+
+class TestHeaderTreeNodeModelSerialization(TestCase):
+    extract_output_hierarchical_v2: ClassVar[dict[str, Any]]
+
+    @classmethod
+    def setUpClass(cls) -> None:
+        with open(HIERARCHICAL_v2_OUTPUT_FILE_PATH, "r") as f:
+            cls.extract_output_hierarchical_v2 = json.load(f)
+
+    def test_to_dict_returns_plain_dict(self) -> None:
+        tree = convert_output_to_header_tree(self.extract_output_hierarchical_v2)
+        result = tree.to_dict()
+        self.assertIsInstance(result, dict)
+        self.assertEqual(result["type"], "document")
+        self.assertIsInstance(result["children"], list)
+        self.assertIsInstance(result["locations"], list)
+        self.assertIsInstance(result["contents"], list)
+
+    def test_to_dict_nested_children_are_dicts(self) -> None:
+        tree = convert_output_to_header_tree(self.extract_output_hierarchical_v2)
+        result = tree.to_dict()
+        h1 = result["children"][0]
+        self.assertIsInstance(h1, dict)
+        self.assertEqual(h1["type"], "h1")
+        self.assertEqual(h1["text"], "Generated Toy File Title")
+
+    def test_to_dict_contents_are_dicts(self) -> None:
+        tree = convert_output_to_header_tree(self.extract_output_hierarchical_v2)
+        result = tree.to_dict()
+        h1 = result["children"][0]
+        self.assertIsInstance(h1["contents"], list)
+        self.assertIsInstance(h1["contents"][0], dict)
+        self.assertIn("category", h1["contents"][0])
+        self.assertIn("text", h1["contents"][0])
+
+    def test_to_dict_locations_are_dicts(self) -> None:
+        tree = convert_output_to_header_tree(self.extract_output_hierarchical_v2)
+        result = tree.to_dict()
+        h1 = result["children"][0]
+        self.assertIsInstance(h1["locations"][0], dict)
+        self.assertIn("page_number", h1["locations"][0])
+
+    def test_from_dict_roundtrip_equality(self) -> None:
+        tree = convert_output_to_header_tree(self.extract_output_hierarchical_v2)
+        serialized = tree.to_dict()
+        restored = HeaderTreeNodeModel.from_dict(serialized)
+        self.assertEqual(restored, tree)
+
+    def test_from_dict_with_contents_none(self) -> None:
+        tree = convert_output_to_header_tree(
+            self.extract_output_hierarchical_v2, return_contents=False
+        )
+        serialized = tree.to_dict()
+        restored = HeaderTreeNodeModel.from_dict(serialized)
+        self.assertIsNone(restored.contents)
