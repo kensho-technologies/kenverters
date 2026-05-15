@@ -23,7 +23,9 @@ from .constants import (
 )
 from .extract_output_models import (
     ContentModel,
+    ContentSegmentModel,
     ConvertOutputResult,
+    HeaderTreeNodeModel,
     LocationModel,
     RelationAnnotationModel,
     TableStructureAnnotationModel,
@@ -440,8 +442,8 @@ def _create_content_segment(
     figure_extracted_table_uid_to_cell_annotations: dict[
         str, list[TableStructureAnnotationModel]
     ],
-) -> dict[str, Any] | None:
-    """Create a content segment dict for the header tree's 'contents' list."""
+) -> ContentSegmentModel | None:
+    """Create a content segment for the header tree's 'contents' list."""
     locations = content.locations or []
     if content.type in (
         ContentCategory.TABLE.value,
@@ -453,12 +455,12 @@ def _create_content_segment(
         table = _construct_table_from_cells(table_cells, uid_to_index, uid_to_span)
         if len(table) == 0:
             return None
-        return {
-            CATEGORY_KEY: content.type.lower(),
-            TEXT_KEY: table_to_markdown(table),
-            LOCATIONS_KEY: locations,
-            TABLE_KEY: table,
-        }
+        return ContentSegmentModel(
+            category=content.type.lower(),
+            text=table_to_markdown(table),
+            locations=locations,
+            table=table,
+        )
     elif content.type == ContentCategory.FIGURE_EXTRACTED_TABLE.value:
         if content.uid not in figure_extracted_table_uid_to_cell_annotations:
             return None
@@ -467,23 +469,23 @@ def _create_content_segment(
         )
         if len(table) == 0:
             return None
-        return {
-            CATEGORY_KEY: content.type.lower(),
-            TEXT_KEY: table_to_markdown(table),
-            LOCATIONS_KEY: locations,
-            TABLE_KEY: table,
-        }
+        return ContentSegmentModel(
+            category=content.type.lower(),
+            text=table_to_markdown(table),
+            locations=locations,
+            table=table,
+        )
     elif content.type in (
         ContentCategory.TABLE_CELL.value,
         ContentCategory.FIGURE_EXTRACTED_TABLE_CELL.value,
     ):
         return None
     else:
-        return {
-            CATEGORY_KEY: content.type.lower(),
-            TEXT_KEY: content.content or EMPTY_STRING,
-            LOCATIONS_KEY: locations,
-        }
+        return ContentSegmentModel(
+            category=content.type.lower(),
+            text=content.content or EMPTY_STRING,
+            locations=locations,
+        )
 
 
 def _build_header_tree_node(
@@ -494,10 +496,10 @@ def _build_header_tree_node(
         str, list[TableStructureAnnotationModel]
     ],
     return_contents: bool = True,
-) -> dict[str, Any]:
+) -> HeaderTreeNodeModel:
     """Build a header tree node from a ContentModel that is a heading or document root."""
-    children: list[dict[str, Any]] = []
-    contents: list[dict[str, Any]] = []
+    children: list[HeaderTreeNodeModel] = []
+    contents: list[ContentSegmentModel] = []
 
     for child in content.children:
         if child.type in HEADING_CATEGORIES:
@@ -520,21 +522,19 @@ def _build_header_tree_node(
             if segment is not None:
                 contents.append(segment)
 
-    node: dict[str, Any] = {
-        "type": content.type.lower(),
-        "text": content.content or EMPTY_STRING,
-        "children": children,
-        LOCATIONS_KEY: content.locations or [],
-    }
-    if return_contents:
-        node["contents"] = contents
-    return node
+    return HeaderTreeNodeModel(
+        type=content.type.lower(),
+        text=content.content or EMPTY_STRING,
+        children=children,
+        locations=content.locations or [],
+        contents=contents if return_contents else None,
+    )
 
 
 def convert_output_to_header_tree(
     serialized_document: dict[str, Any],
     return_contents: bool = True,
-) -> dict[str, Any]:
+) -> HeaderTreeNodeModel:
     """Convert Extract output into a header content tree.
 
     Builds a tree where only headings (TITLE, H1-H5) and the document root
@@ -545,13 +545,9 @@ def convert_output_to_header_tree(
         return_contents: whether to include the "contents" list on each node
 
     Returns:
-        a dict representing the root "document" node with:
-            - "type": the node type (lowercased)
-            - "text": the heading text (empty for document root)
-            - "children": list of child header nodes
-            - "contents": list of content segments under this heading
-                (only present if return_contents is True)
-            - "locations": list of LocationModel
+        A HeaderTreeNodeModel representing the root "document" node.
+        Serialize with model_dump() / model_dump_json().
+        Deserialize with HeaderTreeNodeModel.model_validate(data).
     """
     parsed = load_output_to_pydantic(serialized_document)
     annotations = parsed.annotations
