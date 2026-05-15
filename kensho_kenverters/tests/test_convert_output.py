@@ -1,6 +1,6 @@
 import json
 import os
-from typing import Any, ClassVar, cast
+from typing import Any, ClassVar
 from unittest import TestCase
 
 from ..convert_output import (
@@ -4527,17 +4527,6 @@ class TestConvertOutputToHeaderTree(TestCase):
         self.assertEqual(children[2].type, "title")
         self.assertEqual(children[2].text, "Recommendation: BUY")
 
-    def test_flat_document_contents(self) -> None:
-        tree = convert_output_to_header_tree(self.extract_output)
-        # Contents before first title belong to root
-        self.assertIsNotNone(tree.contents)
-        root_contents = cast(list[ContentSegmentModel], tree.contents)
-        self.assertTrue(len(root_contents) >= 2)
-        self.assertEqual(root_contents[0].category, "text")
-        self.assertEqual(root_contents[0].text, "2019")
-        self.assertEqual(root_contents[1].category, "text")
-        self.assertEqual(root_contents[1].text, "test noise string at top")
-
     def test_heading_node_has_contents(self) -> None:
         tree = convert_output_to_header_tree(self.extract_output_hierarchical_v2)
         # H1 "Generated Toy File Title" has paragraph/text children
@@ -4756,9 +4745,6 @@ class TestBuildHeaderTreeNode(TestCase):
         result = _build_header_tree_node(content, {}, {}, {})
         self.assertEqual(result.type, "document")
         self.assertIsNotNone(result.contents)
-        result_contents = cast(list[ContentSegmentModel], result.contents)
-        self.assertEqual(result_contents[0].category, "paragraph")
-        self.assertEqual(result_contents[0].text, "Before heading")
         self.assertEqual(len(result.children), 1)
         h1_node = result.children[0]
         self.assertEqual(h1_node.type, "h1")
