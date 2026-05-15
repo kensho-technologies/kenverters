@@ -4865,33 +4865,11 @@ class TestHeaderTreeNodeModelSerialization(TestCase):
         self.assertIsInstance(h1["locations"][0], dict)
         self.assertIn("page_number", h1["locations"][0])
 
-    def test_from_dict_roundtrip(self) -> None:
+    def test_from_dict_roundtrip_equality(self) -> None:
         tree = convert_output_to_header_tree(self.extract_output_hierarchical_v2)
         serialized = tree.to_dict()
         restored = HeaderTreeNodeModel.from_dict(serialized)
-        self.assertEqual(restored.type, tree.type)
-        self.assertEqual(restored.text, tree.text)
-        self.assertEqual(len(restored.children), len(tree.children))
-        self.assertEqual(restored.children[0].type, tree.children[0].type)
-        self.assertEqual(restored.children[0].text, tree.children[0].text)
-
-    def test_from_dict_restores_locations(self) -> None:
-        tree = convert_output_to_header_tree(self.extract_output_hierarchical_v2)
-        serialized = tree.to_dict()
-        restored = HeaderTreeNodeModel.from_dict(serialized)
-        h1 = restored.children[0]
-        self.assertIsInstance(h1.locations[0], LocationModel)
-        self.assertEqual(
-            h1.locations[0].page_number, tree.children[0].locations[0].page_number
-        )
-
-    def test_from_dict_restores_contents(self) -> None:
-        tree = convert_output_to_header_tree(self.extract_output_hierarchical_v2)
-        serialized = tree.to_dict()
-        restored = HeaderTreeNodeModel.from_dict(serialized)
-        assert restored.contents is not None
-        assert tree.contents is not None
-        self.assertEqual(len(restored.contents), len(tree.contents))
+        self.assertEqual(restored, tree)
 
     def test_from_dict_with_contents_none(self) -> None:
         tree = convert_output_to_header_tree(
@@ -4900,9 +4878,3 @@ class TestHeaderTreeNodeModelSerialization(TestCase):
         serialized = tree.to_dict()
         restored = HeaderTreeNodeModel.from_dict(serialized)
         self.assertIsNone(restored.contents)
-
-    def test_from_dict_roundtrip_equality(self) -> None:
-        tree = convert_output_to_header_tree(self.extract_output_hierarchical_v2)
-        serialized = tree.to_dict()
-        restored = HeaderTreeNodeModel.from_dict(serialized)
-        self.assertEqual(restored, tree)
