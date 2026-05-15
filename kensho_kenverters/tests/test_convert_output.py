@@ -4530,9 +4530,9 @@ class TestConvertOutputToHeaderTree(TestCase):
     def test_flat_document_contents(self) -> None:
         tree = convert_output_to_header_tree(self.extract_output)
         # Contents before first title belong to root
-        if tree.contents is None:
-            raise AssertionError("Expected contents to not be None")
         root_contents = tree.contents
+        if root_contents is None:
+            raise AssertionError("Expected contents to not be None")
         self.assertTrue(len(root_contents) >= 2)
         self.assertEqual(root_contents[0].category, "text")
         self.assertEqual(root_contents[0].text, "2019")
@@ -4756,10 +4756,11 @@ class TestBuildHeaderTreeNode(TestCase):
         )
         result = _build_header_tree_node(content, {}, {}, {})
         self.assertEqual(result.type, "document")
-        if result.contents is None:
+        result_contents = result.contents
+        if result_contents is None:
             raise AssertionError("Expected contents to not be None")
-        self.assertEqual(result.contents[0].category, "paragraph")
-        self.assertEqual(result.contents[0].text, "Before heading")
+        self.assertEqual(result_contents[0].category, "paragraph")
+        self.assertEqual(result_contents[0].text, "Before heading")
         self.assertEqual(len(result.children), 1)
         h1_node = result.children[0]
         self.assertEqual(h1_node.type, "h1")
