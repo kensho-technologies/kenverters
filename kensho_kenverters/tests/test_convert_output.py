@@ -1,6 +1,6 @@
 import json
 import os
-from typing import Any, ClassVar
+from typing import Any, ClassVar, cast
 from unittest import TestCase
 
 from ..convert_output import (
@@ -4530,9 +4530,8 @@ class TestConvertOutputToHeaderTree(TestCase):
     def test_flat_document_contents(self) -> None:
         tree = convert_output_to_header_tree(self.extract_output)
         # Contents before first title belong to root
-        root_contents = tree.contents
-        if root_contents is None:
-            raise AssertionError("Expected contents to not be None")
+        self.assertIsNotNone(tree.contents)
+        root_contents = cast(list[ContentSegmentModel], tree.contents)
         self.assertTrue(len(root_contents) >= 2)
         self.assertEqual(root_contents[0].category, "text")
         self.assertEqual(root_contents[0].text, "2019")
@@ -4756,9 +4755,8 @@ class TestBuildHeaderTreeNode(TestCase):
         )
         result = _build_header_tree_node(content, {}, {}, {})
         self.assertEqual(result.type, "document")
-        result_contents = result.contents
-        if result_contents is None:
-            raise AssertionError("Expected contents to not be None")
+        self.assertIsNotNone(result.contents)
+        result_contents = cast(list[ContentSegmentModel], result.contents)
         self.assertEqual(result_contents[0].category, "paragraph")
         self.assertEqual(result_contents[0].text, "Before heading")
         self.assertEqual(len(result.children), 1)
