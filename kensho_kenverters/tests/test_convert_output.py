@@ -4627,9 +4627,10 @@ class TestCreateContentSegment(TestCase):
         self.assertIsInstance(result, ContentSegmentModel)
         self.assertEqual(result.category, "paragraph")
         self.assertEqual(result.text, "Hello world")
-        assert result.locations is not None
-        self.assertEqual(len(result.locations), 1)
-        self.assertEqual(result.locations[0].page_number, 0)
+        locations = result.locations
+        assert locations is not None
+        self.assertEqual(len(locations), 1)
+        self.assertEqual(locations[0].page_number, 0)
         self.assertIsNone(result.table)
 
     def test_paragraph_no_locations(self) -> None:
@@ -4675,8 +4676,9 @@ class TestCreateContentSegment(TestCase):
         self.assertEqual(result.table, [["A", "B"]])
         assert result.text is not None
         self.assertTrue(len(result.text) > 0)
-        assert result.locations is not None
-        self.assertEqual(result.locations[0].page_number, 1)
+        locations = result.locations
+        assert locations is not None
+        self.assertEqual(locations[0].page_number, 1)
 
     def test_table_cell_returns_none(self) -> None:
         content = ContentModel(
