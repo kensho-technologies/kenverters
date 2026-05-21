@@ -4630,7 +4630,9 @@ class TestCreateContentSegment(TestCase):
         locations = result.locations
         assert locations is not None
         self.assertEqual(len(locations), 1)
-        self.assertEqual(locations[0].page_number, 0)
+        self.assertEqual(
+            locations[0].page_number, 0
+        )  # pylint: disable=unsubscriptable-object
         self.assertIsNone(result.table)
 
     def test_paragraph_no_locations(self) -> None:
@@ -4678,7 +4680,9 @@ class TestCreateContentSegment(TestCase):
         self.assertTrue(len(result.text) > 0)
         locations = result.locations
         assert locations is not None
-        self.assertEqual(locations[0].page_number, 1)
+        self.assertEqual(
+            locations[0].page_number, 1
+        )  # pylint: disable=unsubscriptable-object
 
     def test_table_cell_returns_none(self) -> None:
         content = ContentModel(
