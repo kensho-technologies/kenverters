@@ -444,21 +444,16 @@ def _create_content_segment(
     ],
 ) -> ContentSegmentModel | None:
     """Create a content segment for the header tree's 'contents' list."""
-    locations = content.locations or []
     if content.type in (
         ContentCategory.TABLE.value,
         ContentCategory.TABLE_OF_CONTENTS.value,
     ):
         table_cells = content.children
-        if len(table_cells) == 0:
-            return None
         table = _construct_table_from_cells(table_cells, uid_to_index, uid_to_span)
-        if len(table) == 0:
-            return None
         return ContentSegmentModel(
             category=content.type.lower(),
             text=table_to_markdown(table),
-            locations=locations,
+            locations=content.locations,
             table=table,
         )
     elif content.type == ContentCategory.FIGURE_EXTRACTED_TABLE.value:
@@ -467,12 +462,10 @@ def _create_content_segment(
         table = build_content_grid_from_figure_extracted_table_cell_annotations(
             figure_extracted_table_uid_to_cell_annotations[content.uid]
         )
-        if len(table) == 0:
-            return None
         return ContentSegmentModel(
             category=content.type.lower(),
             text=table_to_markdown(table),
-            locations=locations,
+            locations=content.locations,
             table=table,
         )
     elif content.type in (
@@ -483,8 +476,8 @@ def _create_content_segment(
     else:
         return ContentSegmentModel(
             category=content.type.lower(),
-            text=content.content or EMPTY_STRING,
-            locations=locations,
+            text=content.content,
+            locations=content.locations,
         )
 
 
@@ -524,9 +517,9 @@ def _build_header_tree_node(
 
     return HeaderTreeNodeModel(
         type=content.type.lower(),
-        text=content.content or EMPTY_STRING,
+        text=content.content,
         children=children,
-        locations=content.locations or [],
+        locations=content.locations,
         contents=contents if return_contents else None,
     )
 

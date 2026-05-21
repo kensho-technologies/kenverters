@@ -4510,8 +4510,8 @@ class TestConvertOutputToHeaderTree(TestCase):
     def test_root_node_structure(self) -> None:
         tree = convert_output_to_header_tree(self.extract_output)
         self.assertEqual(tree.type, "document")
-        self.assertEqual(tree.text, "")
-        self.assertEqual(tree.locations, [])
+        self.assertIsNone(tree.text)
+        self.assertIsNone(tree.locations)
         self.assertIsNotNone(tree.children)
         self.assertIsNotNone(tree.contents)
 
@@ -4554,6 +4554,7 @@ class TestConvertOutputToHeaderTree(TestCase):
     def test_locations_on_heading_node(self) -> None:
         tree = convert_output_to_header_tree(self.extract_output)
         first_title = tree.children[0]
+        assert first_title.locations is not None
         self.assertTrue(len(first_title.locations) > 0)
         self.assertEqual(first_title.locations[0].page_number, 0)
 
@@ -4580,6 +4581,7 @@ class TestConvertOutputToHeaderTree(TestCase):
         self.assertEqual(len(children), 1)
         self.assertEqual(children[0].type, "h1")
         self.assertEqual(children[0].text, "Generated Toy File Title")
+        assert children[0].locations is not None
         self.assertEqual(children[0].locations[0].page_number, 0)
         # H1 should have paragraph and table contents
         h1_contents = children[0].contents
@@ -4598,6 +4600,7 @@ class TestConvertOutputToHeaderTree(TestCase):
         self.assertEqual(tree.type, "document")
         self.assertEqual(tree.children[0].type, "h1")
         self.assertEqual(tree.children[0].text, "Generated Toy File Title")
+        assert tree.children[0].locations is not None
         self.assertTrue(len(tree.children[0].locations) > 0)
 
     def test_return_contents_true(self) -> None:
@@ -4624,6 +4627,7 @@ class TestCreateContentSegment(TestCase):
         self.assertIsInstance(result, ContentSegmentModel)
         self.assertEqual(result.category, "paragraph")
         self.assertEqual(result.text, "Hello world")
+        assert result.locations is not None
         self.assertEqual(len(result.locations), 1)
         self.assertEqual(result.locations[0].page_number, 0)
         self.assertIsNone(result.table)
@@ -4638,7 +4642,7 @@ class TestCreateContentSegment(TestCase):
         )
         result = _create_content_segment(content, {}, {}, {})
         assert result is not None
-        self.assertEqual(result.locations, [])
+        self.assertIsNone(result.locations)
 
     def test_table_segment(self) -> None:
         content = ContentModel(
@@ -4669,19 +4673,10 @@ class TestCreateContentSegment(TestCase):
         assert result is not None
         self.assertEqual(result.category, "table")
         self.assertEqual(result.table, [["A", "B"]])
+        assert result.text is not None
         self.assertTrue(len(result.text) > 0)
+        assert result.locations is not None
         self.assertEqual(result.locations[0].page_number, 1)
-
-    def test_empty_table_returns_none(self) -> None:
-        content = ContentModel(
-            uid="t1",
-            type="TABLE",
-            content=None,
-            children=[],
-            locations=None,
-        )
-        result = _create_content_segment(content, {}, {}, {})
-        self.assertIsNone(result)
 
     def test_table_cell_returns_none(self) -> None:
         content = ContentModel(
@@ -4693,7 +4688,7 @@ class TestCreateContentSegment(TestCase):
         result = _create_content_segment(content, {}, {}, {})
         self.assertIsNone(result)
 
-    def test_none_content_uses_empty_string(self) -> None:
+    def test_none_content_passes_through(self) -> None:
         content = ContentModel(
             uid="1",
             type="TEXT",
@@ -4702,7 +4697,7 @@ class TestCreateContentSegment(TestCase):
         )
         result = _create_content_segment(content, {}, {}, {})
         assert result is not None
-        self.assertEqual(result.text, "")
+        self.assertIsNone(result.text)
 
 
 class TestBuildHeaderTreeNode(TestCase):
@@ -4749,6 +4744,7 @@ class TestBuildHeaderTreeNode(TestCase):
         h1_node = result.children[0]
         self.assertEqual(h1_node.type, "h1")
         self.assertEqual(h1_node.text, "Title")
+        assert h1_node.locations is not None
         self.assertEqual(h1_node.locations[0].page_number, 0)
         assert isinstance(h1_node.contents, list)
         self.assertEqual(h1_node.contents[0].text, "Under title")
@@ -4824,7 +4820,7 @@ class TestHeaderTreeNodeModelSerialization(TestCase):
         self.assertIsInstance(result, dict)
         self.assertEqual(result["type"], "document")
         self.assertIsInstance(result["children"], list)
-        self.assertIsInstance(result["locations"], list)
+        self.assertIsNone(result["locations"])
         self.assertIsInstance(result["contents"], list)
 
     def test_to_dict_nested_children_are_dicts(self) -> None:

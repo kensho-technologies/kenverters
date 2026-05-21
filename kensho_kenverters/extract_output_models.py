@@ -141,8 +141,8 @@ class ContentSegmentModel(BaseModel):
     """A content segment within a header tree node."""
 
     category: str
-    text: str
-    locations: list[LocationModel]
+    text: str | None
+    locations: list[LocationModel] | None = None
     table: list[list[str]] | None = None
 
 
@@ -150,9 +150,9 @@ class HeaderTreeNodeModel(BaseModel):
     """A node in the header content tree produced by convert_output_to_header_tree."""
 
     type: str
-    text: str
+    text: str | None
     children: list["HeaderTreeNodeModel"]
-    locations: list[LocationModel]
+    locations: list[LocationModel] | None = None
     contents: list[ContentSegmentModel] | None = None
 
     def to_dict(self) -> dict[str, Any]:
