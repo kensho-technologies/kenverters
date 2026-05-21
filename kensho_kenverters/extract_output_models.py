@@ -7,6 +7,8 @@ from typing import Annotated, Any, Literal, NamedTuple, TypeAlias, Union
 import pandas as pd
 from pydantic import BaseModel, Field  # pylint: disable=no-name-in-module
 
+from .constants import TableType
+
 # Location types are either dictionaries of bbox coordinates and page numbers
 # or None if locations are not returned in the Extract output.
 LocationType: TypeAlias = dict[str, float | int] | None
@@ -143,7 +145,7 @@ class ContentSegmentModel(BaseModel):
     category: str
     text: str | None
     locations: list[LocationModel] | None = None
-    table: list[list[str]] | None = None
+    table: TableType | None = None
 
 
 class HeaderTreeNodeModel(BaseModel):
