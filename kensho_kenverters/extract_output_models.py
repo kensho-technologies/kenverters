@@ -7,6 +7,8 @@ from typing import Annotated, Any, Literal, NamedTuple, TypeAlias, Union
 import pandas as pd
 from pydantic import BaseModel, Field  # pylint: disable=no-name-in-module
 
+from .constants import TableType
+
 # Location types are either dictionaries of bbox coordinates and page numbers
 # or None if locations are not returned in the Extract output.
 LocationType: TypeAlias = dict[str, float | int] | None
@@ -135,3 +137,31 @@ class TableGridAndStructure(NamedTuple):
     table_category_type: TableCategoryType
     table_string_grid: list[list[str]]
     table_structure_annotations: list[TableStructureAnnotationModel]
+
+
+class ContentSegmentModel(BaseModel):
+    """A content segment within a header tree node."""
+
+    category: str
+    text: str | None
+    locations: list[LocationModel] | None = None
+    table: TableType | None = None
+
+
+class HeaderTreeNodeModel(BaseModel):
+    """A node in the header content tree produced by convert_output_to_header_tree."""
+
+    type: str
+    text: str | None
+    children: list["HeaderTreeNodeModel"]
+    locations: list[LocationModel] | None = None
+    contents: list[ContentSegmentModel] | None = None
+
+    def to_dict(self) -> dict[str, Any]:
+        """Serialize the tree to a plain dictionary."""
+        return self.model_dump()
+
+    @classmethod
+    def from_dict(cls, data: dict[str, Any]) -> "HeaderTreeNodeModel":
+        """Deserialize a plain dictionary into a HeaderTreeNodeModel."""
+        return cls.model_validate(data)
