@@ -169,14 +169,13 @@ class TableGridHierarchyModel(BaseModel):
     contents: list[list[str]]
 
 
-class TableDataFrameHierarchyModel(BaseModel):
+@dataclass
+class TableDataFrameHierarchyModel:
     """A node in the table DataFrame hierarchy tree.
 
     Similar to TableGridHierarchyModel, but the contents are a pandas DataFrame
     converted from the string grid.
     """
-
-    model_config = {"arbitrary_types_allowed": True}
 
     node_text: str | None
     node_type: str

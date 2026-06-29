@@ -512,7 +512,6 @@ def _convert_table_cell_hierarchy_tree_to_table_grid_hierarchy_tree(
 
 def _convert_table_grid_hierarchy_tree_to_table_df_hierarchy_tree(
     grid_hierarchy_tree: TableGridHierarchyModel,
-    use_first_row_as_header: bool = True,
 ) -> TableDataFrameHierarchyModel:
     """Convert a TableGridHierarchyModel to a TableDataFrameHierarchyModel.
 
@@ -520,20 +519,17 @@ def _convert_table_grid_hierarchy_tree_to_table_df_hierarchy_tree(
 
     Args:
         grid_hierarchy_tree: the hierarchy tree with string grid contents.
-        use_first_row_as_header: if True, use the first row of the grid as DataFrame columns.
 
     Returns:
         a TableDataFrameHierarchyModel with DataFrame contents.
     """
     contents_df = convert_table_to_pd_df(
         grid_hierarchy_tree.contents,
-        use_first_row_as_header=use_first_row_as_header,
+        use_first_row_as_header=False,
     )
 
     children = [
-        _convert_table_grid_hierarchy_tree_to_table_df_hierarchy_tree(
-            child, use_first_row_as_header=use_first_row_as_header
-        )
+        _convert_table_grid_hierarchy_tree_to_table_df_hierarchy_tree(child)
         for child in grid_hierarchy_tree.children
     ]
 
@@ -883,7 +879,6 @@ def extract_pd_dfs_with_locs_and_table_structure_from_output(
                 hierarchy_tree = (
                     _convert_table_grid_hierarchy_tree_to_table_df_hierarchy_tree(
                         grid_hierarchy_tree,
-                        use_first_row_as_header=use_first_row_as_header,
                     )
                 )
             tables.append(
