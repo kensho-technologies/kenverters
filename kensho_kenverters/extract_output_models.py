@@ -36,6 +36,7 @@ class Table(NamedTuple):
     table_type: TableCategoryType
     locations: list[LocationType] | None = None
     cells: list[Cell] | None = None
+    hierarchy_tree: "TableDataFrameHierarchyModel | None" = None
 
 
 class LocationModel(BaseModel):
@@ -137,6 +138,50 @@ class TableGridAndStructure(NamedTuple):
     table_category_type: TableCategoryType
     table_string_grid: list[list[str]]
     table_structure_annotations: list[TableStructureAnnotationModel]
+
+
+class TableCellHierarchyTreeModel(BaseModel):
+    """A node in the table cell hierarchy tree representing the row header structure.
+
+    The tree shows the hierarchical structure of a table's projected row headers.
+    Children are other projected row header cells (sub-categories), and contents are
+    the table_structure annotations for the corresponding leftmost cells (data rows)
+    that belong to this projected row header.
+    """
+
+    node_uid: str
+    node_type: str
+    children: list["TableCellHierarchyTreeModel"]
+    contents: list[TableStructureAnnotationModel]
+
+
+class TableGridHierarchyModel(BaseModel):
+    """A node in the table grid hierarchy tree with human-readable text content.
+
+    Similar to TableCellHierarchyTreeModel, but instead of annotation objects,
+    the node has text recovered from the content tree, and the contents are a
+    2D string grid recovered from the annotations.
+    """
+
+    node_text: str | None
+    node_type: str
+    children: list["TableGridHierarchyModel"]
+    contents: list[list[str]]
+
+
+class TableDataFrameHierarchyModel(BaseModel):
+    """A node in the table DataFrame hierarchy tree.
+
+    Similar to TableGridHierarchyModel, but the contents are a pandas DataFrame
+    converted from the string grid.
+    """
+
+    model_config = {"arbitrary_types_allowed": True}
+
+    node_text: str | None
+    node_type: str
+    children: list["TableDataFrameHierarchyModel"]
+    contents: pd.DataFrame
 
 
 class ContentSegmentModel(BaseModel):

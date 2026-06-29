@@ -1,5 +1,12 @@
 # Changelog
 
+## v3.2.0
+
+### Added
+
+* Add table row header hierarchy tree extraction. When `include_table_hierarchy_tree=True` is passed to `extract_pd_dfs_with_locs_and_table_structure_from_output`, each `Table` output includes a `hierarchy_tree` field representing the projected row header structure as a `TableDataFrameHierarchyModel`.
+
+
 ## v3.1.0
 
 ### Added

@@ -1,20 +1,33 @@
 import json
 import os
+from collections import defaultdict
 from typing import Any, ClassVar
 from unittest import TestCase
 
+from ..constants import ContentCategory
 from ..extract_output_models import (
     AnnotationDataModel,
     Cell,
+    ContentModel,
     LocationModel,
+    TableCellHierarchyTreeModel,
     TableGridAndStructure,
+    TableGridHierarchyModel,
     TableStructureAnnotationModel,
 )
 from ..output_to_tables import (
+    _build_table_cell_hierarchy_tree_node,
+    _convert_table_cell_hierarchy_tree_to_table_grid_hierarchy_tree,
+    _convert_table_grid_hierarchy_tree_to_table_df_hierarchy_tree,
+    _get_column_header_grid,
+    _get_table_uid_to_table_cell_hierarchy_tree,
+    _get_table_uid_to_table_grid_hierarchy_tree,
     build_table_grids,
     extract_pd_dfs_from_output,
     extract_pd_dfs_with_locs_and_table_structure_from_output,
+    get_table_uid_to_cells_mapping,
 )
+from ..utils import load_output_to_pydantic
 
 OUTPUT_FILE_PATH = os.path.join(
     os.path.dirname(__file__), "data", "extract_output.json"
@@ -4566,3 +4579,572 @@ class TestTableExtraction(TestCase):
             {"content_tree": content, "annotations": annotations}, True
         )
         self.assertEqual(expected_tables_grid_and_structure, tables_grid_and_structure)
+
+
+# --------- Hierarchy Tree Tests ---------
+
+
+def _make_table_structure_annotation(
+    content_uid: str,
+    row: int,
+    col: int,
+    row_span: int = 1,
+    col_span: int = 1,
+    is_column_header: bool = False,
+    is_projected_row_header: bool = False,
+) -> TableStructureAnnotationModel:
+    """Create a TableStructureAnnotationModel for testing."""
+    return TableStructureAnnotationModel(
+        content_uids=[content_uid],
+        data=AnnotationDataModel(
+            index=(row, col),
+            span=(row_span, col_span),
+            is_column_header=is_column_header,
+            is_projected_row_header=is_projected_row_header,
+        ),
+        type="table_structure",
+        locations=None,
+    )
+
+
+def _make_content_model_dict(
+    uid: str, content: str, node_type: str = "TABLE_CELL"
+) -> dict[str, Any]:
+    """Create a ContentModel-compatible dict for testing."""
+    return {
+        "uid": uid,
+        "type": node_type,
+        "content": content,
+        "children": [],
+        "locations": None,
+    }
+
+
+def _build_simple_table_document() -> dict[str, Any]:
+    """Build a simple table document for testing hierarchy.
+
+    Table structure:
+        Row 0: Column headers ["Name", "Value"]
+        Row 1: Projected row header "ASSETS" (spans 2 cols)
+        Row 2: Projected row header "Current Assets" (spans 2 cols)
+        Row 3: Data row ["Cash", "100"]  (child of "Current Assets")
+        Row 4: Data row ["Securities", "200"]  (child of "Current Assets")
+        Row 5: Data row ["Equipment", "500"]  (child of "ASSETS", not via "Current Assets")
+
+    Hierarchy:
+        TABLE
+          ASSETS
+            Current Assets
+              Cash | 100
+              Securities | 200
+            Equipment | 500
+    """
+    return {
+        "annotations": [
+            # Column headers (row 0)
+            {
+                "content_uids": ["c1"],
+                "data": {
+                    "index": [0, 0],
+                    "span": [1, 1],
+                    "is_column_header": True,
+                    "is_projected_row_header": False,
+                },
+                "type": "table_structure",
+            },
+            {
+                "content_uids": ["c2"],
+                "data": {
+                    "index": [0, 1],
+                    "span": [1, 1],
+                    "is_column_header": True,
+                    "is_projected_row_header": False,
+                },
+                "type": "table_structure",
+            },
+            # Projected row header "ASSETS" (row 1, spans 2 cols)
+            {
+                "content_uids": ["c3"],
+                "data": {
+                    "index": [1, 0],
+                    "span": [1, 2],
+                    "is_column_header": False,
+                    "is_projected_row_header": True,
+                },
+                "type": "table_structure",
+            },
+            # Projected row header "Current Assets" (row 2, spans 2 cols)
+            {
+                "content_uids": ["c4"],
+                "data": {
+                    "index": [2, 0],
+                    "span": [1, 2],
+                    "is_column_header": False,
+                    "is_projected_row_header": True,
+                },
+                "type": "table_structure",
+            },
+            # Data row "Cash" (row 3)
+            {
+                "content_uids": ["c5"],
+                "data": {
+                    "index": [3, 0],
+                    "span": [1, 1],
+                    "is_column_header": False,
+                    "is_projected_row_header": False,
+                },
+                "type": "table_structure",
+            },
+            {
+                "content_uids": ["c6"],
+                "data": {
+                    "index": [3, 1],
+                    "span": [1, 1],
+                    "is_column_header": False,
+                    "is_projected_row_header": False,
+                },
+                "type": "table_structure",
+            },
+            # Data row "Securities" (row 4)
+            {
+                "content_uids": ["c7"],
+                "data": {
+                    "index": [4, 0],
+                    "span": [1, 1],
+                    "is_column_header": False,
+                    "is_projected_row_header": False,
+                },
+                "type": "table_structure",
+            },
+            {
+                "content_uids": ["c8"],
+                "data": {
+                    "index": [4, 1],
+                    "span": [1, 1],
+                    "is_column_header": False,
+                    "is_projected_row_header": False,
+                },
+                "type": "table_structure",
+            },
+            # Data row "Equipment" (row 5)
+            {
+                "content_uids": ["c9"],
+                "data": {
+                    "index": [5, 0],
+                    "span": [1, 1],
+                    "is_column_header": False,
+                    "is_projected_row_header": False,
+                },
+                "type": "table_structure",
+            },
+            {
+                "content_uids": ["c10"],
+                "data": {
+                    "index": [5, 1],
+                    "span": [1, 1],
+                    "is_column_header": False,
+                    "is_projected_row_header": False,
+                },
+                "type": "table_structure",
+            },
+            # Relations
+            {
+                "data": {
+                    "relation_type": "row_key_parent",
+                    "source_content_uid": "c3",
+                    "target_content_uid": "c4",
+                },
+                "type": "relation",
+            },
+            {
+                "data": {
+                    "relation_type": "row_key_parent",
+                    "source_content_uid": "c4",
+                    "target_content_uid": "c5",
+                },
+                "type": "relation",
+            },
+            {
+                "data": {
+                    "relation_type": "row_key_parent",
+                    "source_content_uid": "c4",
+                    "target_content_uid": "c7",
+                },
+                "type": "relation",
+            },
+            {
+                "data": {
+                    "relation_type": "row_key_parent",
+                    "source_content_uid": "c3",
+                    "target_content_uid": "c9",
+                },
+                "type": "relation",
+            },
+        ],
+        "content_tree": {
+            "uid": "0",
+            "type": "DOCUMENT",
+            "content": None,
+            "children": [
+                {
+                    "uid": "t1",
+                    "type": "TABLE",
+                    "content": None,
+                    "children": [
+                        _make_content_model_dict("c1", "Name"),
+                        _make_content_model_dict("c2", "Value"),
+                        _make_content_model_dict("c3", "ASSETS"),
+                        _make_content_model_dict("c4", "Current Assets"),
+                        _make_content_model_dict("c5", "Cash"),
+                        _make_content_model_dict("c6", "100"),
+                        _make_content_model_dict("c7", "Securities"),
+                        _make_content_model_dict("c8", "200"),
+                        _make_content_model_dict("c9", "Equipment"),
+                        _make_content_model_dict("c10", "500"),
+                    ],
+                }
+            ],
+        },
+    }
+
+
+class TestBuildTableCellHierarchyTreeNode(TestCase):
+    """Tests for _build_table_cell_hierarchy_tree_node."""
+
+    def test_leaf_node_no_children(self) -> None:
+        """A projected row header with only data row children produces contents, no child nodes."""
+        cell_uid_to_annotation = {
+            "c4": _make_table_structure_annotation(
+                "c4", 2, 0, is_projected_row_header=True
+            ),
+            "c5": _make_table_structure_annotation("c5", 3, 0),
+            "c6": _make_table_structure_annotation("c6", 3, 1),
+            "c7": _make_table_structure_annotation("c7", 4, 0),
+            "c8": _make_table_structure_annotation("c8", 4, 1),
+        }
+        parent_to_children = {"c4": ["c5", "c7"]}
+        all_projected_row_header_uids = {"c3", "c4"}
+        row_index_to_annotations = defaultdict(list)
+        row_index_to_annotations[3] = [
+            cell_uid_to_annotation["c5"],
+            cell_uid_to_annotation["c6"],
+        ]
+        row_index_to_annotations[4] = [
+            cell_uid_to_annotation["c7"],
+            cell_uid_to_annotation["c8"],
+        ]
+
+        node = _build_table_cell_hierarchy_tree_node(
+            "c4",
+            cell_uid_to_annotation,
+            parent_to_children,
+            all_projected_row_header_uids,
+            row_index_to_annotations,
+        )
+
+        self.assertEqual(node.node_uid, "c4")
+        self.assertEqual(node.node_type, ContentCategory.TABLE_CELL.value)
+        self.assertEqual(len(node.children), 0)
+        self.assertEqual(len(node.contents), 4)
+
+    def test_node_with_projected_row_header_children(self) -> None:
+        """A projected row header with sub-headers produces child nodes."""
+        cell_uid_to_annotation = {
+            "c3": _make_table_structure_annotation(
+                "c3", 1, 0, is_projected_row_header=True
+            ),
+            "c4": _make_table_structure_annotation(
+                "c4", 2, 0, is_projected_row_header=True
+            ),
+            "c9": _make_table_structure_annotation("c9", 5, 0),
+            "c10": _make_table_structure_annotation("c10", 5, 1),
+        }
+        parent_to_children = {"c3": ["c4", "c9"]}
+        all_projected_row_header_uids = {"c3", "c4"}
+        row_index_to_annotations = defaultdict(list)
+        row_index_to_annotations[5] = [
+            cell_uid_to_annotation["c9"],
+            cell_uid_to_annotation["c10"],
+        ]
+
+        node = _build_table_cell_hierarchy_tree_node(
+            "c3",
+            cell_uid_to_annotation,
+            dict(parent_to_children),
+            all_projected_row_header_uids,
+            row_index_to_annotations,
+        )
+
+        self.assertEqual(node.node_uid, "c3")
+        self.assertEqual(len(node.children), 1)
+        self.assertEqual(node.children[0].node_uid, "c4")
+        self.assertEqual(len(node.contents), 2)
+
+
+class TestGetTableUidToTableCellHierarchyTree(TestCase):
+    """Tests for _get_table_uid_to_table_cell_hierarchy_tree."""
+
+    def test_builds_tree_for_simple_table(self) -> None:
+        """Test building hierarchy tree from annotations and relations."""
+        doc = _build_simple_table_document()
+        parsed = load_output_to_pydantic(doc)
+
+        table_uid_to_cells_mapping = get_table_uid_to_cells_mapping(parsed.content_tree)
+        table_cell_annotations = [
+            ann
+            for ann in parsed.annotations
+            if isinstance(ann, TableStructureAnnotationModel)
+        ]
+        relation_annotations = [
+            ann
+            for ann in parsed.annotations
+            if not isinstance(ann, TableStructureAnnotationModel)
+        ]
+
+        result = _get_table_uid_to_table_cell_hierarchy_tree(
+            table_uid_to_cells_mapping,
+            table_cell_annotations,
+            relation_annotations,
+        )
+
+        self.assertIn("t1", result)
+        tree = result["t1"]
+        self.assertEqual(tree.node_uid, "t1")
+        self.assertEqual(tree.node_type, ContentCategory.TABLE.value)
+        self.assertEqual(len(tree.children), 1)
+
+        assets_node = tree.children[0]
+        self.assertEqual(assets_node.node_uid, "c3")
+        self.assertEqual(len(assets_node.children), 1)
+        self.assertEqual(len(assets_node.contents), 2)
+
+        current_assets_node = assets_node.children[0]
+        self.assertEqual(current_assets_node.node_uid, "c4")
+        self.assertEqual(len(current_assets_node.children), 0)
+        self.assertEqual(len(current_assets_node.contents), 4)
+
+
+class TestGetColumnHeaderGrid(TestCase):
+    """Tests for _get_column_header_grid."""
+
+    def test_extracts_consecutive_headers(self) -> None:
+        """Column header rows starting from row 0 are extracted."""
+        cells = [
+            ContentModel(**_make_content_model_dict("c1", "Name")),
+            ContentModel(**_make_content_model_dict("c2", "Value")),
+            ContentModel(**_make_content_model_dict("c3", "Data")),
+        ]
+        annotations = [
+            _make_table_structure_annotation("c1", 0, 0, is_column_header=True),
+            _make_table_structure_annotation("c2", 0, 1, is_column_header=True),
+            _make_table_structure_annotation("c3", 1, 0, is_column_header=False),
+        ]
+        grid = _get_column_header_grid(cells, annotations)
+        self.assertEqual(grid, [["Name", "Value"]])
+
+    def test_no_headers_returns_empty(self) -> None:
+        """Table with no column headers returns empty grid."""
+        cells = [ContentModel(**_make_content_model_dict("c1", "Data"))]
+        annotations = [
+            _make_table_structure_annotation("c1", 0, 0, is_column_header=False)
+        ]
+        grid = _get_column_header_grid(cells, annotations)
+        self.assertEqual(grid, [])
+
+    def test_spanning_header_with_duplicate(self) -> None:
+        """Spanning column headers are duplicated when flag is True."""
+        cells = [
+            ContentModel(**_make_content_model_dict("c1", "Header")),
+            ContentModel(**_make_content_model_dict("c2", "Other")),
+        ]
+        annotations = [
+            _make_table_structure_annotation(
+                "c1", 0, 0, col_span=2, is_column_header=True
+            ),
+            _make_table_structure_annotation("c2", 0, 2, is_column_header=True),
+        ]
+        grid = _get_column_header_grid(
+            cells, annotations, duplicate_merged_cells_content_flag=True
+        )
+        self.assertEqual(grid, [["Header", "Header", "Other"]])
+
+    def test_spanning_header_without_duplicate(self) -> None:
+        """Spanning column headers leave empty cells when flag is False."""
+        cells = [
+            ContentModel(**_make_content_model_dict("c1", "Header")),
+            ContentModel(**_make_content_model_dict("c2", "Other")),
+        ]
+        annotations = [
+            _make_table_structure_annotation(
+                "c1", 0, 0, col_span=2, is_column_header=True
+            ),
+            _make_table_structure_annotation("c2", 0, 2, is_column_header=True),
+        ]
+        grid = _get_column_header_grid(
+            cells, annotations, duplicate_merged_cells_content_flag=False
+        )
+        self.assertEqual(grid, [["Header", "", "Other"]])
+
+
+class TestConvertCellHierarchyTreeToGridHierarchyTree(TestCase):
+    """Tests for _convert_table_cell_hierarchy_tree_to_table_grid_hierarchy_tree."""
+
+    def test_converts_to_text_grid(self) -> None:
+        """Converts annotation-based contents to string grid with text."""
+        cell_contents = [
+            ContentModel(**_make_content_model_dict("c3", "ASSETS")),
+            ContentModel(**_make_content_model_dict("c5", "Cash")),
+            ContentModel(**_make_content_model_dict("c6", "100")),
+        ]
+        cell_tree = TableCellHierarchyTreeModel(
+            node_uid="c3",
+            node_type=ContentCategory.TABLE_CELL.value,
+            children=[],
+            contents=[
+                _make_table_structure_annotation("c5", 3, 0),
+                _make_table_structure_annotation("c6", 3, 1),
+            ],
+        )
+        grid_tree = _convert_table_cell_hierarchy_tree_to_table_grid_hierarchy_tree(
+            cell_tree, cell_contents
+        )
+        self.assertEqual(grid_tree.node_text, "ASSETS")
+        self.assertEqual(grid_tree.contents, [["Cash", "100"]])
+
+    def test_prepends_column_headers(self) -> None:
+        """Column header grid is prepended to contents."""
+        cell_contents = [
+            ContentModel(**_make_content_model_dict("c3", "ASSETS")),
+            ContentModel(**_make_content_model_dict("c5", "Cash")),
+            ContentModel(**_make_content_model_dict("c6", "100")),
+        ]
+        cell_tree = TableCellHierarchyTreeModel(
+            node_uid="c3",
+            node_type=ContentCategory.TABLE_CELL.value,
+            children=[],
+            contents=[
+                _make_table_structure_annotation("c5", 3, 0),
+                _make_table_structure_annotation("c6", 3, 1),
+            ],
+        )
+        grid_tree = _convert_table_cell_hierarchy_tree_to_table_grid_hierarchy_tree(
+            cell_tree, cell_contents, column_header_grid=[["Name", "Value"]]
+        )
+        self.assertEqual(grid_tree.contents, [["Name", "Value"], ["Cash", "100"]])
+
+    def test_empty_contents_no_header_prepend(self) -> None:
+        """Column headers are NOT prepended if there are no content rows."""
+        cell_contents = [ContentModel(**_make_content_model_dict("c3", "ASSETS"))]
+        cell_tree = TableCellHierarchyTreeModel(
+            node_uid="c3",
+            node_type=ContentCategory.TABLE_CELL.value,
+            children=[],
+            contents=[],
+        )
+        grid_tree = _convert_table_cell_hierarchy_tree_to_table_grid_hierarchy_tree(
+            cell_tree, cell_contents, column_header_grid=[["Name", "Value"]]
+        )
+        self.assertEqual(grid_tree.contents, [])
+
+
+class TestConvertGridHierarchyTreeToDfHierarchyTree(TestCase):
+    """Tests for _convert_table_grid_hierarchy_tree_to_table_df_hierarchy_tree."""
+
+    def test_converts_grid_to_dataframe(self) -> None:
+        """Grid contents are converted to a pandas DataFrame."""
+        grid_tree = TableGridHierarchyModel(
+            node_text="ASSETS",
+            node_type=ContentCategory.TABLE_CELL.value,
+            children=[],
+            contents=[["Name", "Value"], ["Cash", "100"]],
+        )
+        df_tree = _convert_table_grid_hierarchy_tree_to_table_df_hierarchy_tree(
+            grid_tree, use_first_row_as_header=True
+        )
+        self.assertEqual(df_tree.node_text, "ASSETS")
+        self.assertEqual(list(df_tree.contents.columns), ["Name", "Value"])
+        self.assertEqual(list(df_tree.contents.iloc[0]), ["Cash", "100"])
+
+    def test_converts_children_recursively(self) -> None:
+        """Children are also converted to DataFrame hierarchy."""
+        grid_tree = TableGridHierarchyModel(
+            node_text="ASSETS",
+            node_type=ContentCategory.TABLE_CELL.value,
+            children=[
+                TableGridHierarchyModel(
+                    node_text="Current Assets",
+                    node_type=ContentCategory.TABLE_CELL.value,
+                    children=[],
+                    contents=[["Cash", "100"]],
+                )
+            ],
+            contents=[],
+        )
+        df_tree = _convert_table_grid_hierarchy_tree_to_table_df_hierarchy_tree(
+            grid_tree, use_first_row_as_header=False
+        )
+        self.assertEqual(len(df_tree.children), 1)
+        self.assertEqual(df_tree.children[0].node_text, "Current Assets")
+
+
+class TestGetTableUidToTableGridHierarchyTree(TestCase):
+    """Tests for _get_table_uid_to_table_grid_hierarchy_tree (end-to-end)."""
+
+    def test_end_to_end_hierarchy(self) -> None:
+        """Full pipeline: build grid hierarchy tree from a serialized document."""
+        doc = _build_simple_table_document()
+        parsed = load_output_to_pydantic(doc)
+        result = _get_table_uid_to_table_grid_hierarchy_tree(parsed)
+
+        self.assertIn("t1", result)
+        tree = result["t1"]
+        self.assertIsNone(tree.node_text)
+        self.assertEqual(tree.node_type, ContentCategory.TABLE.value)
+
+        self.assertEqual(len(tree.children), 1)
+        assets = tree.children[0]
+        self.assertEqual(assets.node_text, "ASSETS")
+        self.assertEqual(len(assets.children), 1)
+        self.assertEqual(assets.contents, [["Name", "Value"], ["Equipment", "500"]])
+
+        current_assets = assets.children[0]
+        self.assertEqual(current_assets.node_text, "Current Assets")
+        self.assertEqual(
+            current_assets.contents,
+            [["Name", "Value"], ["Cash", "100"], ["Securities", "200"]],
+        )
+
+    def test_end_to_end_no_hierarchy(self) -> None:
+        """Table with no projected row headers has all rows in table contents."""
+        doc = {
+            "annotations": [
+                {
+                    "content_uids": ["c1"],
+                    "data": {
+                        "index": [0, 0],
+                        "span": [1, 1],
+                        "is_column_header": False,
+                        "is_projected_row_header": False,
+                    },
+                    "type": "table_structure",
+                },
+            ],
+            "content_tree": {
+                "uid": "0",
+                "type": "DOCUMENT",
+                "content": None,
+                "children": [
+                    {
+                        "uid": "t1",
+                        "type": "TABLE",
+                        "content": None,
+                        "children": [_make_content_model_dict("c1", "Data")],
+                    }
+                ],
+            },
+        }
+        parsed = load_output_to_pydantic(doc)
+        result = _get_table_uid_to_table_grid_hierarchy_tree(parsed)
+        tree = result["t1"]
+        self.assertEqual(len(tree.children), 0)
+        self.assertEqual(tree.contents, [["Data"]])
