@@ -8,10 +8,7 @@ from ..constants import ContentCategory
 from ..extract_output_models import (
     AnnotationDataModel,
     Cell,
-    ContentModel,
     LocationModel,
-    RelationAnnotationModel,
-    TableCellHierarchyTreeModel,
     TableGridAndStructure,
     TableStructureAnnotationModel,
 )
