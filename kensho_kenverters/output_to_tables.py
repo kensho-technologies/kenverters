@@ -9,6 +9,7 @@ import pandas as pd
 
 from .constants import (
     EMPTY_STRING,
+    ROW_KEY_PARENT_RELATION,
     TABLE_CONTENT_CATEGORIES,
     AnnotationType,
     ContentCategory,
@@ -17,11 +18,16 @@ from .constants import (
 from .extract_output_models import (
     Cell,
     ContentModel,
+    ExtractOutputModel,
     LocationModel,
     LocationType,
+    RelationAnnotationModel,
     Table,
     TableCategoryType,
+    TableCellHierarchyTreeModel,
+    TableDataFrameHierarchyModel,
     TableGridAndStructure,
+    TableGridHierarchyModel,
     TableStructureAnnotationModel,
 )
 from .tables_utils import (
@@ -253,6 +259,418 @@ def convert_uid_grid_to_content_grid(
     return content_grid
 
 
+def _build_table_cell_hierarchy_tree_node(
+    cell_uid: str,
+    cell_uid_to_annotation: dict[str, TableStructureAnnotationModel],
+    parent_to_children: dict[str, list[str]],
+    all_projected_row_header_uids: set[str],
+    row_index_to_annotations: dict[int, list[TableStructureAnnotationModel]],
+) -> TableCellHierarchyTreeModel:
+    """Recursively build a hierarchy tree node for a projected row header cell.
+
+    Args:
+        cell_uid: the uid of the projected row header cell to build a node for.
+        cell_uid_to_annotation: mapping from cell uid to its table structure annotation.
+        parent_to_children: mapping from parent uid to its children uids
+            (from row_key_parent relations).
+        all_projected_row_header_uids: set of all projected row header uids across all tables.
+        row_index_to_annotations: mapping from row index to all cell annotations in that row.
+
+    Returns:
+        a TableCellHierarchyTreeModel node for the given cell uid.
+    """
+    children_uids = parent_to_children.get(cell_uid, [])
+
+    # Separate children into projected row headers (tree children) and
+    # data row cells (contents)
+    child_nodes: list[TableCellHierarchyTreeModel] = []
+    content_annotations: list[TableStructureAnnotationModel] = []
+    for child_uid in children_uids:
+        if child_uid in all_projected_row_header_uids:
+            child_nodes.append(
+                _build_table_cell_hierarchy_tree_node(
+                    child_uid,
+                    cell_uid_to_annotation,
+                    parent_to_children,
+                    all_projected_row_header_uids,
+                    row_index_to_annotations,
+                )
+            )
+        else:
+            # Include all cells in the same row as the child data row cell
+            child_annotation = cell_uid_to_annotation.get(child_uid)
+            if child_annotation:
+                row_index = child_annotation.data.index[0]
+                content_annotations.extend(row_index_to_annotations.get(row_index, []))
+
+    return TableCellHierarchyTreeModel(
+        node_uid=cell_uid,
+        node_type=ContentCategory.TABLE_CELL.value,
+        children=child_nodes,
+        contents=content_annotations,
+    )
+
+
+def _get_table_uid_to_table_cell_hierarchy_tree(
+    table_uid_to_cells_mapping: dict[str, list[ContentModel]],
+    table_cell_annotations: list[TableStructureAnnotationModel],
+    relation_annotations: list[RelationAnnotationModel],
+) -> dict[str, TableCellHierarchyTreeModel]:
+    """Build a TableCellHierarchyTreeModel for each table uid.
+
+    The root node represents the table itself. Its children are the top-level projected row
+    header cells. Each projected row header node's children are its sub-level projected row
+    headers (from row_key_parent relations), and its contents are the cell annotations for the
+    leftmost cells (data rows) that belong to that projected row header.
+
+    Args:
+        table_uid_to_cells_mapping: mapping of table uid to cells (ContentModel) in that table.
+        table_cell_annotations: list of table structure annotations.
+        relation_annotations: list of relation annotations (row_key_parent relations define
+            the hierarchy).
+
+    Returns:
+        a mapping of table uid to the TableCellHierarchyTreeModel representing the hierarchy.
+    """
+    # Build mapping from cell uid to its table uid
+    cell_uid_to_table_uid: dict[str, str] = {}
+    for table_uid, cells in table_uid_to_cells_mapping.items():
+        for cell in cells:
+            cell_uid_to_table_uid[cell.uid] = table_uid
+
+    # Build mapping from cell uid to its annotation
+    cell_uid_to_annotation: dict[str, TableStructureAnnotationModel] = {}
+    for annotation in table_cell_annotations:
+        for uid in annotation.content_uids:
+            cell_uid_to_annotation[uid] = annotation
+
+    # Extract row_key_parent relations and group by table uid
+    # In row_key_parent: source is parent, target is child
+    parent_to_children: dict[str, list[str]] = defaultdict(list)
+    child_uids: set[str] = set()
+    for relation in relation_annotations:
+        if relation.data.relation_type == ROW_KEY_PARENT_RELATION:
+            parent_uid = relation.data.source_content_uid
+            child_uid = relation.data.target_content_uid
+            parent_to_children[parent_uid].append(child_uid)
+            child_uids.add(child_uid)
+
+    # Identify projected row header uids per table
+    table_uid_to_projected_row_header_uids: dict[str, list[str]] = defaultdict(list)
+    for table_uid, cells in table_uid_to_cells_mapping.items():
+        for cell in cells:
+            cell_ann = cell_uid_to_annotation.get(cell.uid)
+            if cell_ann and cell_ann.data.is_projected_row_header:
+                table_uid_to_projected_row_header_uids[table_uid].append(cell.uid)
+
+    # Set of all projected row header uids for quick lookup
+    all_projected_row_header_uids: set[str] = set()
+    for uids in table_uid_to_projected_row_header_uids.values():
+        all_projected_row_header_uids.update(uids)
+
+    # Build the tree for each table
+    result: dict[str, TableCellHierarchyTreeModel] = {}
+    for table_uid in table_uid_to_cells_mapping:
+        # Build row_index_to_annotations for this table
+        row_index_to_annotations: dict[int, list[TableStructureAnnotationModel]] = (
+            defaultdict(list)
+        )
+        for cell in table_uid_to_cells_mapping[table_uid]:
+            cell_ann = cell_uid_to_annotation.get(cell.uid)
+            if cell_ann:
+                row_index_to_annotations[cell_ann.data.index[0]].append(cell_ann)
+
+        projected_uids = table_uid_to_projected_row_header_uids.get(table_uid, [])
+        # Top-level projected row headers are those that are not children of any other
+        top_level_uids = [uid for uid in projected_uids if uid not in child_uids]
+
+        # Build child nodes for top-level projected row headers
+        top_level_nodes = [
+            _build_table_cell_hierarchy_tree_node(
+                uid,
+                cell_uid_to_annotation,
+                parent_to_children,
+                all_projected_row_header_uids,
+                row_index_to_annotations,
+            )
+            for uid in top_level_uids
+        ]
+
+        # Collect row indices that are linked by any row_key_parent relation
+        linked_row_indices: set[int] = set()
+        for child_uid in child_uids:
+            child_ann = cell_uid_to_annotation.get(child_uid)
+            if child_ann and cell_uid_to_table_uid.get(child_uid) == table_uid:
+                linked_row_indices.add(child_ann.data.index[0])
+        # Also exclude rows belonging to projected row headers themselves
+        for uid in projected_uids:
+            proj_ann = cell_uid_to_annotation.get(uid)
+            if proj_ann:
+                linked_row_indices.add(proj_ann.data.index[0])
+
+        # Rows not linked by any parent and not column header rows belong to the table
+        table_contents: list[TableStructureAnnotationModel] = []
+        for row_index, annotations in row_index_to_annotations.items():
+            if row_index in linked_row_indices:
+                continue
+            # Skip rows that contain column headers
+            if any(ann.data.is_column_header for ann in annotations):
+                continue
+            table_contents.extend(annotations)
+
+        # The root node represents the table itself
+        result[table_uid] = TableCellHierarchyTreeModel(
+            node_uid=table_uid,
+            node_type=ContentCategory.TABLE.value,
+            children=top_level_nodes,
+            contents=table_contents,
+        )
+
+    return result
+
+
+def _convert_table_cell_hierarchy_tree_to_table_grid_hierarchy_tree(
+    cell_hierarchy_tree: TableCellHierarchyTreeModel,
+    cell_contents: Sequence[ContentModel],
+    column_header_grid: list[list[str]] | None = None,
+    duplicate_merged_cells_content_flag: bool = True,
+) -> TableGridHierarchyModel:
+    """Convert a TableCellHierarchyTreeModel to a TableGridHierarchyModel.
+
+    Replaces the node_uid with the cell's text content and converts the annotation-based
+    contents into a 2D string grid. If column_header_grid is provided, it is prepended
+    to each node's contents grid.
+
+    Args:
+        cell_hierarchy_tree: the hierarchy tree with annotation-based contents.
+        cell_contents: the list of ContentModel cells for looking up text by uid.
+        column_header_grid: optional column header rows to prepend to each node's contents.
+        duplicate_merged_cells_content_flag: if True, duplicate cell content for merged cells.
+            If False, only fill the first cell (top left) of the merged area.
+
+    Returns:
+        a TableGridHierarchyModel with human-readable text and string grid contents.
+    """
+    uid_to_text = {cell.uid: cell.content or EMPTY_STRING for cell in cell_contents}
+
+    # Recover node text from the content tree
+    node_text = uid_to_text.get(cell_hierarchy_tree.node_uid)
+
+    # Convert annotation contents to a 2D string grid grouped by row, expanding spans
+    row_groups: dict[int, list[tuple[int, str]]] = defaultdict(list)
+    for annotation in cell_hierarchy_tree.contents:
+        row_index = annotation.data.index[0]
+        col_index = annotation.data.index[1]
+        row_span, col_span = annotation.data.span
+        # Look up text from content_uids
+        if annotation.content_uids:
+            cell_text = uid_to_text.get(annotation.content_uids[0], EMPTY_STRING)
+        else:
+            cell_text = EMPTY_STRING
+        for r_offset in range(row_span):
+            for c_offset in range(col_span):
+                if duplicate_merged_cells_content_flag or (
+                    r_offset == 0 and c_offset == 0
+                ):
+                    row_groups[row_index + r_offset].append(
+                        (col_index + c_offset, cell_text)
+                    )
+                else:
+                    row_groups[row_index + r_offset].append(
+                        (col_index + c_offset, EMPTY_STRING)
+                    )
+
+    # Build sorted 2D grid
+    contents_grid: list[list[str]] = []
+    for row_index in sorted(row_groups.keys()):
+        row = row_groups[row_index]
+        row.sort(key=lambda x: x[0])
+        contents_grid.append([text for _, text in row])
+
+    # Prepend column header rows to contents if available
+    if column_header_grid and contents_grid:
+        contents_grid = column_header_grid + contents_grid
+
+    # Recursively convert children
+    children = [
+        _convert_table_cell_hierarchy_tree_to_table_grid_hierarchy_tree(
+            child,
+            cell_contents,
+            column_header_grid,
+            duplicate_merged_cells_content_flag,
+        )
+        for child in cell_hierarchy_tree.children
+    ]
+
+    return TableGridHierarchyModel(
+        node_uid=cell_hierarchy_tree.node_uid,
+        node_text=node_text,
+        node_type=cell_hierarchy_tree.node_type,
+        children=children,
+        contents=contents_grid,
+    )
+
+
+def _convert_table_grid_hierarchy_tree_to_table_df_hierarchy_tree(
+    grid_hierarchy_tree: TableGridHierarchyModel,
+) -> TableDataFrameHierarchyModel:
+    """Convert a TableGridHierarchyModel to a TableDataFrameHierarchyModel.
+
+    Converts the 2D string grid contents into a pandas DataFrame.
+
+    Args:
+        grid_hierarchy_tree: the hierarchy tree with string grid contents.
+
+    Returns:
+        a TableDataFrameHierarchyModel with DataFrame contents.
+    """
+    contents_df = convert_table_to_pd_df(
+        grid_hierarchy_tree.contents,
+        use_first_row_as_header=False,
+    )
+
+    children = [
+        _convert_table_grid_hierarchy_tree_to_table_df_hierarchy_tree(child)
+        for child in grid_hierarchy_tree.children
+    ]
+
+    return TableDataFrameHierarchyModel(
+        node_uid=grid_hierarchy_tree.node_uid,
+        node_text=grid_hierarchy_tree.node_text,
+        node_type=grid_hierarchy_tree.node_type,
+        children=children,
+        contents=contents_df,
+    )
+
+
+def _get_column_header_grid(
+    cells: list[ContentModel],
+    table_cell_annotations: list[TableStructureAnnotationModel],
+    duplicate_merged_cells_content_flag: bool = True,
+) -> list[list[str]]:
+    """Extract consecutive column header rows starting from row 0 as a string grid.
+
+    Args:
+        cells: the list of ContentModel cells for this table.
+        table_cell_annotations: list of table structure annotations.
+        duplicate_merged_cells_content_flag: if True, duplicate cell content for merged cells.
+            If False, only fill the first cell (top left) of the merged area.
+
+    Returns:
+        a 2D string grid of consecutive column header rows starting from row 0.
+        Returns an empty list if there are no column headers starting at row 0.
+    """
+    uid_to_text = {cell.uid: cell.content or EMPTY_STRING for cell in cells}
+
+    # Filter to only column header annotations for this table
+    header_annotations = [
+        ann
+        for ann in table_cell_annotations
+        if ann.content_uids
+        and ann.content_uids[0] in uid_to_text
+        and ann.data.is_column_header
+    ]
+
+    # Group by row index, expanding spans manually
+    header_row_groups: dict[int, list[tuple[int, str]]] = defaultdict(list)
+    for annotation in header_annotations:
+        row_idx = annotation.data.index[0]
+        col_idx = annotation.data.index[1]
+        row_span, col_span = annotation.data.span
+        if annotation.content_uids:
+            cell_text = uid_to_text.get(annotation.content_uids[0], EMPTY_STRING)
+        else:
+            cell_text = EMPTY_STRING
+        for r_offset in range(row_span):
+            for c_offset in range(col_span):
+                if duplicate_merged_cells_content_flag or (
+                    r_offset == 0 and c_offset == 0
+                ):
+                    header_row_groups[row_idx + r_offset].append(
+                        (col_idx + c_offset, cell_text)
+                    )
+                else:
+                    header_row_groups[row_idx + r_offset].append(
+                        (col_idx + c_offset, EMPTY_STRING)
+                    )
+
+    # Build consecutive column header grid starting from row 0
+    column_header_grid: list[list[str]] = []
+    row_idx = 0
+    while row_idx in header_row_groups:
+        row = header_row_groups[row_idx]
+        row.sort(key=lambda x: x[0])
+        column_header_grid.append([text for _, text in row])
+        row_idx += 1
+    return column_header_grid
+
+
+def _get_table_uid_to_table_grid_hierarchy_tree(
+    parsed_serialized_document: ExtractOutputModel,
+    duplicate_merged_cells_content_flag: bool = True,
+) -> dict[str, TableGridHierarchyModel]:
+    """Build a TableGridHierarchyModel for each table uid.
+
+    Integrates building the annotation hierarchy tree and converting it to a
+    human-readable grid hierarchy tree with text content and string grids.
+
+    Args:
+        parsed_serialized_document: the parsed Extract output model.
+        duplicate_merged_cells_content_flag: if True, duplicate cell content for merged cells.
+            If False, only fill the first cell (top left) of the merged area.
+
+    Returns:
+        a mapping of table uid to the TableGridHierarchyModel representing the hierarchy.
+    """
+    annotations = parsed_serialized_document.annotations
+    table_uid_to_cells_mapping = get_table_uid_to_cells_mapping(
+        parsed_serialized_document.content_tree
+    )
+    table_cell_annotations: list[TableStructureAnnotationModel] = [
+        annotation
+        for annotation in annotations
+        if isinstance(annotation, TableStructureAnnotationModel)
+        and annotation.type
+        in (
+            AnnotationType.TABLE_STRUCTURE.value,
+            AnnotationType.FIGURE_EXTRACTED_TABLE_STRUCTURE.value,
+        )
+    ]
+    relation_annotations: list[RelationAnnotationModel] = [
+        annotation
+        for annotation in annotations
+        if isinstance(annotation, RelationAnnotationModel)
+        and annotation.data.relation_type == ROW_KEY_PARENT_RELATION
+    ]
+
+    table_uid_to_cell_hierarchy_tree = _get_table_uid_to_table_cell_hierarchy_tree(
+        table_uid_to_cells_mapping,
+        table_cell_annotations,
+        relation_annotations,
+    )
+
+    # Extract column header grid for each table
+    table_uid_to_column_header_grid: dict[str, list[list[str]]] = {}
+    for table_uid, cells in table_uid_to_cells_mapping.items():
+        table_uid_to_column_header_grid[table_uid] = _get_column_header_grid(
+            cells, table_cell_annotations, duplicate_merged_cells_content_flag
+        )
+
+    table_uid_to_grid_hierarchy_tree: dict[str, TableGridHierarchyModel] = {}
+    for table_uid, cell_hierarchy_tree in table_uid_to_cell_hierarchy_tree.items():
+        column_header_grid = table_uid_to_column_header_grid.get(table_uid) or None
+        table_uid_to_grid_hierarchy_tree[table_uid] = (
+            _convert_table_cell_hierarchy_tree_to_table_grid_hierarchy_tree(
+                cell_hierarchy_tree,
+                table_uid_to_cells_mapping[table_uid],
+                column_header_grid,
+                duplicate_merged_cells_content_flag,
+            )
+        )
+
+    return table_uid_to_grid_hierarchy_tree
+
+
 # --------- Main API ---------
 
 
@@ -386,6 +804,7 @@ def extract_pd_dfs_with_locs_and_table_structure_from_output(
     duplicate_merged_cells_content_flag: bool = True,
     use_first_row_as_header: bool = True,
     include_figure_extracted_table: bool = False,
+    include_table_hierarchy_tree: bool = False,
 ) -> list[Table]:
     """Extract tables and convert them to a list of pd DataFrames, table locations and structures.
 
@@ -396,6 +815,8 @@ def extract_pd_dfs_with_locs_and_table_structure_from_output(
             empty.
         use_first_row_as_header: if True, use the first row of the extracted table as the columns.
             Set to False if you know there is no header row in your tables.
+        include_table_hierarchy_tree: if True, also extract the table annotation hierarchy tree
+            for each table showing the projected row header structure.
 
     Returns:
         a list of Table NamedTuples with a pandas DataFrame, locations and structures.
@@ -426,6 +847,16 @@ def extract_pd_dfs_with_locs_and_table_structure_from_output(
         parsed_serialized_document.content_tree
     )
 
+    # Build hierarchy trees if requested
+    table_uid_to_table_grid_hierarchy_tree: dict[str, TableGridHierarchyModel] = {}
+    if include_table_hierarchy_tree:
+        table_uid_to_table_grid_hierarchy_tree = (
+            _get_table_uid_to_table_grid_hierarchy_tree(
+                parsed_serialized_document,
+                duplicate_merged_cells_content_flag,
+            )
+        )
+
     # Match dfs and locations
     tables: list[Table] = []
     for table_uid, table_grid_and_structure in table_id_to_grid_and_structure.items():
@@ -444,12 +875,21 @@ def extract_pd_dfs_with_locs_and_table_structure_from_output(
             table_cells = _convert_table_annotations_to_cells(
                 table_grid_and_structure.table_structure_annotations
             )
+            hierarchy_tree: TableDataFrameHierarchyModel | None = None
+            grid_hierarchy_tree = table_uid_to_table_grid_hierarchy_tree.get(table_uid)
+            if grid_hierarchy_tree is not None:
+                hierarchy_tree = (
+                    _convert_table_grid_hierarchy_tree_to_table_df_hierarchy_tree(
+                        grid_hierarchy_tree,
+                    )
+                )
             tables.append(
                 Table(
                     df=table_df,
                     table_type=table_grid_and_structure.table_category_type,
                     locations=table_uid_to_locs_mapping[table_uid],
                     cells=table_cells,
+                    hierarchy_tree=hierarchy_tree,
                 )
             )
     return tables
