@@ -503,6 +503,7 @@ def _convert_table_cell_hierarchy_tree_to_table_grid_hierarchy_tree(
     ]
 
     return TableGridHierarchyModel(
+        node_uid=cell_hierarchy_tree.node_uid,
         node_text=node_text,
         node_type=cell_hierarchy_tree.node_type,
         children=children,
@@ -534,6 +535,7 @@ def _convert_table_grid_hierarchy_tree_to_table_df_hierarchy_tree(
     ]
 
     return TableDataFrameHierarchyModel(
+        node_uid=grid_hierarchy_tree.node_uid,
         node_text=grid_hierarchy_tree.node_text,
         node_type=grid_hierarchy_tree.node_type,
         children=children,

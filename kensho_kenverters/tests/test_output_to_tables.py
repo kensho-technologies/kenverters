@@ -5053,6 +5053,7 @@ class TestConvertGridHierarchyTreeToDfHierarchyTree(TestCase):
     def test_converts_grid_to_dataframe(self) -> None:
         """Grid contents are converted to a pandas DataFrame."""
         grid_tree = TableGridHierarchyModel(
+            node_uid="c3",
             node_text="ASSETS",
             node_type=ContentCategory.TABLE_CELL.value,
             children=[],
@@ -5062,6 +5063,7 @@ class TestConvertGridHierarchyTreeToDfHierarchyTree(TestCase):
             grid_tree
         )
         self.assertEqual(df_tree.node_text, "ASSETS")
+        self.assertEqual(df_tree.node_uid, "c3")
         # use_first_row_as_header=False, so columns are integer indices
         self.assertEqual(list(df_tree.contents.iloc[0]), ["Name", "Value"])
         self.assertEqual(list(df_tree.contents.iloc[1]), ["Cash", "100"])
@@ -5069,10 +5071,12 @@ class TestConvertGridHierarchyTreeToDfHierarchyTree(TestCase):
     def test_converts_children_recursively(self) -> None:
         """Children are also converted to DataFrame hierarchy."""
         grid_tree = TableGridHierarchyModel(
+            node_uid="c3",
             node_text="ASSETS",
             node_type=ContentCategory.TABLE_CELL.value,
             children=[
                 TableGridHierarchyModel(
+                    node_uid="c4",
                     node_text="Current Assets",
                     node_type=ContentCategory.TABLE_CELL.value,
                     children=[],

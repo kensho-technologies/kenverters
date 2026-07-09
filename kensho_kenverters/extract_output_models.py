@@ -140,7 +140,19 @@ class TableGridAndStructure(NamedTuple):
     table_structure_annotations: list[TableStructureAnnotationModel]
 
 
-class TableCellHierarchyTreeModel(BaseModel):
+class BaseTableHierarchyNodeModel(BaseModel):
+    """Abstract base for table hierarchy tree nodes.
+
+    All hierarchy tree representations share a node identifier (uid and text)
+    and a node type. Subclasses define their own children and contents types.
+    """
+
+    node_uid: str
+    node_text: str | None = None
+    node_type: str
+
+
+class TableCellHierarchyTreeModel(BaseTableHierarchyNodeModel):
     """A node in the table cell hierarchy tree representing the row header structure.
 
     The tree shows the hierarchical structure of a table's projected row headers.
@@ -149,13 +161,11 @@ class TableCellHierarchyTreeModel(BaseModel):
     that belong to this projected row header.
     """
 
-    node_uid: str
-    node_type: str
     children: list["TableCellHierarchyTreeModel"]
     contents: list[TableStructureAnnotationModel]
 
 
-class TableGridHierarchyModel(BaseModel):
+class TableGridHierarchyModel(BaseTableHierarchyNodeModel):
     """A node in the table grid hierarchy tree with human-readable text content.
 
     Similar to TableCellHierarchyTreeModel, but instead of annotation objects,
@@ -163,22 +173,19 @@ class TableGridHierarchyModel(BaseModel):
     2D string grid recovered from the annotations.
     """
 
-    node_text: str | None
-    node_type: str
     children: list["TableGridHierarchyModel"]
     contents: list[list[str]]
 
 
-@dataclass
-class TableDataFrameHierarchyModel:
+class TableDataFrameHierarchyModel(BaseTableHierarchyNodeModel):
     """A node in the table DataFrame hierarchy tree.
 
     Similar to TableGridHierarchyModel, but the contents are a pandas DataFrame
     converted from the string grid.
     """
 
-    node_text: str | None
-    node_type: str
+    model_config = {"arbitrary_types_allowed": True}
+
     children: list["TableDataFrameHierarchyModel"]
     contents: pd.DataFrame
 
