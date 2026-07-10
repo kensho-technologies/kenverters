@@ -1,5 +1,11 @@
 # Changelog
 
+## v3.1.2
+
+### Added
+
+* Add code to construct table cell hierarchy tree. 
+
 ## v3.1.1
 
 ### Added

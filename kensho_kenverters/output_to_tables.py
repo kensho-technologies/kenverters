@@ -9,6 +9,7 @@ import pandas as pd
 
 from .constants import (
     EMPTY_STRING,
+    ROW_KEY_PARENT_RELATION,
     TABLE_CONTENT_CATEGORIES,
     AnnotationType,
     ContentCategory,
@@ -19,8 +20,10 @@ from .extract_output_models import (
     ContentModel,
     LocationModel,
     LocationType,
+    RelationAnnotationModel,
     Table,
     TableCategoryType,
+    TableCellHierarchyTreeModel,
     TableGridAndStructure,
     TableStructureAnnotationModel,
 )
@@ -251,6 +254,184 @@ def convert_uid_grid_to_content_grid(
             content_row.append(text)
         content_grid.append(content_row)
     return content_grid
+
+
+# --------- Table Hierarchy Tree ---------
+
+
+def _build_table_cell_hierarchy_tree_node(
+    cell_uid: str,
+    cell_uid_to_annotation: dict[str, TableStructureAnnotationModel],
+    parent_to_children: dict[str, list[str]],
+    all_projected_row_header_uids: set[str],
+    row_index_to_annotations: dict[int, list[TableStructureAnnotationModel]],
+) -> TableCellHierarchyTreeModel:
+    """Recursively build a hierarchy tree node for a projected row header cell.
+
+    Args:
+        cell_uid: the uid of the projected row header cell to build a node for.
+        cell_uid_to_annotation: mapping from cell uid to its table structure annotation.
+        parent_to_children: mapping from parent uid to its children uids
+            (from row_key_parent relations).
+        all_projected_row_header_uids: set of all projected row header uids across all tables.
+        row_index_to_annotations: mapping from row index to all cell annotations in that row.
+
+    Returns:
+        a TableCellHierarchyTreeModel node for the given cell uid.
+    """
+    children_uids = parent_to_children.get(cell_uid, [])
+
+    # Separate children into projected row headers (tree children) and
+    # data row cells (contents)
+    child_nodes: list[TableCellHierarchyTreeModel] = []
+    content_annotations: list[TableStructureAnnotationModel] = []
+    for child_uid in children_uids:
+        # If the child is a projected header, make a new child node
+        if child_uid in all_projected_row_header_uids:
+            child_nodes.append(
+                _build_table_cell_hierarchy_tree_node(
+                    child_uid,
+                    cell_uid_to_annotation,
+                    parent_to_children,
+                    all_projected_row_header_uids,
+                    row_index_to_annotations,
+                )
+            )
+        else:
+            # If the child is a regular row header, assign all annotations in the row
+            # to the contents
+            child_annotation = cell_uid_to_annotation.get(child_uid)
+            if child_annotation:
+                row_index = child_annotation.data.index[0]
+                content_annotations.extend(row_index_to_annotations.get(row_index, []))
+
+    return TableCellHierarchyTreeModel(
+        node_uid=cell_uid,
+        node_type=ContentCategory.TABLE_CELL.value,
+        children=child_nodes,
+        contents=content_annotations,
+    )
+
+
+def _get_table_uid_to_table_cell_hierarchy_tree(
+    table_uid_to_cells_mapping: dict[str, list[ContentModel]],
+    table_cell_annotations: list[TableStructureAnnotationModel],
+    relation_annotations: list[RelationAnnotationModel],
+) -> dict[str, TableCellHierarchyTreeModel]:
+    """Build a TableCellHierarchyTreeModel for each table uid.
+
+    The root node represents the table itself. Its children are the top-level projected row
+    header cells. Each projected row header node's children are its sub-level projected row
+    headers (from row_key_parent relations), and its contents are the cell annotations for the
+    leftmost cells (regular row headers) that belong to that projected row header and the cell
+    annotations in the same row.
+
+    Args:
+        table_uid_to_cells_mapping: mapping of table uid to cells (ContentModel) in that table.
+        table_cell_annotations: list of table structure annotations.
+        relation_annotations: list of relation annotations (row_key_parent relations define
+            the hierarchy).
+
+    Returns:
+        a mapping of table uid to the TableCellHierarchyTreeModel representing the table hierarchy.
+    """
+    # Build mapping from cell uid to its table uid
+    cell_uid_to_table_uid: dict[str, str] = {}
+    for table_uid, cells in table_uid_to_cells_mapping.items():
+        for cell in cells:
+            cell_uid_to_table_uid[cell.uid] = table_uid
+
+    # Build mapping from cell uid to its annotation
+    cell_uid_to_annotation: dict[str, TableStructureAnnotationModel] = {}
+    for annotation in table_cell_annotations:
+        for uid in annotation.content_uids:
+            cell_uid_to_annotation[uid] = annotation
+
+    # Extract row_key_parent relations and group by table uid
+    # In row_key_parent: source is parent, target is child
+    parent_to_children: dict[str, list[str]] = defaultdict(list)
+    child_uids: set[str] = set()
+    for relation in relation_annotations:
+        if relation.data.relation_type == ROW_KEY_PARENT_RELATION:
+            parent_uid = relation.data.source_content_uid
+            child_uid = relation.data.target_content_uid
+            parent_to_children[parent_uid].append(child_uid)
+            child_uids.add(child_uid)
+
+    # Identify projected row header uids per table
+    table_uid_to_projected_row_header_uids: dict[str, list[str]] = defaultdict(list)
+    for table_uid, cells in table_uid_to_cells_mapping.items():
+        for cell in cells:
+            cell_ann = cell_uid_to_annotation.get(cell.uid)
+            if cell_ann and cell_ann.data.is_projected_row_header:
+                table_uid_to_projected_row_header_uids[table_uid].append(cell.uid)
+
+    # Set of all projected row header uids for quick lookup
+    all_projected_row_header_uids: set[str] = set()
+    for uids in table_uid_to_projected_row_header_uids.values():
+        all_projected_row_header_uids.update(uids)
+
+    # Build the tree for each table
+    result: dict[str, TableCellHierarchyTreeModel] = {}
+    for table_uid in table_uid_to_cells_mapping:
+        # Build row_index_to_annotations for this table
+        row_index_to_annotations: dict[int, list[TableStructureAnnotationModel]] = (
+            defaultdict(list)
+        )
+        for cell in table_uid_to_cells_mapping[table_uid]:
+            cell_ann = cell_uid_to_annotation.get(cell.uid)
+            if cell_ann:
+                row_index_to_annotations[cell_ann.data.index[0]].append(cell_ann)
+
+        projected_uids = table_uid_to_projected_row_header_uids.get(table_uid, [])
+        # Top-level projected row headers are those that are not children of any other
+        top_level_uids = [uid for uid in projected_uids if uid not in child_uids]
+
+        # Build child nodes for top-level projected row headers
+        top_level_nodes = [
+            _build_table_cell_hierarchy_tree_node(
+                uid,
+                cell_uid_to_annotation,
+                parent_to_children,
+                all_projected_row_header_uids,
+                row_index_to_annotations,
+            )
+            for uid in top_level_uids
+        ]
+
+        # Collect row indices already represented in the hierarchy tree
+        # (either as children of a projected row header, or as projected row headers
+        # themselves). These rows will be excluded from the table root's contents,
+        # since they already appear as nodes or contents within the tree.
+        excluded_row_indices: set[int] = set()
+        for child_uid in child_uids:
+            child_ann = cell_uid_to_annotation.get(child_uid)
+            if child_ann and cell_uid_to_table_uid.get(child_uid) == table_uid:
+                excluded_row_indices.add(child_ann.data.index[0])
+        for uid in projected_uids:
+            proj_ann = cell_uid_to_annotation.get(uid)
+            if proj_ann:
+                excluded_row_indices.add(proj_ann.data.index[0])
+
+        # Remaining rows (not excluded, not column headers) belong to the table
+        table_contents: list[TableStructureAnnotationModel] = []
+        for row_index, annotations in row_index_to_annotations.items():
+            if row_index in excluded_row_indices:
+                continue
+            # Skip rows that contain column headers
+            if any(ann.data.is_column_header for ann in annotations):
+                continue
+            table_contents.extend(annotations)
+
+        # The root node represents the table itself
+        result[table_uid] = TableCellHierarchyTreeModel(
+            node_uid=table_uid,
+            node_type=ContentCategory.TABLE.value,
+            children=top_level_nodes,
+            contents=table_contents,
+        )
+
+    return result
 
 
 # --------- Main API ---------
