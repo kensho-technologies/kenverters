@@ -4,7 +4,7 @@
 
 ### Added
 
-* Add codes to construct table cell hierarchy tree. 
+* Add code to construct table cell hierarchy tree. 
 
 ## v3.1.1
 
