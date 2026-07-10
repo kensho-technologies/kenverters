@@ -12,7 +12,6 @@ from ..extract_output_models import (
     LocationModel,
     TableCellHierarchyTreeModel,
     TableGridAndStructure,
-    TableGridHierarchyModel,
     TableStructureAnnotationModel,
 )
 from ..output_to_tables import (
