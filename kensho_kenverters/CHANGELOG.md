@@ -1,5 +1,11 @@
 # Changelog
 
+## v3.1.3
+
+### Added
+
+* Add conversion from table cell hierarchy tree to table grid hierarchy tree.
+
 ## v3.1.2
 
 ### Added
