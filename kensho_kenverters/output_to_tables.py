@@ -839,7 +839,7 @@ def extract_pd_dfs_with_locs_and_table_structure_from_output(
         use_first_row_as_header: if True, use the first row of the extracted table as the columns.
             Set to False if you know there is no header row in your tables.
         include_figure_extracted_table: if True, include tables extracted from figures.
-        include_table_hierarchy_tree: if True, also extract the table annotation hierarchy tree
+        include_table_hierarchy_tree: if True, also extract the table hierarchy tree
             for each table showing the projected row header structure.
 
     Returns:
