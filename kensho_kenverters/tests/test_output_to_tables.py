@@ -8,13 +8,19 @@ from ..constants import ContentCategory
 from ..extract_output_models import (
     AnnotationDataModel,
     Cell,
+    ContentModel,
     LocationModel,
+    TableCellHierarchyTreeModel,
     TableGridAndStructure,
     TableStructureAnnotationModel,
 )
 from ..output_to_tables import (
     _build_table_cell_hierarchy_tree_node,
+    _convert_table_cell_hierarchy_tree_to_table_grid_hierarchy_tree,
+    _expand_annotations_to_row_groups,
+    _get_column_header_grid,
     _get_table_uid_to_table_cell_hierarchy_tree,
+    _get_table_uid_to_table_grid_hierarchy_tree,
     build_table_grids,
     extract_pd_dfs_from_output,
     extract_pd_dfs_with_locs_and_table_structure_from_output,
@@ -4912,3 +4918,253 @@ class TestGetTableUidToTableCellHierarchyTree(TestCase):
         self.assertEqual(current_assets_node.node_uid, "c4")
         self.assertEqual(len(current_assets_node.children), 0)
         self.assertEqual(len(current_assets_node.contents), 4)
+
+
+class TestExpandAnnotationsToRowGroups(TestCase):
+    """Tests for _expand_annotations_to_row_groups."""
+
+    def test_single_annotation_no_span(self) -> None:
+        """Single annotation with span (1,1) produces one entry."""
+        uid_to_text = {"c1": "Hello"}
+        annotations = [_make_table_structure_annotation("c1", 0, 0)]
+        result = _expand_annotations_to_row_groups(annotations, uid_to_text)
+        self.assertEqual(dict(result), {0: [(0, "Hello")]})
+
+    def test_col_span_with_duplicate(self) -> None:
+        """Column span duplicates text across columns when flag is True."""
+        uid_to_text = {"c1": "Wide"}
+        annotations = [_make_table_structure_annotation("c1", 0, 0, col_span=3)]
+        result = _expand_annotations_to_row_groups(
+            annotations, uid_to_text, duplicate_merged_cells_content_flag=True
+        )
+        self.assertEqual(dict(result), {0: [(0, "Wide"), (1, "Wide"), (2, "Wide")]})
+
+    def test_col_span_without_duplicate(self) -> None:
+        """Column span fills empty strings for non-first cells when flag is False."""
+        uid_to_text = {"c1": "Wide"}
+        annotations = [_make_table_structure_annotation("c1", 0, 0, col_span=3)]
+        result = _expand_annotations_to_row_groups(
+            annotations, uid_to_text, duplicate_merged_cells_content_flag=False
+        )
+        self.assertEqual(dict(result), {0: [(0, "Wide"), (1, ""), (2, "")]})
+
+    def test_row_span_with_duplicate(self) -> None:
+        """Row span duplicates text across rows when flag is True."""
+        uid_to_text = {"c1": "Tall"}
+        annotations = [_make_table_structure_annotation("c1", 1, 0, row_span=2)]
+        result = _expand_annotations_to_row_groups(
+            annotations, uid_to_text, duplicate_merged_cells_content_flag=True
+        )
+        self.assertEqual(dict(result), {1: [(0, "Tall")], 2: [(0, "Tall")]})
+
+    def test_row_span_without_duplicate(self) -> None:
+        """Row span fills empty string for non-first cells when flag is False."""
+        uid_to_text = {"c1": "Tall"}
+        annotations = [_make_table_structure_annotation("c1", 1, 0, row_span=2)]
+        result = _expand_annotations_to_row_groups(
+            annotations, uid_to_text, duplicate_merged_cells_content_flag=False
+        )
+        self.assertEqual(dict(result), {1: [(0, "Tall")], 2: [(0, "")]})
+
+    def test_missing_content_uid_uses_empty_string(self) -> None:
+        """Annotation whose content_uid is not in uid_to_text uses empty string."""
+        uid_to_text = {"c1": "Hello"}
+        annotations = [_make_table_structure_annotation("c_missing", 0, 0)]
+        result = _expand_annotations_to_row_groups(annotations, uid_to_text)
+        self.assertEqual(dict(result), {0: [(0, "")]})
+
+    def test_multiple_annotations_same_row(self) -> None:
+        """Multiple annotations in the same row are grouped together."""
+        uid_to_text = {"c1": "A", "c2": "B"}
+        annotations = [
+            _make_table_structure_annotation("c1", 0, 0),
+            _make_table_structure_annotation("c2", 0, 1),
+        ]
+        result = _expand_annotations_to_row_groups(annotations, uid_to_text)
+        self.assertEqual(dict(result), {0: [(0, "A"), (1, "B")]})
+
+
+class TestGetColumnHeaderGrid(TestCase):
+    """Tests for _get_column_header_grid."""
+
+    def test_extracts_consecutive_headers(self) -> None:
+        """Column header rows starting from row 0 are extracted."""
+        cells = [
+            ContentModel(**_make_content_model_dict("c1", "Name")),
+            ContentModel(**_make_content_model_dict("c2", "Value")),
+            ContentModel(**_make_content_model_dict("c3", "Data")),
+        ]
+        annotations = [
+            _make_table_structure_annotation("c1", 0, 0, is_column_header=True),
+            _make_table_structure_annotation("c2", 0, 1, is_column_header=True),
+            _make_table_structure_annotation("c3", 1, 0, is_column_header=False),
+        ]
+        grid = _get_column_header_grid(cells, annotations)
+        self.assertEqual(grid, [["Name", "Value"]])
+
+    def test_no_headers_returns_empty(self) -> None:
+        """Table with no column headers returns empty grid."""
+        cells = [ContentModel(**_make_content_model_dict("c1", "Data"))]
+        annotations = [
+            _make_table_structure_annotation("c1", 0, 0, is_column_header=False)
+        ]
+        grid = _get_column_header_grid(cells, annotations)
+        self.assertEqual(grid, [])
+
+    def test_spanning_header_with_duplicate(self) -> None:
+        """Spanning column headers are duplicated when flag is True."""
+        cells = [
+            ContentModel(**_make_content_model_dict("c1", "Header")),
+            ContentModel(**_make_content_model_dict("c2", "Other")),
+        ]
+        annotations = [
+            _make_table_structure_annotation(
+                "c1", 0, 0, col_span=2, is_column_header=True
+            ),
+            _make_table_structure_annotation("c2", 0, 2, is_column_header=True),
+        ]
+        grid = _get_column_header_grid(
+            cells, annotations, duplicate_merged_cells_content_flag=True
+        )
+        self.assertEqual(grid, [["Header", "Header", "Other"]])
+
+    def test_spanning_header_without_duplicate(self) -> None:
+        """Spanning column headers leave empty cells when flag is False."""
+        cells = [
+            ContentModel(**_make_content_model_dict("c1", "Header")),
+            ContentModel(**_make_content_model_dict("c2", "Other")),
+        ]
+        annotations = [
+            _make_table_structure_annotation(
+                "c1", 0, 0, col_span=2, is_column_header=True
+            ),
+            _make_table_structure_annotation("c2", 0, 2, is_column_header=True),
+        ]
+        grid = _get_column_header_grid(
+            cells, annotations, duplicate_merged_cells_content_flag=False
+        )
+        self.assertEqual(grid, [["Header", "", "Other"]])
+
+
+class TestConvertCellHierarchyTreeToGridHierarchyTree(TestCase):
+    """Tests for _convert_table_cell_hierarchy_tree_to_table_grid_hierarchy_tree."""
+
+    def test_converts_to_text_grid(self) -> None:
+        """Converts annotation-based contents to string grid with text."""
+        cell_contents = [
+            ContentModel(**_make_content_model_dict("c3", "ASSETS")),
+            ContentModel(**_make_content_model_dict("c5", "Cash")),
+            ContentModel(**_make_content_model_dict("c6", "100")),
+        ]
+        cell_tree = TableCellHierarchyTreeModel(
+            node_uid="c3",
+            node_type=ContentCategory.TABLE_CELL.value,
+            children=[],
+            contents=[
+                _make_table_structure_annotation("c5", 3, 0),
+                _make_table_structure_annotation("c6", 3, 1),
+            ],
+        )
+        grid_tree = _convert_table_cell_hierarchy_tree_to_table_grid_hierarchy_tree(
+            cell_tree, cell_contents
+        )
+        self.assertEqual(grid_tree.node_text, "ASSETS")
+        self.assertEqual(grid_tree.contents, [["Cash", "100"]])
+
+    def test_prepends_column_headers(self) -> None:
+        """Column header grid is prepended to contents."""
+        cell_contents = [
+            ContentModel(**_make_content_model_dict("c3", "ASSETS")),
+            ContentModel(**_make_content_model_dict("c5", "Cash")),
+            ContentModel(**_make_content_model_dict("c6", "100")),
+        ]
+        cell_tree = TableCellHierarchyTreeModel(
+            node_uid="c3",
+            node_type=ContentCategory.TABLE_CELL.value,
+            children=[],
+            contents=[
+                _make_table_structure_annotation("c5", 3, 0),
+                _make_table_structure_annotation("c6", 3, 1),
+            ],
+        )
+        grid_tree = _convert_table_cell_hierarchy_tree_to_table_grid_hierarchy_tree(
+            cell_tree, cell_contents, column_header_grid=[["Name", "Value"]]
+        )
+        self.assertEqual(grid_tree.contents, [["Name", "Value"], ["Cash", "100"]])
+
+    def test_empty_contents_no_header_prepend(self) -> None:
+        """Column headers are NOT prepended if there are no content rows."""
+        cell_contents = [ContentModel(**_make_content_model_dict("c3", "ASSETS"))]
+        cell_tree = TableCellHierarchyTreeModel(
+            node_uid="c3",
+            node_type=ContentCategory.TABLE_CELL.value,
+            children=[],
+            contents=[],
+        )
+        grid_tree = _convert_table_cell_hierarchy_tree_to_table_grid_hierarchy_tree(
+            cell_tree, cell_contents, column_header_grid=[["Name", "Value"]]
+        )
+        self.assertEqual(grid_tree.contents, [])
+
+
+class TestGetTableUidToTableGridHierarchyTree(TestCase):
+    """Tests for _get_table_uid_to_table_grid_hierarchy_tree (end-to-end)."""
+
+    def test_end_to_end_hierarchy(self) -> None:
+        """Full pipeline: build grid hierarchy tree from a serialized document."""
+        doc = _build_simple_table_document()
+        parsed = load_output_to_pydantic(doc)
+        result = _get_table_uid_to_table_grid_hierarchy_tree(parsed)
+
+        self.assertIn("t1", result)
+        tree = result["t1"]
+        self.assertIsNone(tree.node_text)
+        self.assertEqual(tree.node_type, ContentCategory.TABLE.value)
+
+        self.assertEqual(len(tree.children), 1)
+        assets = tree.children[0]
+        self.assertEqual(assets.node_text, "ASSETS")
+        self.assertEqual(len(assets.children), 1)
+        self.assertEqual(assets.contents, [["Name", "Value"], ["Equipment", "500"]])
+
+        current_assets = assets.children[0]
+        self.assertEqual(current_assets.node_text, "Current Assets")
+        self.assertEqual(
+            current_assets.contents,
+            [["Name", "Value"], ["Cash", "100"], ["Securities", "200"]],
+        )
+
+    def test_end_to_end_no_hierarchy(self) -> None:
+        """Table with no projected row headers has all rows in table contents."""
+        doc = {
+            "annotations": [
+                {
+                    "content_uids": ["c1"],
+                    "data": {
+                        "index": [0, 0],
+                        "span": [1, 1],
+                        "is_column_header": False,
+                        "is_projected_row_header": False,
+                    },
+                    "type": "table_structure",
+                },
+            ],
+            "content_tree": {
+                "uid": "0",
+                "type": "DOCUMENT",
+                "content": None,
+                "children": [
+                    {
+                        "uid": "t1",
+                        "type": "TABLE",
+                        "content": None,
+                        "children": [_make_content_model_dict("c1", "Data")],
+                    }
+                ],
+            },
+        }
+        parsed = load_output_to_pydantic(doc)
+        result = _get_table_uid_to_table_grid_hierarchy_tree(parsed)
+        tree = result["t1"]
+        self.assertEqual(len(tree.children), 0)
+        self.assertEqual(tree.contents, [["Data"]])
