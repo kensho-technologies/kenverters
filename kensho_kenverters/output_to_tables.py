@@ -3,7 +3,7 @@
 
 import typing
 from collections import defaultdict
-from typing import Any, Sequence
+from typing import Any, NamedTuple, Sequence
 
 import pandas as pd
 
@@ -436,12 +436,19 @@ def _get_table_uid_to_table_cell_hierarchy_tree(
     return result
 
 
+class CellEntry(NamedTuple):
+    """A single cell entry with its column index and text content."""
+
+    col_index: int
+    text: str
+
+
 def _expand_annotations_to_row_groups(
     annotations: Sequence[TableStructureAnnotationModel],
     uid_to_text: dict[str, str],
     duplicate_merged_cells_content_flag: bool = True,
-) -> dict[int, list[tuple[int, str]]]:
-    """Expand table structure annotations into row-grouped (col_index, text) pairs.
+) -> dict[int, list[CellEntry]]:
+    """Expand table structure annotations into row-grouped CellEntry pairs.
 
     For each annotation, resolves its text from uid_to_text and expands its row/col spans
     into individual cell entries grouped by row index.
@@ -453,9 +460,9 @@ def _expand_annotations_to_row_groups(
             If False, only fill the first cell (top left) of the merged area.
 
     Returns:
-        a dict mapping row index to a list of (col_index, text) tuples.
+        a dict mapping row index to a list of CellEntry named tuples.
     """
-    row_groups: dict[int, list[tuple[int, str]]] = defaultdict(list)
+    row_groups: dict[int, list[CellEntry]] = defaultdict(list)
     for annotation in annotations:
         row_index = annotation.data.index[0]
         col_index = annotation.data.index[1]
@@ -470,11 +477,11 @@ def _expand_annotations_to_row_groups(
                     r_offset == 0 and c_offset == 0
                 ):
                     row_groups[row_index + r_offset].append(
-                        (col_index + c_offset, cell_text)
+                        CellEntry(col_index + c_offset, cell_text)
                     )
                 else:
                     row_groups[row_index + r_offset].append(
-                        (col_index + c_offset, EMPTY_STRING)
+                        CellEntry(col_index + c_offset, EMPTY_STRING)
                     )
     return row_groups
 
@@ -515,8 +522,8 @@ def _convert_table_cell_hierarchy_tree_to_table_grid_hierarchy_tree(
     contents_grid: list[list[str]] = []
     for row_index in sorted(row_groups.keys()):
         row = row_groups[row_index]
-        row.sort(key=lambda x: x[0])
-        contents_grid.append([text for _, text in row])
+        row.sort(key=lambda entry: entry.col_index)
+        contents_grid.append([entry.text for entry in row])
 
     # Prepend column header rows to contents if available
     if column_header_grid and contents_grid:
@@ -580,8 +587,8 @@ def _get_column_header_grid(
     row_idx = 0
     while row_idx in header_row_groups:
         row = header_row_groups[row_idx]
-        row.sort(key=lambda x: x[0])
-        column_header_grid.append([text for _, text in row])
+        row.sort(key=lambda entry: entry.col_index)
+        column_header_grid.append([entry.text for entry in row])
         row_idx += 1
     return column_header_grid
 
