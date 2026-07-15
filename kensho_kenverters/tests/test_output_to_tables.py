@@ -12,11 +12,13 @@ from ..extract_output_models import (
     LocationModel,
     TableCellHierarchyTreeModel,
     TableGridAndStructure,
+    TableGridHierarchyModel,
     TableStructureAnnotationModel,
 )
 from ..output_to_tables import (
     _build_table_cell_hierarchy_tree_node,
     _convert_table_cell_hierarchy_tree_to_table_grid_hierarchy_tree,
+    _convert_table_grid_hierarchy_tree_to_table_df_hierarchy_tree,
     _expand_annotations_to_row_groups,
     _get_column_header_grid,
     _get_table_uid_to_table_cell_hierarchy_tree,
@@ -466,6 +468,39 @@ class TestTableExtraction(TestCase):
             },
         }
         extract_pd_dfs_from_output(output_with_empty_table)
+
+    def test_include_table_hierarchy_tree(self) -> None:
+        """When include_table_hierarchy_tree=True, hierarchy_tree is populated."""
+        doc = _build_simple_table_document()
+        tables = extract_pd_dfs_with_locs_and_table_structure_from_output(
+            doc, include_table_hierarchy_tree=True
+        )
+        self.assertEqual(len(tables), 1)
+        table = tables[0]
+        self.assertIsNotNone(table.hierarchy_tree)
+
+        hierarchy_tree = table.hierarchy_tree
+        assert hierarchy_tree is not None
+        # Root represents the table
+        self.assertEqual(hierarchy_tree.node_type, "TABLE")
+        # Root has one child: "ASSETS"
+        self.assertEqual(len(hierarchy_tree.children), 1)
+        assets_node = hierarchy_tree.children[0]
+        self.assertEqual(assets_node.node_text, "ASSETS")
+        # "ASSETS" has one child: "Current Assets"
+        self.assertEqual(len(assets_node.children), 1)
+        current_assets_node = assets_node.children[0]
+        self.assertEqual(current_assets_node.node_text, "Current Assets")
+        # Contents are DataFrames
+        self.assertIsNotNone(assets_node.contents)
+        self.assertIsNotNone(current_assets_node.contents)
+
+    def test_hierarchy_tree_is_none_when_not_requested(self) -> None:
+        """When include_table_hierarchy_tree=False (default), hierarchy_tree is None."""
+        doc = _build_simple_table_document()
+        tables = extract_pd_dfs_with_locs_and_table_structure_from_output(doc)
+        self.assertEqual(len(tables), 1)
+        self.assertIsNone(tables[0].hierarchy_tree)
 
     def test_build_table_grids_table_structure(self) -> None:
         # Test with a spanning cell: Make sure it's duplicated
@@ -5105,6 +5140,51 @@ class TestConvertCellHierarchyTreeToGridHierarchyTree(TestCase):
             cell_tree, cell_contents, column_header_grid=[["Name", "Value"]]
         )
         self.assertEqual(grid_tree.contents, [])
+
+
+class TestConvertGridHierarchyTreeToDfHierarchyTree(TestCase):
+    """Tests for _convert_table_grid_hierarchy_tree_to_table_df_hierarchy_tree."""
+
+    def test_converts_grid_to_dataframe(self) -> None:
+        """Grid contents are converted to a pandas DataFrame."""
+        grid_tree = TableGridHierarchyModel(
+            node_uid="c3",
+            node_text="ASSETS",
+            node_type=ContentCategory.TABLE_CELL.value,
+            children=[],
+            contents=[["Name", "Value"], ["Cash", "100"]],
+        )
+        df_tree = _convert_table_grid_hierarchy_tree_to_table_df_hierarchy_tree(
+            grid_tree
+        )
+        self.assertEqual(df_tree.node_text, "ASSETS")
+        self.assertEqual(df_tree.node_uid, "c3")
+        # use_first_row_as_header=False, so columns are integer indices
+        self.assertEqual(list(df_tree.contents.iloc[0]), ["Name", "Value"])
+        self.assertEqual(list(df_tree.contents.iloc[1]), ["Cash", "100"])
+
+    def test_converts_children_recursively(self) -> None:
+        """Children are also converted to DataFrame hierarchy."""
+        grid_tree = TableGridHierarchyModel(
+            node_uid="c3",
+            node_text="ASSETS",
+            node_type=ContentCategory.TABLE_CELL.value,
+            children=[
+                TableGridHierarchyModel(
+                    node_uid="c4",
+                    node_text="Current Assets",
+                    node_type=ContentCategory.TABLE_CELL.value,
+                    children=[],
+                    contents=[["Cash", "100"]],
+                )
+            ],
+            contents=[],
+        )
+        df_tree = _convert_table_grid_hierarchy_tree_to_table_df_hierarchy_tree(
+            grid_tree
+        )
+        self.assertEqual(len(df_tree.children), 1)
+        self.assertEqual(df_tree.children[0].node_text, "Current Assets")
 
 
 class TestGetTableUidToTableGridHierarchyTree(TestCase):
