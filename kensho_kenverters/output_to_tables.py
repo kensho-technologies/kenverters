@@ -25,6 +25,7 @@ from .extract_output_models import (
     Table,
     TableCategoryType,
     TableCellHierarchyTreeModel,
+    TableDataFrameHierarchyModel,
     TableGridAndStructure,
     TableGridHierarchyModel,
     TableStructureAnnotationModel,
@@ -789,11 +790,44 @@ def extract_pd_dfs_from_output(
     return table_dfs
 
 
+def _convert_table_grid_hierarchy_tree_to_table_df_hierarchy_tree(
+    grid_hierarchy_tree: TableGridHierarchyModel,
+) -> TableDataFrameHierarchyModel:
+    """Convert a TableGridHierarchyModel to a TableDataFrameHierarchyModel.
+
+    Converts the 2D string grid contents into a pandas DataFrame.
+
+    Args:
+        grid_hierarchy_tree: the hierarchy tree with string grid contents.
+
+    Returns:
+        a TableDataFrameHierarchyModel with DataFrame contents.
+    """
+    contents_df = convert_table_to_pd_df(
+        grid_hierarchy_tree.contents,
+        use_first_row_as_header=False,
+    )
+
+    children = [
+        _convert_table_grid_hierarchy_tree_to_table_df_hierarchy_tree(child)
+        for child in grid_hierarchy_tree.children
+    ]
+
+    return TableDataFrameHierarchyModel(
+        node_uid=grid_hierarchy_tree.node_uid,
+        node_text=grid_hierarchy_tree.node_text,
+        node_type=grid_hierarchy_tree.node_type,
+        children=children,
+        contents=contents_df,
+    )
+
+
 def extract_pd_dfs_with_locs_and_table_structure_from_output(
     serialized_document: dict[str, Any],
     duplicate_merged_cells_content_flag: bool = True,
     use_first_row_as_header: bool = True,
     include_figure_extracted_table: bool = False,
+    include_table_hierarchy_tree: bool = False,
 ) -> list[Table]:
     """Extract tables and convert them to a list of pd DataFrames, table locations and structures.
 
@@ -804,6 +838,9 @@ def extract_pd_dfs_with_locs_and_table_structure_from_output(
             empty.
         use_first_row_as_header: if True, use the first row of the extracted table as the columns.
             Set to False if you know there is no header row in your tables.
+        include_figure_extracted_table: if True, include tables extracted from figures.
+        include_table_hierarchy_tree: if True, also extract the table hierarchy tree
+            for each table showing the projected row header structure.
 
     Returns:
         a list of Table NamedTuples with a pandas DataFrame, locations and structures.
@@ -834,6 +871,16 @@ def extract_pd_dfs_with_locs_and_table_structure_from_output(
         parsed_serialized_document.content_tree
     )
 
+    # Build hierarchy trees if requested
+    table_uid_to_table_grid_hierarchy_tree: dict[str, TableGridHierarchyModel] = {}
+    if include_table_hierarchy_tree:
+        table_uid_to_table_grid_hierarchy_tree = (
+            _get_table_uid_to_table_grid_hierarchy_tree(
+                parsed_serialized_document,
+                duplicate_merged_cells_content_flag,
+            )
+        )
+
     # Match dfs and locations
     tables: list[Table] = []
     for table_uid, table_grid_and_structure in table_id_to_grid_and_structure.items():
@@ -852,12 +899,21 @@ def extract_pd_dfs_with_locs_and_table_structure_from_output(
             table_cells = _convert_table_annotations_to_cells(
                 table_grid_and_structure.table_structure_annotations
             )
+            hierarchy_tree: TableDataFrameHierarchyModel | None = None
+            grid_hierarchy_tree = table_uid_to_table_grid_hierarchy_tree.get(table_uid)
+            if grid_hierarchy_tree is not None:
+                hierarchy_tree = (
+                    _convert_table_grid_hierarchy_tree_to_table_df_hierarchy_tree(
+                        grid_hierarchy_tree,
+                    )
+                )
             tables.append(
                 Table(
                     df=table_df,
                     table_type=table_grid_and_structure.table_category_type,
                     locations=table_uid_to_locs_mapping[table_uid],
                     cells=table_cells,
+                    hierarchy_tree=hierarchy_tree,
                 )
             )
     return tables

@@ -1,5 +1,11 @@
 # Changelog
 
+## v3.2.0
+
+### Added
+
+* Surfacing table dataframe hierarchy tree.
+
 ## v3.1.3
 
 ### Added
