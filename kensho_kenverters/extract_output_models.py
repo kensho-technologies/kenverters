@@ -193,6 +193,7 @@ class TableDataFrameHierarchyModel(BaseTableHierarchyNodeModel):
 class ContentSegmentModel(BaseModel):
     """A content segment within a header tree node."""
 
+    content_uid: str
     category: str
     text: str | None
     locations: list[LocationModel] | None = None
@@ -202,6 +203,7 @@ class ContentSegmentModel(BaseModel):
 class HeaderTreeNodeModel(BaseModel):
     """A node in the header content tree produced by convert_output_to_header_tree."""
 
+    content_uid: str
     type: str
     text: str | None
     children: list["HeaderTreeNodeModel"]

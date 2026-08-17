@@ -1,5 +1,11 @@
 # Changelog
 
+## v3.3.0
+
+### Added
+
+* Add `content_uid` field to `HeaderTreeNodeModel` and `ContentSegmentModel` in `convert_output_to_header_tree`, allowing consumers to trace header tree nodes and content segments back to their original content in the Extract output.
+
 ## v3.2.0
 
 ### Added
