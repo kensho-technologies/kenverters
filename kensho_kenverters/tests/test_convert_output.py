@@ -4625,6 +4625,7 @@ class TestCreateContentSegment(TestCase):
         result = _create_content_segment(content, {}, {}, {})
         assert result is not None
         self.assertIsInstance(result, ContentSegmentModel)
+        self.assertEqual(result.content_uid, "1")
         self.assertEqual(result.category, "paragraph")
         self.assertEqual(result.text, "Hello world")
         expected_locations = [
@@ -4672,6 +4673,7 @@ class TestCreateContentSegment(TestCase):
         uid_to_span = {"c1": (1, 1), "c2": (1, 1)}
         result = _create_content_segment(content, uid_to_index, uid_to_span, {})
         assert result is not None
+        self.assertEqual(result.content_uid, "t1")
         self.assertEqual(result.category, "table")
         self.assertEqual(result.table, [["A", "B"]])
         assert result.text is not None
@@ -4700,6 +4702,7 @@ class TestCreateContentSegment(TestCase):
         )
         result = _create_content_segment(content, {}, {}, {})
         assert result is not None
+        self.assertEqual(result.content_uid, "1")
         self.assertIsNone(result.text)
 
 
@@ -4741,15 +4744,18 @@ class TestBuildHeaderTreeNode(TestCase):
             ],
         )
         result = _build_header_tree_node(content, {}, {}, {})
+        self.assertEqual(result.content_uid, "0")
         self.assertEqual(result.type, "document")
         self.assertIsNotNone(result.contents)
         self.assertEqual(len(result.children), 1)
         h1_node = result.children[0]
+        self.assertEqual(h1_node.content_uid, "2")
         self.assertEqual(h1_node.type, "h1")
         self.assertEqual(h1_node.text, "Title")
         assert h1_node.locations is not None
         self.assertEqual(h1_node.locations[0].page_number, 0)
         assert isinstance(h1_node.contents, list)
+        self.assertEqual(h1_node.contents[0].content_uid, "3")
         self.assertEqual(h1_node.contents[0].text, "Under title")
 
     def test_nested_headings(self) -> None:
@@ -4799,13 +4805,17 @@ class TestBuildHeaderTreeNode(TestCase):
             ],
         )
         result = _build_header_tree_node(content, {}, {}, {})
+        self.assertEqual(result.content_uid, "0")
         h1 = result.children[0]
+        self.assertEqual(h1.content_uid, "1")
         self.assertEqual(h1.type, "h1")
         self.assertEqual(len(h1.children), 1)
         h2 = h1.children[0]
+        self.assertEqual(h2.content_uid, "2")
         self.assertEqual(h2.type, "h2")
         self.assertEqual(h2.text, "Section")
         assert isinstance(h2.contents, list)
+        self.assertEqual(h2.contents[0].content_uid, "3")
         self.assertEqual(h2.contents[0].text, "Body")
 
 
@@ -4821,6 +4831,7 @@ class TestHeaderTreeNodeModelSerialization(TestCase):
         tree = convert_output_to_header_tree(self.extract_output_hierarchical_v2)
         result = tree.to_dict()
         self.assertIsInstance(result, dict)
+        self.assertIn("content_uid", result)
         self.assertEqual(result["type"], "document")
         self.assertIsInstance(result["children"], list)
         self.assertIsNone(result["locations"])
@@ -4840,6 +4851,7 @@ class TestHeaderTreeNodeModelSerialization(TestCase):
         h1 = result["children"][0]
         self.assertIsInstance(h1["contents"], list)
         self.assertIsInstance(h1["contents"][0], dict)
+        self.assertIn("content_uid", h1["contents"][0])
         self.assertIn("category", h1["contents"][0])
         self.assertIn("text", h1["contents"][0])
 

@@ -451,6 +451,7 @@ def _create_content_segment(
         table_cells = content.children
         table = _construct_table_from_cells(table_cells, uid_to_index, uid_to_span)
         return ContentSegmentModel(
+            content_uid=content.uid,
             category=content.type.lower(),
             text=table_to_markdown(table),
             locations=content.locations,
@@ -463,6 +464,7 @@ def _create_content_segment(
             figure_extracted_table_uid_to_cell_annotations[content.uid]
         )
         return ContentSegmentModel(
+            content_uid=content.uid,
             category=content.type.lower(),
             text=table_to_markdown(table),
             locations=content.locations,
@@ -475,6 +477,7 @@ def _create_content_segment(
         return None
     else:
         return ContentSegmentModel(
+            content_uid=content.uid,
             category=content.type.lower(),
             text=content.content,
             locations=content.locations,
@@ -516,6 +519,7 @@ def _build_header_tree_node(
                 contents.append(segment)
 
     return HeaderTreeNodeModel(
+        content_uid=content.uid,
         type=content.type.lower(),
         text=content.content,
         children=children,
